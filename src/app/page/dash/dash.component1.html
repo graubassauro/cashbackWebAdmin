@@ -1,0 +1,86 @@
+<div id="mySidebar" class="sidebar" [ngClass]="{'open': show }">
+  <a class="closebtn" (click)="toggle()">&times;</a>
+  <div class="text-center text-white">
+    <span class="fs-4">Hello <small class="d-block">{{ nome }} </small></span>
+    <a (click)="logout()" class="nav-link text-white p-0 pt-2">
+      <small class="d-block"><i class="bi bi-dash-circle"></i> LOGOUT</small>
+    </a>
+  </div>
+  <hr>
+  <ul class="nav nav-pills flex-column mb-auto">
+    
+    <li>
+      <a routerLink="/dash/home" (click)="toggle()" class="nav-link text-white">
+        <i class="bi bi-kanban-fill"></i>
+        Dashboard
+      </a>
+    </li>
+    <li>
+      <a routerLink="/dash/booking" (click)="toggle()" class="nav-link text-white">
+        <i class="bi bi-calendar"></i>
+        booking
+      </a>
+    </li>
+    <li>
+      <a routerLink="/dash/clients/list" (click)="toggle()" class="nav-link text-white">
+        <i class="bi bi-person"></i>
+        CLIENTS
+      </a>
+    </li>
+    <li>
+      <a routerLink="/dash/employees/list" (click)="toggle()" class="nav-link text-white">
+        <i class="bi bi-person-rolodex"></i>
+        EMPLOYEES
+      </a>
+    </li>
+    <li>
+      <a routerLink="/dash/vets" (click)="toggle()" class="nav-link text-white">
+        <i class="bi bi-github"></i>
+        VETERINARY
+      </a>
+    </li>
+    <li ngbDropdown class="d-inline-block">
+      <a type="button" class=" nav-link text-white" id="config" ngbDropdownToggle>
+        <i class="bi bi-columns"></i>
+        Reports
+      </a>
+      <div ngbDropdownMenu aria-labelledby="config">
+        <a ngbDropdownItem  routerLink="/dash/report/sales" (click)="toggle()" >Sales</a>
+        <a ngbDropdownItem  routerLink="/dash/report/commision" (click)="toggle()" >Commision</a>
+        <a ngbDropdownItem  routerLink="/dash/report/payroll" (click)="toggle()" >Payroll</a>
+        </div>
+      <li ngbDropdown class="d-inline-block">
+        <a type="button" class=" nav-link text-white" id="config" ngbDropdownToggle>
+          <i class="bi bi-gear"></i>
+          Configuration
+        </a>
+        <div ngbDropdownMenu aria-labelledby="config">
+          <a ngbDropdownItem  routerLink="/dash/config/services" (click)="toggle()" >Services</a>
+          <a ngbDropdownItem  routerLink="/dash/config/sizes" (click)="toggle()" >Sizes</a>
+          <a ngbDropdownItem routerLink="/dash/config/breeds" (click)="toggle()" >Breeds</a>
+          <a ngbDropdownItem routerLink="/dash/config/sexes" (click)="toggle()" >Sexes</a>
+          <a ngbDropdownItem  routerLink="/dash/config/vacinne" (click)="toggle()" >Vaccines</a>
+          <a ngbDropdownItem routerLink="/dash/config/colors" (click)="toggle()" >Colors</a>
+          <a ngbDropdownItem routerLink="/dash/config/varieties" (click)="toggle()" >varieties</a>
+          <a ngbDropdownItem  routerLink="/dash/config/markings" (click)="toggle()" >markings</a>
+          <a ngbDropdownItem routerLink="/dash/config/species" (click)="toggle()" >species</a>
+        </div>
+      </li>
+  </ul>
+</div>
+<header class="fixed-top" [ngClass]="{'left250': show }">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light d-block">
+    <div class="d-flex float-end me-3">
+      <input class="form-control  rounded-0 rounded-right" type="search" placeholder="Client" aria-label="Search"
+        [(ngModel)]="procurar">
+      <button class="btn btn-dark rounded-0" type="submit" (click)="procurarOrdem()" [disabled]="!procurar"><i
+          class="bi bi-search"></i></button>
+    </div>
+    <div class="navbar-brand" href="#"><a class="openbtn" (click)="toggle()">&#9776;</a> pawllywood grooming</div>
+
+  </nav>
+</header>
+<div id="main" [ngClass]="{'left250': show }">
+  <router-outlet></router-outlet>
+
+</div>

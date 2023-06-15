@@ -1,0 +1,15 @@
+.h1, h1 {
+  font-size: 1.3rem;
+}
+i{
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: #dc3646;
+  display: inline-block;
+}
+  h1 small{
+  display:block
+}
+.btn{
+  margin:10px;
+}

@@ -1,0 +1,124 @@
+
+/* The sidebar menu */
+.sidebar {
+    height: 100%; /* 100% Full-height */
+    width: 60px; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0;
+    left: 0;
+    background-color: #EDECEE; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 0px; /* Place content 60px from the top */
+    transition: 0.25s; /* 0.5 second transition effect to slide in the sidebar */
+  
+  }
+  
+  /* The sidebar links */
+  .sidebar a {
+    padding: 8px 8px 8px 22px;
+    text-decoration: none;
+    color: #3E3A40 !important ;
+    display: block;
+    transition: 0.15s;
+  }    
+  .sidebar a i{
+    margin-right: 20px;
+  }
+
+
+
+
+  .sidebar .dropdown-item.active,   .sidebar .dropdown-item:active {
+    color: var(--bs-dropdown-link-active-color);
+    text-decoration: none;
+    background-color: #0f172a;
+}
+
+
+  .sidebar .dropdown-menu{
+    position: relative !important;
+    inset: 0px auto auto 0px !important;
+    margin: 0px !important;
+    transform: none !important;
+    background: transparent !important;
+    color: #fff !important;
+    padding: 0;
+}
+
+.sidebar .nav-pills .nav-link.active, 
+.sidebar .nav-pills .show>.nav-link {
+  color: var(--bs-nav-pills-link-active-color);
+  background-color: #0f172a;
+}
+
+
+
+  .open{
+    width: 220px !important;
+  }
+  .left250{
+    left: 220px !important;
+  }
+  /* When you mouse over the navigation links, change their color */
+  .sidebar a:hover {
+    color: #f1f1f1;
+    background: #0f172a;
+  }
+  
+  /* Position and style the close button (top right corner) */
+  .sidebar .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+  .sidebar::-webkit-scrollbar {
+    width: 5px;
+  }
+  
+  .sidebar::-webkit-scrollbar-thumb:vertical {
+    margin: 5px;
+    background-color: #999;
+    -webkit-border-radius: 5px;
+  }
+  
+  .sidebar::-webkit-scrollbar-button:start:decrement,
+  .sidebar::-webkit-scrollbar-button:end:increment {
+    height: 5px;
+    display: block;
+  }
+  /* The button used to open the sidebar */
+  .openbtn {
+    font-size: 20px;
+    cursor: pointer;
+    color: #111;
+    padding: 0px 10px;
+    border: none;
+  }
+  
+  .openbtn:hover {
+    color: #444;
+  }
+    #main{
+    padding-top: 85px;
+  }
+
+  #main, header {
+    transition: margin-left .55s; /* If you want a transition effect */
+    left: 60px;
+  }
+ 
+
+  header .bg-light {
+    background-color: #f7f7f8 !important;
+    border: none;
+    margin-bottom: 20px;
+    box-shadow: none;
+  }
+  /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+  @media screen and (max-height: 450px) {
+    .sidebar {padding-top: 15px;}
+    .sidebar a {font-size: 18px;}
+  }
