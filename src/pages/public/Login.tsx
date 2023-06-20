@@ -1,33 +1,35 @@
-import { Box, Flex, Grid, Heading, Image, Stack } from '@chakra-ui/react'
+import { Box, Center, Heading, Stack, Text, VStack } from '@chakra-ui/react'
+import { NavLink } from 'react-router-dom'
 
-import LoginImage from '~assets/images/login.png'
 import { ButtonComponent } from '~components/Forms/Button'
 import { LightInput } from '~components/Forms/Inputs/LightInput'
 
 export function Login() {
   return (
-    <Grid w="100%" h="100%" templateColumns={'1fr 1fr'}>
-      <Flex
-        as="form"
-        width="100%"
-        p={8}
-        justifyContent="center"
-        flexDir="column"
+    <Center
+      as="form"
+      width="100%"
+      p={8}
+      justifyContent="center"
+      flexDir="column"
+    >
+      <Stack
+        w="100%"
+        maxW={728}
+        borderWidth={1}
+        borderRadius={8}
+        px={10}
+        py={10}
+        position="relative"
+        spacing="4"
+        borderColor="yellow.700"
       >
-        <Stack
-          borderWidth={1}
-          borderRadius={8}
-          px={16}
-          py={32}
-          position="relative"
-          spacing="4"
-          borderColor="yellow.700"
-        >
-          <Box position="absolute" bgColor="gray.300" top={-5} left={20} px={2}>
-            <Heading fontFamily="heading" fontSize="2rem" color="gray.700">
-              Access
-            </Heading>
-          </Box>
+        <Box position="absolute" bgColor="gray.300" top={-5} left={8} px={2}>
+          <Heading fontFamily="heading" fontSize="2rem" color="gray.700">
+            Access
+          </Heading>
+        </Box>
+        <VStack spacing={4} mb={4} alignItems="flex-end">
           <LightInput
             id="email"
             name="email"
@@ -40,10 +42,34 @@ export function Login() {
             placeholder="Password"
             type="password"
           />
-          <ButtonComponent title="Login" />
-        </Stack>
-      </Flex>
-      <Image src={LoginImage} alt="Login" h="100vh" />
-    </Grid>
+
+          <NavLink to="forgot-password">
+            <Text
+              color="yellow.700"
+              fontWeight={700}
+              textAlign="right"
+              transition="ease-in 0.35s"
+              textDecoration="underline"
+            >
+              Forgot my passsowrd
+            </Text>
+          </NavLink>
+        </VStack>
+        <ButtonComponent title="Login" />
+
+        <NavLink to="/create-account">
+          <Text
+            textAlign="center"
+            transition="ease-in 0.35s"
+            textDecorationColor="gray.300"
+            _hover={{
+              textDecoration: 'underline',
+            }}
+          >
+            {`Don't`} have an account? Click here
+          </Text>
+        </NavLink>
+      </Stack>
+    </Center>
   )
 }
