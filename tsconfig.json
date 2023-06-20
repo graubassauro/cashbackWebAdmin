@@ -6,6 +6,25 @@
     "module": "ESNext",
     "skipLibCheck": true,
 
+    /* Path Mapping Configuration */
+    "baseUrl": "./src",
+    "paths": {
+      "~api/*": ["./api/*"],
+      "~assets/*": ["./assets/*"],
+      "~components/*": ["./components/*"],
+      "~config/*": ["./config/*"],
+      "~constants/*": ["./constants/*"],
+      "~hooks/*": ["./hooks/*"],
+      "~i18n/*": ["./i18n/*"],
+      "~models/*": ["./models/*"],
+      "~pages/*": ["./pages/*"],
+      "~pipelines/*": ["./pipelines/*"],
+      "~redux/*": ["./redux/*"],
+      "~services/*": ["./services/*"],
+      "~styles/*": ["./styles/*"],
+      "~utils/*": ["./utils/*"]
+    },
+
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
