@@ -1,4 +1,5 @@
 {
+  "homepage": "https://github.com/graubassauro/cashbackWebAdmin",
   "name": "cashbackwebadmin",
   "private": true,
   "version": "0.0.0",
@@ -6,6 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "prettier-format": "yarn prettier --config .prettierrc --write src",
     "lint-fix": "eslint --fix src",
     "lint": "tsc --noEmit && eslint src/**/*.{ts,tsx} --max-warnings=0",
