@@ -1,5 +1,5 @@
-import { AuthLogin } from './auth.routes'
+import { AppRoutes } from './app.routes'
 
 export function Routes() {
-  return <AuthLogin />
+  return <AppRoutes />
 }
