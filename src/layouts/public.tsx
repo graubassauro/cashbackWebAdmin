@@ -1,5 +1,5 @@
-import { Outlet } from 'react-router-dom'
 import { Grid, Image, useBreakpointValue } from '@chakra-ui/react'
+import { Outlet } from 'react-router-dom'
 
 import LoginImage from '~assets/images/login.png'
 

@@ -16,6 +16,7 @@
       "~constants/*": ["./constants/*"],
       "~hooks/*": ["./hooks/*"],
       "~i18n/*": ["./i18n/*"],
+      "~layouts/*": ["./layouts/*"],
       "~models/*": ["./models/*"],
       "~pages/*": ["./pages/*"],
       "~pipelines/*": ["./pipelines/*"],
