@@ -1,5 +1,6 @@
-import { Flex, Icon, IconButton, useBreakpointValue } from '@chakra-ui/react'
+import { HStack, Icon, IconButton, useBreakpointValue } from '@chakra-ui/react'
 import { List } from '@phosphor-icons/react'
+
 import { SearchBox } from './SearchBox'
 import { Profile } from './Profile'
 
@@ -10,15 +11,14 @@ export function Header() {
   })
 
   return (
-    <Flex
+    <HStack
+      flex={1}
       as="header"
       w="100%"
-      maxWidth={1480}
       h="20"
-      mx="auto"
-      mt="4"
-      px="6"
-      alignItems="center"
+      mt="2"
+      px="2"
+      justifyContent="space-between"
     >
       {!isWideVersion && (
         <IconButton
@@ -33,6 +33,6 @@ export function Header() {
       {isWideVersion ? <SearchBox /> : null}
 
       <Profile showProfileData={isWideVersion} />
-    </Flex>
+    </HStack>
   )
 }

@@ -6,16 +6,17 @@ export function SearchBox() {
     <Flex
       as="label"
       flex="1"
+      px="4"
       py="4"
       maxWidth={400}
-      alignSelf="flex-start"
       color="gray.200"
       position="relative"
       bg="gray.400"
       borderRadius="full"
     >
-      <Icon as={MagnifyingGlass} fontSize="24" />
+      <Icon as={MagnifyingGlass} fontSize="24" color="gray.600" />
       <Input
+        w="100%"
         color="gray.900"
         variant="unstyled"
         px="4"

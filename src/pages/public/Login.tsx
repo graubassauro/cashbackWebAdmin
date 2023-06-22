@@ -2,7 +2,7 @@ import { Text, VStack } from '@chakra-ui/react'
 import { NavLink } from 'react-router-dom'
 
 import { ButtonComponent } from '~components/Forms/Button'
-import { LightInput } from '~components/Forms/Inputs/LightInput'
+import { LightInput } from '~components/Forms/Inputs'
 import { FormLayout } from '~layouts/Form'
 
 export function Login() {

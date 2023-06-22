@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { VStack } from '@chakra-ui/react'
+import { Box, VStack } from '@chakra-ui/react'
 
 import { Header } from '~components/Header'
 
@@ -9,9 +9,11 @@ type BodyLayoutProps = {
 
 export function BodyLayout({ children }: BodyLayoutProps) {
   return (
-    <VStack>
+    <VStack spacing={4} w="100%" alignItems="flex-start">
       <Header />
-      {children}
+      <Box mx={1} w="100%">
+        {children}
+      </Box>
     </VStack>
   )
 }

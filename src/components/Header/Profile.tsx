@@ -9,7 +9,7 @@ import {
   MenuList,
   Text,
 } from '@chakra-ui/react'
-import { CaretDown, MagnifyingGlass } from '@phosphor-icons/react'
+import { CaretDown } from '@phosphor-icons/react'
 
 interface ProfileProps {
   showProfileData?: boolean
@@ -17,9 +17,8 @@ interface ProfileProps {
 
 export function Profile({ showProfileData }: ProfileProps) {
   return (
-    <HStack alignItems="center">
+    <HStack>
       <HStack>
-        <MagnifyingGlass />
         {showProfileData ? (
           <HStack>
             <Avatar
