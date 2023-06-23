@@ -12,7 +12,7 @@ export function LabelInput({ label, ...rest }: LabelInputProps) {
       </Text>
       <Input
         w="100%"
-        h={12}
+        h={14}
         color="gray.800"
         borderRadius="10"
         borderWidth={1}
