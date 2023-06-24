@@ -5,7 +5,7 @@ import { Sidebar } from '~components/Sidebar'
 
 export function PrivateLayout() {
   return (
-    <HStack spacing={2}>
+    <HStack spacing={1} alignItems="flex-start">
       <Sidebar />
       <Outlet />
     </HStack>

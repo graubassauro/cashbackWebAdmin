@@ -1,9 +1,12 @@
 import { VStack, HStack, Button, ButtonProps, Text } from '@chakra-ui/react'
 import { useState } from 'react'
-import { FormButton } from '~components/Buttons'
 
-import { LabelInput, LabelTextarea } from '~components/Forms/Inputs'
-import { LabelFileInput } from '~components/Forms/Inputs/LabelFileInput'
+import { FormButton } from '~components/Buttons'
+import {
+  LabelFileInput,
+  LabelInput,
+  LabelTextarea,
+} from '~components/Forms/Inputs'
 import { Container } from '~layouts/Container'
 
 type PaymentButtonProps = ButtonProps & {

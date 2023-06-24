@@ -1,4 +1,4 @@
-import { BodyLayout } from '~layouts/body'
+import { BodyLayout } from '~layouts/Body'
 
 export function Audience() {
   return (

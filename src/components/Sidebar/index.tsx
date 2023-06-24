@@ -35,7 +35,7 @@ export function Sidebar() {
   }
 
   return (
-    <Box as="aside" w="4.5" mr="8">
+    <Box as="aside" px={4} py={6} mr={2} bgColor="gray.400" h="100vh">
       <SidebarNav />
     </Box>
   )

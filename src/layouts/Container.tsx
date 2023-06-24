@@ -13,11 +13,12 @@ export function Container({ title = '', children }: ContainerProps) {
     <Box
       alignItems="flex-start"
       w="100%"
-      maxW={1480}
       mt="4"
-      bgColor="white"
       px="4"
       py="5"
+      bgColor="white"
+      borderRadius={10}
+      maxW={1480}
     >
       {title ? (
         <Flex borderBottomWidth={1} borderBottomColor="gray.300" pb={2}>

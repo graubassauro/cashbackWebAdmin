@@ -1,7 +1,7 @@
 import { Route, Routes, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 
-import { PrivateLayout } from '~layouts/private'
+import { PrivateLayout } from '~layouts/Private'
 import { Dashboard } from '~pages/private/Dashboard'
 import { Onboard } from '~pages/private/Onboard'
 import { Analytics } from '~pages/private/Analytics'

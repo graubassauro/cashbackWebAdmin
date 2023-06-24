@@ -1,0 +1,35 @@
+{
+  "login": {
+    "title": "Access",
+    "forgotPassword": "Forgot my password",
+    "createAccount": "Don't have an account. Click here",
+    "buttonLogin": "Login"
+  },
+  "passwordRecovery": {
+    "case1": {
+      "title": "Password recovery",
+      "description": "Type your phone number to receive the code to recovery your password",
+      "button": "Send"
+    },
+    "case2": {
+      "title": "New password",
+      "button": "Save"
+    },
+    "case3": {
+      "title": "That's all",
+      "description": "Now you can use our plataform again",
+      "button": "Return to Login"
+    }
+  },
+  "createAccount": {
+    "title": "Create account",
+    "button": "Save"
+  },
+  "settings": {
+    "tabProfile": {
+      "title": "Profile",
+      "cancelbutton": "Cancel",
+      "submitButton": "Update"
+    }
+  }
+}

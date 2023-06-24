@@ -3,7 +3,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 // import {} from 'framer-motion/dist/framer-motion'
 
-import { PublicLayout } from '~layouts/public'
+import { PublicLayout } from '~layouts/Public'
 import { CreateAccount } from '~pages/public/CreateAccount'
 import { ForgotPassword } from '~pages/public/ForgotPassword'
 import { Login } from '~pages/public/Login'

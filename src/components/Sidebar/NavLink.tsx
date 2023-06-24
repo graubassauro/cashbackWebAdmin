@@ -14,14 +14,14 @@ export function NavLink({ icon, children, hrefString, ...rest }: NavLinkProps) {
       as={RRLink}
       to={hrefString}
       _activeLink={{
-        color: 'blue.900',
+        color: 'purple.900',
       }}
       display="flex"
       alignItems="center"
       {...rest}
     >
-      <Icon as={icon} fontSize="20" />
-      <Text ml="4" fontWeight="medium">
+      <Icon as={icon} fontSize={18} />
+      <Text ml="4" fontSize={18} fontWeight={700}>
         {children}
       </Text>
     </Link>
