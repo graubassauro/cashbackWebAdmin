@@ -5,9 +5,9 @@ import { PrivateLayout } from '~layouts/Private'
 import { Dashboard } from '~pages/private/Dashboard'
 import { Onboard } from '~pages/private/Onboard'
 import { Analytics } from '~pages/private/Analytics'
+import { Settings } from '~pages/private/Settings'
 import { Audience } from '~pages/private/Audience'
 import { Products } from '~pages/private/Products'
-import { Settings } from '~pages/private/Settings'
 
 export function AppRoutes() {
   const location = useLocation()
