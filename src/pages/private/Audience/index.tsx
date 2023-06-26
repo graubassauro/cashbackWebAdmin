@@ -45,8 +45,16 @@ export function Audience() {
             }}
           />
           <ActionButton title="Filter" />
-          <ActionButton title="Segments" />
-          <ActionButton title="New Highlights" />
+          <ActionButton
+            title="Segments"
+            linkingButton
+            endpointString="segments"
+          />
+          <ActionButton
+            title="New Highlights"
+            linkingButton
+            endpointString="new-highlight"
+          />
         </HStack>
       </HStack>
       {/* Table - TODO: Improve to a component */}

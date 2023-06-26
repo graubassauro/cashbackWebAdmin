@@ -45,8 +45,16 @@ export function Products() {
             }}
           />
           <ActionButton title="Filter" />
-          <ActionButton title="Categories" />
-          <ActionButton title="New Product" />
+          <ActionButton
+            title="Categories"
+            linkingButton
+            endpointString="categories"
+          />
+          <ActionButton
+            title="New Product"
+            linkingButton
+            endpointString="new-product"
+          />
         </HStack>
       </HStack>
       {/* Table - TODO: Improve to a component */}

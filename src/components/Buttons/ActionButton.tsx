@@ -1,10 +1,18 @@
 import { Button, ButtonProps } from '@chakra-ui/react'
+import { NavLink } from 'react-router-dom'
 
 type ActionButtonProps = ButtonProps & {
   title: string
+  linkingButton?: boolean
+  endpointString?: string
 }
 
-export function ActionButton({ title, ...rest }: ActionButtonProps) {
+export function ActionButton({
+  title,
+  linkingButton = false,
+  endpointString = '',
+  ...rest
+}: ActionButtonProps) {
   return (
     <Button
       bgColor="white"
@@ -24,7 +32,7 @@ export function ActionButton({ title, ...rest }: ActionButtonProps) {
       }}
       {...rest}
     >
-      {title}
+      {linkingButton ? <NavLink to={endpointString}>{title}</NavLink> : title}
     </Button>
   )
 }
