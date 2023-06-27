@@ -34,12 +34,14 @@
     "@emotion/styled": "^11.11.0",
     "@phosphor-icons/react": "^2.0.10",
     "@reduxjs/toolkit": "^1.9.5",
+    "dotenv": "^16.3.1",
     "framer-motion": "^10.12.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.1.1",
     "react-router-dom": "^6.13.0",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^1.2.0",
