@@ -1,5 +1,5 @@
-import { Breadcrumb, BreadcrumbItem, Text } from '@chakra-ui/react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { Breadcrumb, BreadcrumbItem, Text } from '@chakra-ui/react'
 
 import { formatBreadcrumbLabel } from '~utils/formatBreadcrumbLabel'
 

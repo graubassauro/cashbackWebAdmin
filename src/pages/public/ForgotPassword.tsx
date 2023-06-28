@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react'
+import { NavLink } from 'react-router-dom'
 import { ButtonProps, Text } from '@chakra-ui/react'
 
 import { ButtonComponent } from '~components/Forms/Button'
-import { FormLayout } from '~layouts/Form'
-import { NavLink } from 'react-router-dom'
 import { LightInput } from '~components/Forms/Inputs'
+import { FormLayout } from '~layouts/Form'
 
 type PasswordRecoveryWrapperProps = ButtonProps & {
   description: string

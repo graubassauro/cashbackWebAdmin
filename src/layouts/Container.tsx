@@ -1,5 +1,5 @@
-import { Box, Flex } from '@chakra-ui/react'
 import { ReactNode } from 'react'
+import { Box, Flex } from '@chakra-ui/react'
 
 import { Title } from '~components/Typograph/Title'
 

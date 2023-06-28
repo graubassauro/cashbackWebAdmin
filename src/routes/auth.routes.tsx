@@ -1,7 +1,5 @@
-import { Route, Routes, useLocation } from 'react-router-dom'
-
 import { AnimatePresence } from 'framer-motion'
-// import {} from 'framer-motion/dist/framer-motion'
+import { Route, Routes, useLocation } from 'react-router-dom'
 
 import { PublicLayout } from '~layouts/Public'
 import { CreateAccount } from '~pages/public/CreateAccount'

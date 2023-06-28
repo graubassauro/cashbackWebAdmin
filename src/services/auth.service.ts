@@ -1,9 +1,10 @@
+import { DataWrapper } from './types'
 import { cashbackApi } from '~api/cashback-api.service'
+import { UserDTO } from '~models/User'
 
 export interface IAuthLoginParams {
   PhoneNumber: string
   Password: string
-  isPersistent: boolean
 }
 
 export interface IAuthRefreshTokenLoginParams {
@@ -14,10 +15,10 @@ const generateBaseUrl = (url: string) => `/auth/${url}`
 
 export const authServiceApi = cashbackApi.injectEndpoints({
   endpoints: (build) => ({
-    postAuthLogin: build.mutation<void, IAuthLoginParams>({
-      query: (body) => ({
+    postAuthLogin: build.mutation<DataWrapper<UserDTO>, IAuthLoginParams>({
+      query: (params) => ({
         url: generateBaseUrl('login'),
-        body,
+        params,
         method: 'POST',
       }),
     }),

@@ -5,6 +5,8 @@ export const authenticationHeader = (
   { getState }: { getState: () => unknown },
 ) => {
   const { token } = (getState() as RootState).auth
+  headers.set('Access-Control-Allow-Origin', '*')
+
   if (token) {
     headers.set('authorization', `Bearer ${token}`)
   }

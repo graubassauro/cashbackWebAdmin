@@ -3,7 +3,7 @@ import { Flex, HStack, VStack } from '@chakra-ui/react'
 
 import { TabButton } from '~components/Buttons'
 import { Title } from '~components/Typograph/Title'
-import { BodyLayout } from '~layouts/body'
+import { BodyLayout } from '~layouts/Body'
 
 import { Profile } from './Tabs/Profile'
 import { Admin } from './Tabs/Admin'

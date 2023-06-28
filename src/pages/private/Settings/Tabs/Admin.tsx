@@ -1,6 +1,6 @@
 import { HStack, VStack } from '@chakra-ui/react'
-import { FormButton } from '~components/Buttons'
 
+import { FormButton } from '~components/Buttons'
 import { LabelInput } from '~components/Forms/Inputs'
 import { Container } from '~layouts/Container'
 

@@ -1,5 +1,6 @@
 import { Card, HStack, Heading, Icon, Text, VStack } from '@chakra-ui/react'
 import { TrendDown, TrendUp } from '@phosphor-icons/react'
+
 import { formatCurrency } from '~utils/formatCurrency'
 
 type OverviewCardProps = {

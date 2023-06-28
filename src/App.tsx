@@ -1,19 +1,19 @@
-import { ChakraProvider } from '@chakra-ui/react'
-import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
+import { Provider as ReduxProvider } from 'react-redux'
+import { ChakraProvider } from '@chakra-ui/react'
 
-import store from '~redux/store'
 import { theme } from '~styles/theme'
+import { store } from '~redux/store'
 import { Routes } from 'routes'
 
 export function App() {
   return (
-    <Provider store={store}>
+    <ReduxProvider store={store}>
       <ChakraProvider theme={theme}>
         <BrowserRouter>
           <Routes />
         </BrowserRouter>
       </ChakraProvider>
-    </Provider>
+    </ReduxProvider>
   )
 }

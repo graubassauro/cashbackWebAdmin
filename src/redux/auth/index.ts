@@ -1,14 +1,15 @@
 /* eslint-disable camelcase */
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
-import { UserDTO } from '~models/User'
+
+import { UserTokenDTO } from '~models/User'
 
 type AuthState = {
-  user: UserDTO | null
+  user: UserTokenDTO | null
   token: string | null
   refresh_token: string | null
 }
 
-type LoginDTO = { user: UserDTO; token: string; refresh_token: string }
+type LoginDTO = { user: UserTokenDTO; token: string; refresh_token: string }
 
 const authSlice = createSlice({
   name: 'auth',
@@ -31,4 +32,4 @@ const authSlice = createSlice({
 
 export const { setCredentials } = authSlice.actions
 
-export default authSlice.reducer
+export const auth = authSlice

@@ -13,6 +13,7 @@ import {
   Tr,
 } from '@chakra-ui/react'
 import { DotsThreeVertical } from '@phosphor-icons/react'
+
 import { products } from 'mock/products'
 
 import { ActionButton } from '~components/Buttons'

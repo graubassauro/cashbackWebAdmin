@@ -1,4 +1,6 @@
 import { ReactNode } from 'react'
+import { NavLink } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import {
   Box,
   Button,
@@ -9,8 +11,6 @@ import {
   VStack,
 } from '@chakra-ui/react'
 import { ArrowLeft } from '@phosphor-icons/react'
-import { motion } from 'framer-motion'
-import { NavLink } from 'react-router-dom'
 
 type FormLayoutProps = ButtonProps & {
   children: ReactNode
@@ -72,7 +72,6 @@ export function FormLayout({
         ) : null}
 
         <Center
-          as="form"
           width="100%"
           p={8}
           alignItems="center"
