@@ -42,6 +42,7 @@ export function Login() {
       requestAuthLogin({
         PhoneNumber: phoneNumber,
         Password: password,
+        isPersistent: false,
       })
     },
     [requestAuthLogin],

@@ -12,5 +12,5 @@ export const cashbackApi = createApi({
   }),
   endpoints: () => ({}),
   reducerPath: 'cashbackApi',
-  tagTypes: ['Users', 'Products'],
+  tagTypes: ['Auth'],
 })
