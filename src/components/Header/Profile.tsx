@@ -1,3 +1,6 @@
+import { useCallback } from 'react'
+import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   Avatar,
   AvatarBadge,
@@ -11,11 +14,24 @@ import {
 } from '@chakra-ui/react'
 import { CaretDown } from '@phosphor-icons/react'
 
+import { logout } from '~redux/auth'
+import { useAppSelector } from '~redux/store'
+
 interface ProfileProps {
   showProfileData?: boolean
 }
 
 export function Profile({ showProfileData }: ProfileProps) {
+  const navigate = useNavigate()
+  const user = useAppSelector((state) => state.auth.user)
+
+  const dispatch = useDispatch()
+
+  const handleLogout = useCallback(() => {
+    dispatch(logout())
+    navigate('/')
+  }, [dispatch, navigate])
+
   return (
     <HStack>
       <HStack>
@@ -31,7 +47,7 @@ export function Profile({ showProfileData }: ProfileProps) {
               <AvatarBadge boxSize="1rem" bg="purple.900" />
             </Avatar>
             <Text fontSize={14} fontWeight={400} color="gray.900">
-              David Lucas
+              {user?.firstName ?? 'Un'}
             </Text>
           </HStack>
         ) : null}
@@ -41,11 +57,37 @@ export function Profile({ showProfileData }: ProfileProps) {
           <Icon as={CaretDown} fontSize={16} color="gray.900" />
         </MenuButton>
         <MenuList>
-          <MenuItem>Download</MenuItem>
-          <MenuItem>Create a Copy</MenuItem>
-          <MenuItem>Mark as Draft</MenuItem>
-          <MenuItem>Delete</MenuItem>
-          <MenuItem>Attend a Workshop</MenuItem>
+          <MenuItem
+            transition="ease-in-out 0.35s"
+            _hover={{
+              bgColor: 'purple.900',
+              opacity: 0.9,
+              textColor: 'white',
+            }}
+          >
+            Profile
+          </MenuItem>
+          <MenuItem
+            transition="ease-in-out 0.35s"
+            _hover={{
+              bgColor: 'purple.900',
+              opacity: 0.9,
+              textColor: 'white',
+            }}
+          >
+            Settings
+          </MenuItem>
+          <MenuItem
+            onClick={handleLogout}
+            transition="ease-in-out 0.35s"
+            _hover={{
+              bgColor: 'purple.900',
+              opacity: 0.9,
+              textColor: 'white',
+            }}
+          >
+            Logout
+          </MenuItem>
         </MenuList>
       </Menu>
     </HStack>

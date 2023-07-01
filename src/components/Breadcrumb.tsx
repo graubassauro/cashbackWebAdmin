@@ -10,7 +10,7 @@ export function BreadCrumb() {
     .split('/')
     .filter((endpoint) => endpoint !== '')
 
-  const formattedEndpoints = endpoints.map((endpoint, index) => {
+  const formattedEndpoints = endpoints.map((endpoint) => {
     const breadcrumbLabel = formatBreadcrumbLabel(endpoint)
 
     const item = {

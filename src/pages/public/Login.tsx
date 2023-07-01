@@ -50,12 +50,12 @@ export function Login() {
 
   useEffect(() => {
     if (isSuccess && loginData) {
-      console.log(isSuccess)
       dispatch(
         setCredentials({
           user: loginData.data.userToken,
           refresh_token: loginData.data.refreshToken,
           token: loginData.data.accessToken,
+          is_first_login: false,
         }),
       )
     }

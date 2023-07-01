@@ -1,21 +1,21 @@
-import {
-  FormControl,
-  Text,
-  Textarea,
-  TextareaProps,
-  VStack,
-} from '@chakra-ui/react'
 import { ForwardRefRenderFunction, forwardRef } from 'react'
 import { FieldError } from 'react-hook-form'
+import {
+  FormControl,
+  Select,
+  SelectProps,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
 
-type LabelTextAreaProps = TextareaProps & {
-  label: string
+interface LightSelectInputProps extends SelectProps {
   error?: FieldError
+  label: string
 }
 
-const LabelTextAreaBase: ForwardRefRenderFunction<
-  HTMLTextAreaElement,
-  LabelTextAreaProps
+const LightSelectBase: ForwardRefRenderFunction<
+  HTMLSelectElement,
+  LightSelectInputProps
 > = ({ label, error, ...rest }, ref) => {
   return (
     <FormControl isInvalid={!!error}>
@@ -23,24 +23,24 @@ const LabelTextAreaBase: ForwardRefRenderFunction<
         <Text fontSize={14} fontWeight={400} fontFamily="body" color="gray.600">
           {label}
         </Text>
-        <Textarea
+        <Select
           w="100%"
-          h={12}
+          h={14}
           color="gray.800"
           borderRadius="10"
           borderWidth={1}
           borderColor="gray.600"
           bgColor="gray.400"
           variant="unstyled"
-          px="4"
-          mr="4"
-          maxHeight={100}
+          py={2}
           ref={ref}
           {...rest}
-        />
+        >
+          <option>Option 1</option>
+        </Select>
       </VStack>
     </FormControl>
   )
 }
 
-export const LabelTextarea = forwardRef(LabelTextAreaBase)
+export const LightSelectInput = forwardRef(LightSelectBase)
