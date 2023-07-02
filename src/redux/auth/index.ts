@@ -2,6 +2,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { UserTokenDTO } from '~models/User'
+import { useAppSelector } from '~redux/store'
 
 type AuthState = {
   user: UserTokenDTO | null
@@ -51,3 +52,9 @@ const authSlice = createSlice({
 export const { setCredentials, setFirstLogin, logout } = authSlice.actions
 
 export const auth = authSlice
+
+export const useCurrentUserLogged = () => {
+  return useAppSelector((state) => {
+    return state.auth.user
+  })
+}

@@ -3,10 +3,10 @@ import { HStack, VStack } from '@chakra-ui/react'
 import { FormButton } from '~components/Buttons'
 import { LabelInput } from '~components/Forms/Inputs'
 import { Container } from '~layouts/Container'
-import { useAppSelector } from '~redux/store'
+import { useCurrentUserLogged } from '~redux/auth'
 
 export function Admin() {
-  const user = useAppSelector((state) => state.auth.user)
+  const user = useCurrentUserLogged()
 
   return (
     <Container title="Admin">

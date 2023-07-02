@@ -57,11 +57,10 @@ export function NewStore() {
     (data: IAddressLocationDTO) => {
       setCanShowInput(true)
 
-      const splitedAddress = data.displayName.split('')
       const cityAddress = data.address.city ? `${data.address.city},` : ''
       const stateAddress = data.address.state ? `${data.address.state},` : ''
 
-      const streetFormattedValue = `${splitedAddress[0]}, ${cityAddress} ${stateAddress}`
+      const streetFormattedValue = `${data.displayName}, ${cityAddress} ${stateAddress}`
 
       setValue('cityId', data.placeId)
       setValue('streetNameFormatted', streetFormattedValue)
@@ -205,12 +204,11 @@ export function NewStore() {
             spacing={2}
             w="100%"
             maxH={'200px'}
-            overflow={'scroll'}
+            overflow={addressList?.data && 'auto'}
             borderBottomWidth={1}
             borderBottomColor="gray.400"
           >
-            {isFetchingAddress ||
-            (isLoadingAddress && streetFieldValue !== '') ? (
+            {isFetchingAddress && isLoadingAddress ? (
               <Loading />
             ) : (
               addressList?.data.map((item) => (

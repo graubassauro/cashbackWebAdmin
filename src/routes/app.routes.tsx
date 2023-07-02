@@ -22,7 +22,7 @@ export function AppRoutes() {
     <AnimatePresence>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PrivateLayout />}>
-          <Route element={<Dashboard />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="onboard" element={<Onboard />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="stores" element={<Stores />}>

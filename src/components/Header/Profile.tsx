@@ -14,8 +14,7 @@ import {
 } from '@chakra-ui/react'
 import { CaretDown } from '@phosphor-icons/react'
 
-import { logout } from '~redux/auth'
-import { useAppSelector } from '~redux/store'
+import { logout, useCurrentUserLogged } from '~redux/auth'
 
 interface ProfileProps {
   showProfileData?: boolean
@@ -23,7 +22,7 @@ interface ProfileProps {
 
 export function Profile({ showProfileData }: ProfileProps) {
   const navigate = useNavigate()
-  const user = useAppSelector((state) => state.auth.user)
+  const user = useCurrentUserLogged()
 
   const dispatch = useDispatch()
 
