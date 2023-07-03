@@ -1,3 +1,4 @@
+import { Outlet, useLocation } from 'react-router-dom'
 import {
   Button,
   Checkbox,
@@ -21,7 +22,7 @@ import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
 import { TableFooter } from '~components/Table/TableFooter'
 import { BodyLayout } from '~layouts/Body'
 
-export function Products() {
+function ProductContainer() {
   return (
     <BodyLayout>
       <HStack justifyContent="space-between">
@@ -112,5 +113,15 @@ export function Products() {
         </Tfoot>
       </Table>
     </BodyLayout>
+  )
+}
+
+export function Products() {
+  const location = useLocation()
+
+  return location.pathname === '/stores/products' ? (
+    <ProductContainer />
+  ) : (
+    <Outlet />
   )
 }

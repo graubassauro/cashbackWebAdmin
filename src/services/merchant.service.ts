@@ -1,4 +1,5 @@
 import { cashbackApi } from '~api/cashback-api.service'
+import { IStoreDTO } from '~models/Store'
 
 import { DataWrapper } from './types'
 
@@ -57,20 +58,6 @@ export interface ICreateMerchantDTO {
   phoneNumber: string
   address: string
 }
-
-export interface IStoreDTO {
-  id: number
-  uId: string
-  name: string
-  email: string
-  phoneNumber: string
-  urlLogo: string
-  statusId: number
-  merchantId: number
-  categories: Array<object>
-  products: Array<object>
-}
-
 export interface IMerchantStoresDTO {
   totalRecords: number
   totalPages: number
@@ -110,6 +97,7 @@ export const merchantServiceApi = cashbackApi.injectEndpoints({
         url: generateBaseUrl(`store/all/${page}/${pagesize}`),
         method: 'GET',
       }),
+      providesTags: ['Merchant'],
     }),
   }),
 })

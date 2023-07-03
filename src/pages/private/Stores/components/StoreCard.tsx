@@ -1,3 +1,5 @@
+import { useCallback, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import {
   Button,
   Card,
@@ -23,14 +25,48 @@ import {
   Trash,
 } from '@phosphor-icons/react'
 
-import { IStoreDTO } from '~services/merchant.service'
+import { cashbackApi } from '~api/cashback-api.service'
+import { IStoreDTO } from '~models/Store'
+import { setCurrentStore } from '~redux/auth'
+import { useDeleteStoreMutation } from '~services/stores.service'
+import { useNavigate } from 'react-router-dom'
 
 type StoreCardProps = {
   data: IStoreDTO
 }
 
 export function StoreCard({ data }: StoreCardProps) {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const [
+    requestDeleteStore,
+    { isLoading: isDeletingStore, isSuccess: isSuccessDeleted },
+  ] = useDeleteStoreMutation()
+
+  const handleDeleteStore = useCallback(() => {
+    requestDeleteStore({
+      uId: data.uId,
+    })
+  }, [requestDeleteStore, data])
+
+  const handleNavigateToEditStore = useCallback(() => {
+    dispatch(setCurrentStore({ currentStore: data }))
+    navigate('/stores/edit-store')
+  }, [dispatch, data, navigate])
+
+  const handleNavigateToDetailStore = useCallback(() => {
+    dispatch(setCurrentStore({ currentStore: data }))
+    navigate('/stores/detail-store')
+  }, [dispatch, data, navigate])
+
+  useEffect(() => {
+    if (isSuccessDeleted) {
+      dispatch(cashbackApi.util.invalidateTags(['Merchant']))
+      onClose()
+    }
+  }, [isSuccessDeleted, dispatch, onClose])
 
   return (
     <Card
@@ -60,6 +96,7 @@ export function StoreCard({ data }: StoreCardProps) {
           _hover={{
             cursor: 'pointer',
           }}
+          onClick={handleNavigateToDetailStore}
         />
         <HStack>
           <Icon
@@ -70,6 +107,7 @@ export function StoreCard({ data }: StoreCardProps) {
             _hover={{
               cursor: 'pointer',
             }}
+            onClick={handleNavigateToEditStore}
           />
           <Icon
             as={Trash}
@@ -162,7 +200,8 @@ export function StoreCard({ data }: StoreCardProps) {
               borderColor="purple.900"
               textColor="purple.900"
               mr={3}
-              onClick={onClose}
+              onClick={handleDeleteStore}
+              isLoading={isDeletingStore}
               _hover={{
                 bgColor: 'purple.900',
                 borderColor: 'purple.900',

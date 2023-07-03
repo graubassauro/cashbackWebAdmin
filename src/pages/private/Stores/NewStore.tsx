@@ -290,7 +290,7 @@ export function NewStore() {
         )}
         <FormButton
           type="submit"
-          title="Update"
+          title="Create"
           alignSelf="flex-end"
           formButtonType="SUBMIT"
           isLoading={isSubmitting || isLoadingNewMerchantStore}

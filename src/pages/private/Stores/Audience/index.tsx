@@ -1,3 +1,4 @@
+import { Outlet, useLocation } from 'react-router-dom'
 import {
   Button,
   Checkbox,
@@ -13,14 +14,14 @@ import {
   Tr,
 } from '@chakra-ui/react'
 import { DotsThreeVertical } from '@phosphor-icons/react'
-import { products } from 'mock/products'
 
+import { products } from 'mock/products'
 import { ActionButton } from '~components/Buttons'
 import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
 import { TableFooter } from '~components/Table/TableFooter'
 import { BodyLayout } from '~layouts/Body'
 
-export function Audience() {
+function AudienceContainer() {
   return (
     <BodyLayout>
       <HStack justifyContent="space-between">
@@ -111,5 +112,15 @@ export function Audience() {
         </Tfoot>
       </Table>
     </BodyLayout>
+  )
+}
+
+export function Audience() {
+  const location = useLocation()
+
+  return location.pathname === '/stores/audience' ? (
+    <AudienceContainer />
+  ) : (
+    <Outlet />
   )
 }

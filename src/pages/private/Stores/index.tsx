@@ -6,7 +6,7 @@ import { ActionButton, EmptyCardButton } from '~components/Buttons'
 import { Loading } from '~components/Loading'
 import { StoreCard } from './components/StoreCard'
 import { BodyLayout } from '~layouts/Body'
-import { IStoreDTO } from '~services/merchant.service'
+import { IStoreDTO } from '~models/Store'
 
 import { useGetMerchantStores } from './hooks/useGetMerchantStores'
 

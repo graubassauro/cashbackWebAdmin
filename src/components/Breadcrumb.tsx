@@ -13,8 +13,11 @@ export function BreadCrumb() {
   const formattedEndpoints = endpoints.map((endpoint) => {
     const breadcrumbLabel = formatBreadcrumbLabel(endpoint)
 
+    const actualPathName =
+      endpoints[0] !== endpoint ? `${endpoints[0]}/${endpoint}` : endpoint
+
     const item = {
-      pathName: `${endpoint}`,
+      pathName: actualPathName,
       breadcrumbName: breadcrumbLabel,
     }
 
