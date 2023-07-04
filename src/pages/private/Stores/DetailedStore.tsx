@@ -1,11 +1,39 @@
-import { Center, Grid, HStack, Icon, Image, Text } from '@chakra-ui/react'
-import { TextT, NavigationArrow, At, Phone } from '@phosphor-icons/react'
+import { useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+import {
+  Card,
+  Center,
+  Grid,
+  HStack,
+  Icon,
+  Image,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
+import {
+  TextT,
+  NavigationArrow,
+  At,
+  Phone,
+  Package,
+  Coins,
+  CursorClick,
+} from '@phosphor-icons/react'
 
 import { BodyLayout } from '~layouts/Body'
 import { useCurrentStore } from '~redux/auth'
 
 export function DetailedStore() {
   const store = useCurrentStore()
+  const navigate = useNavigate()
+
+  const handleNavigateToProductsStore = useCallback(() => {
+    navigate('/stores/products')
+  }, [navigate])
+
+  const handleNavigateToPromotionsStore = useCallback(() => {
+    navigate('/stores/audience')
+  }, [navigate])
 
   return (
     <BodyLayout>
@@ -67,6 +95,50 @@ export function DetailedStore() {
           </HStack>
         </Grid>
       </Center>
+      <HStack w="100%" spacing={4} mt={8}>
+        <Card w="100%" p={4}>
+          <VStack alignItems="center" justifyContent="center">
+            <Icon as={Package} color="yellow.700" h={16} w={16} />
+            <Text fontSize={16} fontWeight={400} color="gray.900">
+              Products
+            </Text>
+          </VStack>
+          <HStack justifyContent="space-between">
+            <Text>{store?.products.length} items</Text>
+            <Icon
+              as={CursorClick}
+              color="gray.700"
+              h={6}
+              w={6}
+              _hover={{
+                cursor: 'pointer',
+              }}
+              onClick={handleNavigateToProductsStore}
+            />
+          </HStack>
+        </Card>
+        <Card w="100%" p={4}>
+          <VStack alignItems="center" justifyContent="center">
+            <Icon as={Coins} color="yellow.700" h={16} w={16} />
+            <Text fontSize={16} fontWeight={400} color="gray.900">
+              Promotions
+            </Text>
+          </VStack>
+          <HStack justifyContent="space-between">
+            <Text>You can create now</Text>
+            <Icon
+              as={CursorClick}
+              color="gray.700"
+              h={6}
+              w={6}
+              _hover={{
+                cursor: 'pointer',
+              }}
+              onClick={handleNavigateToPromotionsStore}
+            />
+          </HStack>
+        </Card>
+      </HStack>
     </BodyLayout>
   )
 }
