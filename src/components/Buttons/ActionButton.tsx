@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from '@chakra-ui/react'
-import { NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 type ActionButtonProps = ButtonProps & {
   title: string
@@ -15,7 +15,7 @@ export function ActionButton({
 }: ActionButtonProps) {
   if (linkingButton) {
     return (
-      <NavLink to={endpointString}>
+      <Link to={endpointString}>
         <Button
           bgColor="white"
           borderColor="gray.700"
@@ -36,7 +36,7 @@ export function ActionButton({
         >
           {title}
         </Button>
-      </NavLink>
+      </Link>
     )
   }
 

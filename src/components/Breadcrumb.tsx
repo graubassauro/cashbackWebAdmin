@@ -1,10 +1,13 @@
-import { NavLink, useLocation } from 'react-router-dom'
-import { Breadcrumb, BreadcrumbItem, Text } from '@chakra-ui/react'
+import { useCallback } from 'react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Breadcrumb, BreadcrumbItem, Icon, Text } from '@chakra-ui/react'
+import { DotsThreeOutline } from '@phosphor-icons/react'
 
 import { formatBreadcrumbLabel } from '~utils/formatBreadcrumbLabel'
 
 export function BreadCrumb() {
   const locations = useLocation()
+  const navigate = useNavigate()
 
   const endpoints = locations.pathname
     .split('/')
@@ -24,6 +27,10 @@ export function BreadCrumb() {
     return item
   })
 
+  const handleGoBack = useCallback(() => {
+    navigate(-1)
+  }, [navigate])
+
   return (
     <Breadcrumb>
       <BreadcrumbItem>
@@ -41,22 +48,37 @@ export function BreadCrumb() {
         </NavLink>
       </BreadcrumbItem>
 
-      {formattedEndpoints.map((item) => (
+      <Icon
+        as={DotsThreeOutline}
+        w={6}
+        h={6}
+        borderRadius={6}
+        color="gray.700"
+        transition="ease-in 0.35s"
+        _hover={{
+          cursor: 'pointer',
+        }}
+        onClick={handleGoBack}
+      />
+
+      {formattedEndpoints.map((item, index) => (
         <BreadcrumbItem
           key={item.pathName}
           isCurrentPage={item.pathName === endpoints[endpoints.length - 1]}
         >
-          <NavLink to={`/${item.pathName}`}>
-            <Text
-              fontSize={18}
-              fontWeight={
-                item.pathName === endpoints[endpoints.length - 1] ? 700 : 400
-              }
-              color="gray.900"
-            >
-              {item.breadcrumbName}
-            </Text>
-          </NavLink>
+          {index === formattedEndpoints.length - 1 && (
+            <NavLink to={`/${item.pathName}`}>
+              <Text
+                fontSize={18}
+                fontWeight={
+                  item.pathName === endpoints[endpoints.length - 1] ? 700 : 400
+                }
+                color="gray.900"
+              >
+                {item.breadcrumbName}
+              </Text>
+            </NavLink>
+          )}
         </BreadcrumbItem>
       ))}
     </Breadcrumb>
