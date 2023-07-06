@@ -64,7 +64,11 @@ export function Audience() {
       <Tfoot>
         <Tr>
           <Td colSpan={8}>
-            <TableFooter />
+            <TableFooter
+              currentPageStartAmount={1}
+              currentPageEndAmount={2}
+              totalItems={10}
+            />
           </Td>
         </Tr>
       </Tfoot>

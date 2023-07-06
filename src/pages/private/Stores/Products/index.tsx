@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import {
   Button,
   Checkbox,
@@ -11,12 +12,21 @@ import {
 } from '@chakra-ui/react'
 import { DotsThreeVertical } from '@phosphor-icons/react'
 
-import { products } from 'mock/products'
-
 import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
 import { TableFooter } from '~components/Table/TableFooter'
+import { useCurrentStore } from '~redux/auth'
 
 export function Products() {
+  const store = useCurrentStore()
+
+  const pageParams = useMemo(() => {
+    return {
+      startPosition: 1,
+      endPosition: store?.products?.length ?? 5,
+      totalOfItems: store?.products?.length ?? 0,
+    }
+  }, [store?.products])
+
   return (
     <Table mt={8} bgColor="white" borderRadius={6}>
       <Thead>
@@ -34,7 +44,7 @@ export function Products() {
         </Tr>
       </Thead>
       <Tbody>
-        {products.map((item) => (
+        {store?.products.map((item) => (
           <Tr key={item.id}>
             <Td>
               <Checkbox />
@@ -43,11 +53,11 @@ export function Products() {
               product={item.name}
               src="https://github.com/thereallucas98.png"
             />
-            <TableTd title={item.category} />
-            <TableTd title={item.brand} />
+            <TableTd title="Category" />
+            <TableTd title="Brand" />
             <TableTd title={String(item.quantity)} />
             <TableTd title={String(item.price)} />
-            <StatusTd status={item.status} title="Available" />
+            <StatusTd status="green" title="Available" />
             <Td>
               <Button
                 bgColor="transparent"
@@ -65,7 +75,11 @@ export function Products() {
       <Tfoot>
         <Tr>
           <Td colSpan={8}>
-            <TableFooter />
+            <TableFooter
+              currentPageStartAmount={pageParams.startPosition}
+              currentPageEndAmount={pageParams.endPosition}
+              totalItems={pageParams.totalOfItems}
+            />
           </Td>
         </Tr>
       </Tfoot>

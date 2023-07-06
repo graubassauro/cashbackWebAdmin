@@ -13,6 +13,7 @@ import { NewProduct } from '~pages/private/Stores/Products/NewProduct'
 import { EditStore } from '~pages/private/Stores/EditStore'
 import { NewStore } from '~pages/private/Stores/NewStore'
 import { DetailedStore } from '~pages/private/Stores/DetailedStore'
+import { Settings } from '~pages/private/Settings'
 
 export function AppRoutes() {
   const location = useLocation()
@@ -24,6 +25,7 @@ export function AppRoutes() {
           <Route path="/" element={<Dashboard />} />
           <Route path="onboard" element={<Onboard />} />
           <Route path="analytics" element={<Analytics />} />
+          <Route path="settings" element={<Settings />} />
           <Route path="stores" element={<Stores />}>
             <Route path="detail-store" element={<DetailedStore />} />
             <Route path="edit-store" element={<EditStore />} />

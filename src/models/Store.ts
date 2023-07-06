@@ -1,3 +1,12 @@
+export interface IProductStoreDTO {
+  id: number
+  uId: string
+  name: string
+  price: number
+  quantity: number
+  storeId: number
+}
+
 export interface IStoreDTO {
   id: number
   uId: string
@@ -27,5 +36,5 @@ export interface IStoreDTO {
     }
   }
   categories: Array<object>
-  products: Array<object>
+  products: IProductStoreDTO[]
 }

@@ -1,53 +1,23 @@
 import { cashbackApi } from '~api/cashback-api.service'
+import { DataWrapper } from './types'
+import { ICategoryDTO } from '~models/Category'
 
-export interface ICustomerCreateParams {
-  frstName: string
-  lastName: string
-  email: string
-  phoneNumber: string
-  address: string
-  officeAddress: string
-  password: string
-}
-
-export type ICustomerProfileParams = Omit<ICustomerCreateParams, 'password'>
-
-const generateBaseUrl = (url: string) => `/customer/${url}`
-
-export const customerServiceApi = cashbackApi.injectEndpoints({
+export const categoriesServiceApi = cashbackApi.injectEndpoints({
   endpoints: (build) => ({
-    postCustomerCreate: build.mutation<void, ICustomerCreateParams>({
-      query: (body) => ({
-        url: generateBaseUrl('create'),
-        body,
-        method: 'POST',
-      }),
-    }),
-    putCustomerProfile: build.mutation<void, ICustomerProfileParams>({
-      query: (body) => ({
-        url: generateBaseUrl('profile'),
-        body,
-        method: 'PUT',
-      }),
-    }),
-    getCustomerProfile: build.query({
+    getAllCategories: build.query<DataWrapper<ICategoryDTO[]>, void>({
       query: () => ({
-        url: generateBaseUrl('profile'),
+        url: 'category/all',
         method: 'GET',
       }),
     }),
-    putCustomerProfileImage: build.mutation({
+    getCategoryById: build.query<DataWrapper<ICategoryDTO[]>, void>({
       query: () => ({
-        url: generateBaseUrl('profile/image'),
-        method: 'PUT',
+        url: 'category/id',
+        method: 'GET',
       }),
     }),
   }),
 })
 
-export const {
-  usePostCustomerCreateMutation,
-  usePutCustomerProfileMutation,
-  useGetCustomerProfileQuery,
-  usePutCustomerProfileImageMutation,
-} = customerServiceApi
+export const { useGetAllCategoriesQuery, useGetCategoryByIdQuery } =
+  categoriesServiceApi

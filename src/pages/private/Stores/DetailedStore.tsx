@@ -24,6 +24,7 @@ import {
 } from '@phosphor-icons/react'
 
 import { ActionButton } from '~components/Buttons'
+import { FeedbackCard } from './components/FeedbackCard'
 import { BodyLayout } from '~layouts/Body'
 import { useCurrentStore } from '~redux/auth'
 
@@ -153,8 +154,80 @@ const TabOptions = ({ data }: TabOptionsProps) => {
   )
 }
 
+/**
+ *
+ */
+
+const feedbackFilterOptions = [
+  {
+    title: 'All',
+    key: 'all',
+  },
+  {
+    title: 'Recents',
+    key: 'recents',
+  },
+  {
+    title: 'Old',
+    key: 'old',
+  },
+  {
+    title: 'Accpeted',
+    key: 'accpeted',
+  },
+  {
+    title: 'Rejected',
+    key: 'rejected',
+  },
+]
+
+type FeedbackTabProps = {
+  activeFeedbackFilter: string
+  onSelected: (tab: string) => void
+}
+
+const FeedbackTab = ({
+  onSelected,
+  activeFeedbackFilter,
+}: FeedbackTabProps) => {
+  const onSelectedTab = useCallback(
+    (tab: string) => {
+      onSelected(tab)
+    },
+    [onSelected],
+  )
+
+  return (
+    <HStack position="absolute" right={0} bottom={0}>
+      {feedbackFilterOptions.map((option) => (
+        <Button
+          key={option.key}
+          bgColor="transparent"
+          pb={4}
+          borderBottomWidth={1}
+          borderRadius={0}
+          borderBottomColor={
+            activeFeedbackFilter === option.key ? 'purple.900' : 'transparent'
+          }
+          fontSize={16}
+          fontWeight={activeFeedbackFilter === option.key ? 700 : 400}
+          textColor="gray.800"
+          transition="ease-in 0.35s"
+          _hover={{ bgColor: 'transparent', borderBottomColor: 'purple.900' }}
+          onClick={() => onSelectedTab(option.key)}
+        >
+          {option.title}
+        </Button>
+      ))}
+    </HStack>
+  )
+}
+
 export function DetailedStore() {
   const [selectedTab, setSelectedTab] = useState<DetailStoreTab>('products')
+  const [selectedFeedback, setSelectedFeedback] = useState('all')
+
+  const store = useCurrentStore()
 
   const titleCapitalize =
     selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)
@@ -163,7 +236,16 @@ export function DetailedStore() {
     return {
       products: <Products />,
       audience: <Audience />,
-      feedback: <h1>Oi</h1>,
+      feedback: (
+        <VStack w="100%" spacing={2}>
+          <FeedbackCard />
+          <FeedbackCard />
+          <FeedbackCard />
+          <FeedbackCard />
+          <FeedbackCard />
+          <FeedbackCard />
+        </VStack>
+      ),
     }
   }, [])
 
@@ -174,20 +256,14 @@ export function DetailedStore() {
     return {
       products: <TabOptions data={optionsTabData[0]} />,
       audience: <TabOptions data={optionsTabData[1]} />,
-      feedback: null,
+      feedback: (
+        <FeedbackTab
+          activeFeedbackFilter={selectedFeedback}
+          onSelected={setSelectedFeedback}
+        />
+      ),
     }
-  }, [])
-
-  const store = useCurrentStore()
-  // const navigate = useNavigate()
-
-  // const handleNavigateToProductsStore = useCallback(() => {
-  //   navigate('/stores/products')
-  // }, [navigate])
-
-  // const handleNavigateToPromotionsStore = useCallback(() => {
-  //   navigate('/stores/audience')
-  // }, [navigate])
+  }, [selectedFeedback])
 
   return (
     <BodyLayout>
@@ -250,7 +326,14 @@ export function DetailedStore() {
         </Grid>
       </Center>
       <VStack mt={8}>
-        <HStack w="100%" justifyContent="space-between">
+        <HStack
+          w="100%"
+          justifyContent="space-between"
+          borderBottomColor="gray.400"
+          borderBottomWidth={1}
+          pb={4}
+          position="relative"
+        >
           <Menu>
             <MenuButton
               as={Button}
@@ -281,50 +364,6 @@ export function DetailedStore() {
         </HStack>
         {tabs[selectedTab]}
       </VStack>
-      {/* <HStack w="100%" spacing={4} mt={8}>
-        <Card w="100%" p={4}>
-          <VStack alignItems="center" justifyContent="center">
-            <Icon as={Package} color="yellow.700" h={16} w={16} />
-            <Text fontSize={16} fontWeight={400} color="gray.900">
-              Products
-            </Text>
-          </VStack>
-          <HStack justifyContent="space-between">
-            <Text>{store?.products.length} items</Text>
-            <Icon
-              as={CursorClick}
-              color="gray.700"
-              h={6}
-              w={6}
-              _hover={{
-                cursor: 'pointer',
-              }}
-              onClick={handleNavigateToProductsStore}
-            />
-          </HStack>
-        </Card>
-        <Card w="100%" p={4}>
-          <VStack alignItems="center" justifyContent="center">
-            <Icon as={Coins} color="yellow.700" h={16} w={16} />
-            <Text fontSize={16} fontWeight={400} color="gray.900">
-              Promotions
-            </Text>
-          </VStack>
-          <HStack justifyContent="space-between">
-            <Text>You can create now</Text>
-            <Icon
-              as={CursorClick}
-              color="gray.700"
-              h={6}
-              w={6}
-              _hover={{
-                cursor: 'pointer',
-              }}
-              onClick={handleNavigateToPromotionsStore}
-            />
-          </HStack>
-        </Card>
-      </HStack> */}
     </BodyLayout>
   )
 }

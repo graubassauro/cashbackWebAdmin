@@ -57,6 +57,7 @@ export function Profile({ showProfileData }: ProfileProps) {
         </MenuButton>
         <MenuList>
           <MenuItem
+            onClick={() => navigate('/settings')}
             transition="ease-in-out 0.35s"
             _hover={{
               bgColor: 'purple.900',
