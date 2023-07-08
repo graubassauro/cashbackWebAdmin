@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { VStack, HStack, Grid } from '@chakra-ui/react'
+import { VStack, Grid } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { FormButton } from '~components/Buttons'
@@ -49,7 +49,11 @@ export function NewProduct() {
         mt={4}
         onSubmit={handleSubmit(handleCreateNewProduct)}
       >
-        <HStack w="100%" spacing={2}>
+        <Grid
+          w="100%"
+          gap={2}
+          gridTemplateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
+        >
           <LabelInput
             label="Name"
             id="name"
@@ -62,14 +66,18 @@ export function NewProduct() {
             {...register('brand')}
             error={errors.brand}
           />
-        </HStack>
+        </Grid>
         <LabelTextarea
           label="Description"
           id="about"
           {...register('about')}
           error={errors.about}
         />
-        <HStack spacing={2} w="100%">
+        <Grid
+          gap={2}
+          gridTemplateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
+          w="100%"
+        >
           <LabelInput
             label="Quantity"
             id="quantity"
@@ -82,7 +90,7 @@ export function NewProduct() {
             {...register('price')}
             error={errors.price}
           />
-        </HStack>
+        </Grid>
         <Grid
           gap={2}
           w="100%"

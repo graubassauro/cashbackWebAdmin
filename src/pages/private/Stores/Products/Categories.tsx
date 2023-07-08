@@ -21,7 +21,7 @@ export function Categories() {
       {isFetchingCategories || isLoadingCategories ? (
         <Loading />
       ) : (
-        <Grid templateColumns={['1fr', 'repeat(2, 1fr)']} gap={2} mt={8}>
+        <Grid templateColumns={['1fr', '1fr', 'repeat(2, 1fr)']} gap={2} mt={8}>
           {categories?.data.map((category) => (
             <CategoryCard key={category.id} data={category} />
           ))}

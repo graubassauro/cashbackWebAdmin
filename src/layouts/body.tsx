@@ -11,7 +11,7 @@ export function BodyLayout({ children }: BodyLayoutProps) {
   return (
     <VStack spacing={4} w="100%">
       <Header />
-      <Box p={4} w="100%">
+      <Box p={4} w="100%" maxW={1480}>
         {children}
       </Box>
     </VStack>

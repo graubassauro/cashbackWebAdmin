@@ -8,7 +8,7 @@ type OverviewCardProps = {
   amount: number
   percentageIncrease?: boolean
   percentage: number
-  type: 'SALES' | 'OTHERS'
+  type: 'SALES' | 'TRANSACTIONS' | 'AVERAGE'
 }
 
 export function OverviewCard({
@@ -22,6 +22,7 @@ export function OverviewCard({
 
   return (
     <Card
+      gridArea={type}
       w="100%"
       h={110}
       p={4}

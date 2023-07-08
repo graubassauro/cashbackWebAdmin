@@ -16,11 +16,7 @@ import { CaretDown } from '@phosphor-icons/react'
 
 import { logout, useCurrentUserLogged } from '~redux/auth'
 
-interface ProfileProps {
-  showProfileData?: boolean
-}
-
-export function Profile({ showProfileData }: ProfileProps) {
+export function Profile() {
   const navigate = useNavigate()
   const user = useCurrentUserLogged()
 
@@ -34,22 +30,20 @@ export function Profile({ showProfileData }: ProfileProps) {
   return (
     <HStack>
       <HStack>
-        {showProfileData ? (
-          <HStack>
-            <Avatar
-              src="https://github.com/thereallucas98.png"
-              h="2rem"
-              w="2rem"
-              borderWidth={1}
-              borderColor="purple.900"
-            >
-              <AvatarBadge boxSize="1rem" bg="purple.900" />
-            </Avatar>
-            <Text fontSize={14} fontWeight={400} color="gray.900">
-              {user?.firstName ?? 'Un'}
-            </Text>
-          </HStack>
-        ) : null}
+        <HStack>
+          <Avatar
+            src="https://github.com/thereallucas98.png"
+            h="2rem"
+            w="2rem"
+            borderWidth={1}
+            borderColor="purple.900"
+          >
+            <AvatarBadge boxSize="1rem" bg="purple.900" />
+          </Avatar>
+          <Text fontSize={14} fontWeight={400} color="gray.900">
+            {user?.firstName ?? 'Un'}
+          </Text>
+        </HStack>
       </HStack>
       <Menu>
         <MenuButton>

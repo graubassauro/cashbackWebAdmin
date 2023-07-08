@@ -49,7 +49,13 @@ function StoreContainer() {
       {isStoresLoading && <Loading />}
 
       {!isStoresLoading && storesData.length === 0 ? (
-        <Grid templateColumns={['1fr', 'repeat(2, 1fr)']} gap={2} mt={8}>
+        <Grid
+          templateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
+          gap={2}
+          mt={8}
+          maxW={1480}
+          w="100%"
+        >
           <EmptyCardButton />
           <EmptyCardButton />
           <EmptyCardButton />
@@ -58,7 +64,7 @@ function StoreContainer() {
       ) : (
         <VStack w="100%" spacing={4}>
           <Grid
-            templateColumns={['1fr', 'repeat(2, 1fr)']}
+            templateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
             gap={2}
             mt={8}
             w="100%"

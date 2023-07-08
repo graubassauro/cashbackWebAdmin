@@ -1,7 +1,8 @@
 import {
   Box,
   Button,
-  Flex,
+  Grid,
+  GridItem,
   HStack,
   Heading,
   Text,
@@ -21,34 +22,53 @@ export function Dashboard() {
         </Heading>
         <ActionButton title="Filter" />
       </HStack>
-      <Flex
+      <Grid
         mt={8}
-        w="100%"
         gap={2}
-        flexDirection={['column', 'column', 'column', 'row']}
+        w="100%"
+        gridTemplateAreas={[
+          `"sales sales sales"
+          "transactions transactions transactions"
+          "average average average"
+          `,
+          `"sales sales sales"
+          "transactions average average"
+          "transactions average average"
+          `,
+          `"sales transactions average"
+          "sales transactions average"
+          "sales transactions average"
+          `,
+        ]}
       >
-        <OverviewCard
-          title="Sales"
-          amount={190340}
-          percentage={45.5}
-          percentageIncrease
-          type="SALES"
-        />
-        <OverviewCard
-          title="Transactions"
-          amount={669}
-          percentage={45.5}
-          percentageIncrease
-          type="OTHERS"
-        />
-        <OverviewCard
-          title="Average Ticket"
-          amount={4009}
-          percentage={45.5}
-          percentageIncrease
-          type="OTHERS"
-        />
-      </Flex>
+        <GridItem area="sales">
+          <OverviewCard
+            title="Sales"
+            amount={190340}
+            percentage={45.5}
+            percentageIncrease
+            type="SALES"
+          />
+        </GridItem>
+        <GridItem area="transactions">
+          <OverviewCard
+            title="Transactions"
+            amount={669}
+            percentage={45.5}
+            percentageIncrease
+            type="TRANSACTIONS"
+          />
+        </GridItem>
+        <GridItem area="average">
+          <OverviewCard
+            title="Average Ticket"
+            amount={4009}
+            percentage={45.5}
+            percentageIncrease
+            type="AVERAGE"
+          />
+        </GridItem>
+      </Grid>
       <Box w="100%" bgColor="white" px={2} py={4} mt={4} borderRadius={10}>
         <HStack justifyContent="space-between" spacing={2}>
           <VStack alignItems="flex-start" spacing={0}>

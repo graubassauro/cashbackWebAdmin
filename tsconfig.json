@@ -14,6 +14,7 @@
       "~components/*": ["./components/*"],
       "~config/*": ["./config/*"],
       "~constants/*": ["./constants/*"],
+      "~contexts/*": ["./contexts/*"],
       "~hooks/*": ["./hooks/*"],
       "~i18n/*": ["./i18n/*"],
       "~layouts/*": ["./layouts/*"],

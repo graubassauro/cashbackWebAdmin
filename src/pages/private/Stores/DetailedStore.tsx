@@ -14,6 +14,7 @@ import {
   MenuList,
   Text,
   VStack,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import {
   TextT,
@@ -117,6 +118,52 @@ type TabOptionsProps = {
 
 const TabOptions = ({ data }: TabOptionsProps) => {
   const navigate = useNavigate()
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true,
+  })
+
+  if (!isWideVersion) {
+    return (
+      <Menu>
+        <MenuButton
+          borderWidth={1}
+          borderColor="gray.700"
+          borderRadius="lg"
+          px={4}
+          py={2}
+        >
+          Options
+        </MenuButton>
+        <MenuList>
+          <MenuItem
+            bgColor="white"
+            textColor="gray.700"
+            _hover={{
+              bgColor: 'purple.900',
+              textColor: 'white',
+            }}
+            title={data.groupedData.title}
+            onClick={() => navigate(`../../${data.groupedData.urlEndpoint}`)}
+          >
+            {data.groupedData.title}
+          </MenuItem>
+          <MenuItem
+            bgColor="white"
+            textColor="gray.700"
+            _hover={{
+              bgColor: 'purple.900',
+              textColor: 'white',
+            }}
+            title={data.newData.title}
+            onClick={() => navigate(`../../${data.newData.urlEndpoint}`)}
+          >
+            {data.newData.title}
+          </MenuItem>
+        </MenuList>
+      </Menu>
+    )
+  }
 
   return (
     <HStack>
@@ -190,12 +237,49 @@ const FeedbackTab = ({
   onSelected,
   activeFeedbackFilter,
 }: FeedbackTabProps) => {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true,
+  })
+
   const onSelectedTab = useCallback(
     (tab: string) => {
       onSelected(tab)
     },
     [onSelected],
   )
+
+  if (!isWideVersion) {
+    return (
+      <Menu>
+        <MenuButton
+          borderWidth={1}
+          borderColor="gray.700"
+          borderRadius="lg"
+          px={4}
+          py={2}
+        >
+          Options
+        </MenuButton>
+        <MenuList>
+          {feedbackFilterOptions.map((option) => (
+            <MenuItem
+              key={option.key}
+              bgColor="white"
+              textColor="gray.700"
+              _hover={{
+                bgColor: 'purple.900',
+                textColor: 'white',
+              }}
+              onClick={() => onSelectedTab(option.key)}
+            >
+              {option.title}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Menu>
+    )
+  }
 
   return (
     <HStack position="absolute" right={0} bottom={0}>
@@ -265,66 +349,83 @@ export function DetailedStore() {
     }
   }, [selectedFeedback])
 
+  const HeaderStoreDetailComponent = useMemo(() => {
+    return (
+      <VStack>
+        <Image
+          w="100%"
+          h={250}
+          objectFit="cover"
+          src={
+            'https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'
+          }
+          borderRadius="md"
+          alt={store?.name}
+        />
+        <Center mt={4}>
+          <Grid
+            templateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
+            gap={2}
+            mt={8}
+          >
+            <HStack>
+              <Icon as={TextT} color="gray.700" h={6} w={6} />
+              <Text
+                fontSize={14}
+                fontWeight={400}
+                color="gray.900"
+                fontFamily="heading"
+              >
+                {store?.name}
+              </Text>
+            </HStack>
+            <HStack>
+              <Icon as={At} color="gray.700" h={6} w={6} />
+              <Text
+                fontSize={14}
+                fontWeight={400}
+                color="gray.900"
+                fontFamily="heading"
+              >
+                {store?.email}
+              </Text>
+            </HStack>
+            <HStack>
+              <Icon as={Phone} color="gray.700" h={6} w={6} />
+              <Text
+                fontSize={14}
+                fontWeight={400}
+                color="gray.900"
+                fontFamily="heading"
+              >
+                {store?.phoneNumber}
+              </Text>
+            </HStack>
+            <HStack>
+              <Icon as={NavigationArrow} color="gray.700" h={6} w={6} />
+              <Text
+                fontSize={14}
+                fontWeight={400}
+                color="gray.900"
+                fontFamily="heading"
+              >
+                {store?.storeAddress.streetNameFormatted}
+              </Text>
+            </HStack>
+          </Grid>
+        </Center>
+      </VStack>
+    )
+  }, [
+    store?.email,
+    store?.name,
+    store?.phoneNumber,
+    store?.storeAddress.streetNameFormatted,
+  ])
+
   return (
     <BodyLayout>
-      <Image
-        w="100%"
-        h={250}
-        objectFit="cover"
-        src={
-          'https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80'
-        }
-        borderRadius="md"
-        alt={store?.name}
-      />
-      <Center mt={4}>
-        <Grid templateColumns={['1fr', 'repeat(2, 1fr)']} gap={2} mt={8}>
-          <HStack>
-            <Icon as={TextT} color="gray.700" h={6} w={6} />
-            <Text
-              fontSize={14}
-              fontWeight={400}
-              color="gray.900"
-              fontFamily="heading"
-            >
-              {store?.name}
-            </Text>
-          </HStack>
-          <HStack>
-            <Icon as={At} color="gray.700" h={6} w={6} />
-            <Text
-              fontSize={14}
-              fontWeight={400}
-              color="gray.900"
-              fontFamily="heading"
-            >
-              {store?.email}
-            </Text>
-          </HStack>
-          <HStack>
-            <Icon as={Phone} color="gray.700" h={6} w={6} />
-            <Text
-              fontSize={14}
-              fontWeight={400}
-              color="gray.900"
-              fontFamily="heading"
-            >
-              {store?.phoneNumber}
-            </Text>
-          </HStack>
-          <HStack>
-            <Icon as={NavigationArrow} color="gray.700" h={6} w={6} />
-            <Text
-              fontSize={14}
-              fontWeight={400}
-              color="gray.900"
-              fontFamily="heading"
-            >
-              {store?.storeAddress.streetNameFormatted}
-            </Text>
-          </HStack>
-        </Grid>
-      </Center>
+      {HeaderStoreDetailComponent}
       <VStack mt={8}>
         <HStack
           w="100%"

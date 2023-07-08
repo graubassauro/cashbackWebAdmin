@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { memo, useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import {
   Button,
@@ -35,7 +35,7 @@ type StoreCardProps = {
   data: IStoreDTO
 }
 
-export function StoreCard({ data }: StoreCardProps) {
+function StoreCardComponent({ data }: StoreCardProps) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -216,3 +216,5 @@ export function StoreCard({ data }: StoreCardProps) {
     </Card>
   )
 }
+
+export const StoreCard = memo(StoreCardComponent)

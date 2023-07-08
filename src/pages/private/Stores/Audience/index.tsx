@@ -8,6 +8,7 @@ import {
   Th,
   Thead,
   Tr,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import { DotsThreeVertical } from '@phosphor-icons/react'
 
@@ -16,6 +17,11 @@ import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
 import { TableFooter } from '~components/Table/TableFooter'
 
 export function Audience() {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true,
+  })
+
   return (
     <Table mt={8} bgColor="white" borderRadius={6}>
       <Thead>
@@ -23,12 +29,12 @@ export function Audience() {
           <Th>
             <Checkbox />
           </Th>
-          <TableTh title="IMAGE" />
+          {isWideVersion ? <TableTh title="IMAGE" /> : null}
           <TableTh title="TITLE" />
-          <TableTh title="DISCOUNT PERCENTAGE" />
+          {isWideVersion ? <TableTh title="DISCOUNT PERCENTAGE" /> : null}
           <TableTh title="OPENING DATE" />
           <TableTh title="FINISHING DATE" />
-          <TableTh title="STATUS" />
+          {isWideVersion ? <TableTh title="STATUS" /> : null}
           <TableTh title="ACTIONS" />
         </Tr>
       </Thead>
@@ -38,15 +44,19 @@ export function Audience() {
             <Td>
               <Checkbox />
             </Td>
-            <ImageTd
-              product={item.name}
-              src="https://github.com/thereallucas98.png"
-            />
+            {isWideVersion ? (
+              <ImageTd
+                product={item.name}
+                src="https://github.com/thereallucas98.png"
+              />
+            ) : null}
             <TableTd title={item.category} />
             <TableTd title={item.brand} />
             <TableTd title={String(item.quantity)} />
             <TableTd title={String(item.price)} />
-            <StatusTd status={item.status} title="Available" />
+            {isWideVersion ? (
+              <StatusTd status={item.status} title="Available" />
+            ) : null}
             <Td>
               <Button
                 bgColor="transparent"

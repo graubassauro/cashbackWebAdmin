@@ -9,6 +9,7 @@ import {
   Th,
   Thead,
   Tr,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import { DotsThreeVertical } from '@phosphor-icons/react'
 
@@ -18,6 +19,10 @@ import { useCurrentStore } from '~redux/auth'
 
 export function Products() {
   const store = useCurrentStore()
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    lg: true,
+  })
 
   const pageParams = useMemo(() => {
     return {
@@ -34,12 +39,12 @@ export function Products() {
           <Th>
             <Checkbox />
           </Th>
-          <TableTh title="IMAGE" />
-          <TableTh title="CATEGORY NAME" />
+          {isWideVersion ? <TableTh title="IMAGE" /> : null}
+          {isWideVersion ? <TableTh title="CATEGORY NAME" /> : null}
           <TableTh title="BRAND NAME" />
           <TableTh title="QUANTITY" />
           <TableTh title="PRICE ($)" />
-          <TableTh title="STATUS" />
+          {isWideVersion ? <TableTh title="STATUS" /> : null}
           <TableTh title="ACTIONS" />
         </Tr>
       </Thead>
@@ -49,15 +54,19 @@ export function Products() {
             <Td>
               <Checkbox />
             </Td>
-            <ImageTd
-              product={item.name}
-              src="https://github.com/thereallucas98.png"
-            />
+            {isWideVersion ? (
+              <ImageTd
+                product={item.name}
+                src="https://github.com/thereallucas98.png"
+              />
+            ) : null}
             <TableTd title="Category" />
-            <TableTd title="Brand" />
+            {isWideVersion ? <TableTd title="Brand" /> : null}
             <TableTd title={String(item.quantity)} />
             <TableTd title={String(item.price)} />
-            <StatusTd status="green" title="Available" />
+            {isWideVersion ? (
+              <StatusTd status="green" title="Available" />
+            ) : null}
             <Td>
               <Button
                 bgColor="transparent"
@@ -76,6 +85,7 @@ export function Products() {
         <Tr>
           <Td colSpan={8}>
             <TableFooter
+              isWideVersion={isWideVersion}
               currentPageStartAmount={pageParams.startPosition}
               currentPageEndAmount={pageParams.endPosition}
               totalItems={pageParams.totalOfItems}

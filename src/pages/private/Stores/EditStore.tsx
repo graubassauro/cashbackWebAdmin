@@ -2,7 +2,15 @@ import { useCallback, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { MapPin } from '@phosphor-icons/react'
-import { VStack, HStack, Button, Icon, Text, useToast } from '@chakra-ui/react'
+import {
+  VStack,
+  HStack,
+  Button,
+  Icon,
+  Text,
+  useToast,
+  Grid,
+} from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { FormButton } from '~components/Buttons'
@@ -197,7 +205,11 @@ export function EditStore() {
           {...register('note')}
           error={errors.note}
         />
-        <HStack spacing={2} w="100%">
+        <Grid
+          gap={2}
+          gridTemplateColumns={['1fr', '1fr', 'repeat(3, 1fr)']}
+          w="100%"
+        >
           <LabelInput
             label="E-mail"
             id="email"
@@ -216,7 +228,7 @@ export function EditStore() {
             {...register('urlLogo')}
             error={errors.urlLogo}
           />
-        </HStack>
+        </Grid>
         <VStack w="100%">
           <LabelInput
             label="Address"
@@ -279,7 +291,11 @@ export function EditStore() {
                 error={errors.zipCode}
               />
             </HStack>
-            <HStack spacing={2} w="100%">
+            <Grid
+              gap={2}
+              gridTemplateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
+              w="100%"
+            >
               <LabelInput
                 label="City"
                 id="city"
@@ -292,8 +308,12 @@ export function EditStore() {
                 {...register('state')}
                 error={errors.state}
               />
-            </HStack>
-            <HStack spacing={2} w="100%">
+            </Grid>
+            <Grid
+              gap={2}
+              gridTemplateColumns={['1fr', '1fr', 'repeat(3, 1fr)']}
+              w="100%"
+            >
               <LabelInput
                 label="Street Number"
                 id="streetNumber"
@@ -312,7 +332,7 @@ export function EditStore() {
                 {...register('longitude')}
                 error={errors.longitude}
               />
-            </HStack>
+            </Grid>
           </VStack>
         )}
         <FormButton

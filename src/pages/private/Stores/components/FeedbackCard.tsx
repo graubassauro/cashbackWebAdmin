@@ -7,10 +7,17 @@ import {
   Icon,
   Text,
   VStack,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import { CaretRight, Question } from '@phosphor-icons/react'
 
 export function FeedbackCard() {
+  const isWideVersion = useBreakpointValue({
+    base: false,
+    md: true,
+    lg: true,
+  })
+
   return (
     <Card w="100%" p={6}>
       <Grid gap={2} templateColumns={['3fr 2fr 1fr']} alignItems="center">
@@ -28,49 +35,53 @@ export function FeedbackCard() {
             >
               David Lucas
             </Heading>
-            <Badge colorScheme="yellow">New</Badge>
+            {isWideVersion ? <Badge colorScheme="yellow">New</Badge> : null}
           </HStack>
-          <Icon as={Question} w={8} h={8} color="gray.700" />
+          {isWideVersion ? (
+            <Icon as={Question} w={8} h={8} color="gray.700" />
+          ) : null}
         </Grid>
         <Grid gap={2} templateColumns={['2fr 1fr']} alignItems="center">
-          <HStack>
-            <VStack spacing={0} alignItems="flex-start">
-              <Text
-                fontSize={10}
-                fontWeight={400}
-                fontFamily="body"
-                color="gray.600"
-              >
-                Category
-              </Text>
-              <Heading
-                fontSize={16}
-                fontWeight={500}
-                fontFamily="heading"
-                color="gray.900"
-              >
-                Clothes
-              </Heading>
-            </VStack>
-            <VStack spacing={0} alignItems="flex-start">
-              <Text
-                fontSize={10}
-                fontWeight={400}
-                fontFamily="body"
-                color="gray.600"
-              >
-                City
-              </Text>
-              <Heading
-                fontSize={16}
-                fontWeight={500}
-                fontFamily="heading"
-                color="gray.900"
-              >
-                Clothes
-              </Heading>
-            </VStack>
-          </HStack>
+          {isWideVersion ? (
+            <HStack>
+              <VStack spacing={0} alignItems="flex-start">
+                <Text
+                  fontSize={10}
+                  fontWeight={400}
+                  fontFamily="body"
+                  color="gray.600"
+                >
+                  Category
+                </Text>
+                <Heading
+                  fontSize={16}
+                  fontWeight={500}
+                  fontFamily="heading"
+                  color="gray.900"
+                >
+                  Clothes
+                </Heading>
+              </VStack>
+              <VStack spacing={0} alignItems="flex-start">
+                <Text
+                  fontSize={10}
+                  fontWeight={400}
+                  fontFamily="body"
+                  color="gray.600"
+                >
+                  City
+                </Text>
+                <Heading
+                  fontSize={16}
+                  fontWeight={500}
+                  fontFamily="heading"
+                  color="gray.900"
+                >
+                  Clothes
+                </Heading>
+              </VStack>
+            </HStack>
+          ) : null}
           <VStack spacing={0} alignItems="flex-start">
             <Text
               fontSize={10}
