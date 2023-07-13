@@ -14,6 +14,10 @@ interface IProductByStoreResponse {
   products: IProductStoreDTO[]
 }
 
+interface IDeleteProductsByUid {
+  uId: string
+}
+
 export const productServiceApi = cashbackApi.injectEndpoints({
   endpoints: (build) => ({
     getProductsByStoreUid: build.query<
@@ -24,8 +28,17 @@ export const productServiceApi = cashbackApi.injectEndpoints({
         url: `product/store/${uId}/all/${page}/2`,
         method: 'GET',
       }),
+      providesTags: ['Product'],
+    }),
+    deleteProduct: build.mutation<void, IDeleteProductsByUid>({
+      query: (body) => ({
+        url: 'product/delete',
+        body,
+        method: 'DELETE',
+      }),
     }),
   }),
 })
 
-export const { useGetProductsByStoreUidQuery } = productServiceApi
+export const { useGetProductsByStoreUidQuery, useDeleteProductMutation } =
+  productServiceApi

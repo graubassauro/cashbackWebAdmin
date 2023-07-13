@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import {
   Center,
   Checkbox,
-  Icon,
   Menu,
   MenuButton,
+  MenuDivider,
   MenuGroup,
   MenuItem,
   MenuList,
@@ -17,23 +18,93 @@ import {
   Tr,
   useBreakpointValue,
 } from '@chakra-ui/react'
-import {
-  DotsThreeVertical,
-  Eye,
-  Money,
-  PencilSimpleLine,
-  Trash,
-} from '@phosphor-icons/react'
+import { DotsThreeVertical } from '@phosphor-icons/react'
 
+import { cashbackApi } from '~api/cashback-api.service'
 import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
 import { Loading } from '~components/Loading'
 import { TableFooter } from '~components/Table/TableFooter'
 import { useCurrentStore } from '~redux/auth'
-import { useGetProductsByStoreUidQuery } from '~services/products.service'
+import {
+  useDeleteProductMutation,
+  useGetProductsByStoreUidQuery,
+} from '~services/products.service'
+
+type MenuItemComponentProps = {
+  productUid: string
+  onHandleDeleteProduct: (productUid: string) => void
+}
+
+function MenuItemComponent({
+  productUid,
+  onHandleDeleteProduct,
+}: MenuItemComponentProps) {
+  return (
+    <Menu>
+      <MenuButton
+        p={2}
+        bgColor="transparent"
+        borderWidth={1}
+        borderColor="white"
+        _hover={{ bgColor: 'gray.300' }}
+        transition="ease-in 0.35s"
+      >
+        <DotsThreeVertical size={24} />
+      </MenuButton>
+      <MenuList>
+        <MenuGroup title="Options">
+          <MenuDivider />
+          {/* <MenuItem
+            bgColor="white"
+            textColor="gray.700"
+            _hover={{
+              bgColor: 'purple.900',
+              textColor: 'white',
+            }}
+          >
+            See product
+          </MenuItem> */}
+          <MenuItem
+            bgColor="white"
+            textColor="gray.700"
+            _hover={{
+              bgColor: 'purple.900',
+              textColor: 'white',
+            }}
+          >
+            Edit
+          </MenuItem>
+          <MenuItem
+            bgColor="white"
+            textColor="gray.700"
+            _hover={{
+              bgColor: 'purple.900',
+              textColor: 'white',
+            }}
+          >
+            Highlight
+          </MenuItem>
+          <MenuItem
+            bgColor="white"
+            textColor="gray.700"
+            _hover={{
+              bgColor: 'purple.900',
+              textColor: 'white',
+            }}
+            onClick={() => onHandleDeleteProduct(productUid)}
+          >
+            Delete
+          </MenuItem>
+        </MenuGroup>
+      </MenuList>
+    </Menu>
+  )
+}
 
 export function Products() {
   const [page, setPage] = useState(1)
 
+  const dispatch = useDispatch()
   const store = useCurrentStore()
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -60,9 +131,33 @@ export function Products() {
     products?.data.products.length,
   ])
 
+  const [
+    deleteProduct,
+    { isSuccess: isDeletedSuccess, isLoading: isDeleting },
+  ] = useDeleteProductMutation()
+
+  /**
+   * Handlers table item
+   */
+  const handleDeleteProductByProductUid = useCallback(
+    (productUid: string) => {
+      deleteProduct({ uId: productUid })
+    },
+    [deleteProduct],
+  )
+
+  /**
+   * useEffect to invalidate product tag
+   */
+  useEffect(() => {
+    if (isDeletedSuccess) {
+      dispatch(cashbackApi.util.invalidateTags(['Product']))
+    }
+  }, [isDeletedSuccess, dispatch])
+
   return (
     <Table mt={8} bgColor="white" borderRadius={6}>
-      {isProductsLoading ? (
+      {isProductsLoading || isDeleting ? (
         <Center w="100%" h={250}>
           <Loading />
         </Center>
@@ -100,72 +195,10 @@ export function Products() {
                 <TableTd title={String(item.price)} />
                 {isWideVersion ? <StatusTd quantity={item.quantity} /> : null}
                 <Td>
-                  <Menu>
-                    <MenuButton
-                      p={2}
-                      bgColor="transparent"
-                      borderWidth={1}
-                      borderColor="white"
-                      _hover={{ bgColor: 'gray.300' }}
-                      transition="ease-in 0.35s"
-                    >
-                      <DotsThreeVertical size={24} />
-                    </MenuButton>
-                    <MenuList>
-                      <MenuGroup title="Options">
-                        <MenuItem
-                          icon={<Icon as={Eye} size={24} color="gray.700" />}
-                          bgColor="white"
-                          textColor="gray.700"
-                          _hover={{
-                            bgColor: 'purple.900',
-                            textColor: 'white',
-                          }}
-                        >
-                          See product
-                        </MenuItem>
-                        <MenuItem
-                          icon={
-                            <Icon
-                              as={PencilSimpleLine}
-                              size={24}
-                              color="gray.700"
-                            />
-                          }
-                          bgColor="white"
-                          textColor="gray.700"
-                          _hover={{
-                            bgColor: 'purple.900',
-                            textColor: 'white',
-                          }}
-                        >
-                          Edit
-                        </MenuItem>
-                        <MenuItem
-                          icon={<Icon as={Money} size={24} color="gray.700" />}
-                          bgColor="white"
-                          textColor="gray.700"
-                          _hover={{
-                            bgColor: 'purple.900',
-                            textColor: 'white',
-                          }}
-                        >
-                          Highlight
-                        </MenuItem>
-                        <MenuItem
-                          icon={<Icon as={Trash} size={24} color="gray.700" />}
-                          bgColor="white"
-                          textColor="gray.700"
-                          _hover={{
-                            bgColor: 'purple.900',
-                            textColor: 'white',
-                          }}
-                        >
-                          Delete
-                        </MenuItem>
-                      </MenuGroup>
-                    </MenuList>
-                  </Menu>
+                  <MenuItemComponent
+                    productUid={item.uId}
+                    onHandleDeleteProduct={handleDeleteProductByProductUid}
+                  />
                 </Td>
               </Tr>
             ))}
