@@ -5,6 +5,12 @@ export interface IProductStoreDTO {
   price: number
   quantity: number
   storeId: number
+  photoUrl: string | null
+  cashbackType: string
+  points: number
+  brandId: null
+  brandName: string
+  images: Array<string | null>
 }
 
 export interface IStoreDTO {
