@@ -13,8 +13,8 @@ import {
 import { DotsThreeVertical } from '@phosphor-icons/react'
 
 import { products } from 'mock/products'
-import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
-import { TableFooter } from '~components/Table/TableFooter'
+import { ImageTd, /* StatusTd, */ TableTd, TableTh } from '~components/Table'
+// import { TableFooter } from '~components/Table/TableFooter'
 
 export function Audience() {
   const isWideVersion = useBreakpointValue({
@@ -34,7 +34,7 @@ export function Audience() {
           {isWideVersion ? <TableTh title="DISCOUNT PERCENTAGE" /> : null}
           <TableTh title="OPENING DATE" />
           <TableTh title="FINISHING DATE" />
-          {isWideVersion ? <TableTh title="STATUS" /> : null}
+          {/* {isWideVersion ? <TableTh title="STATUS" /> : null} */}
           <TableTh title="ACTIONS" />
         </Tr>
       </Thead>
@@ -54,9 +54,9 @@ export function Audience() {
             <TableTd title={item.brand} />
             <TableTd title={String(item.quantity)} />
             <TableTd title={String(item.price)} />
-            {isWideVersion ? (
+            {/* {isWideVersion ? (
               <StatusTd status={item.status} title="Available" />
-            ) : null}
+            ) : null} */}
             <Td>
               <Button
                 bgColor="transparent"
@@ -74,11 +74,11 @@ export function Audience() {
       <Tfoot>
         <Tr>
           <Td colSpan={8}>
-            <TableFooter
+            {/* <TableFooter
               currentPageStartAmount={1}
               currentPageEndAmount={2}
               totalItems={10}
-            />
+            /> */}
           </Td>
         </Tr>
       </Tfoot>
