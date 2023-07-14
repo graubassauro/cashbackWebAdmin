@@ -1,22 +1,17 @@
 import { ForwardRefRenderFunction, forwardRef } from 'react'
 import { FieldError } from 'react-hook-form'
 import {
+  Button,
   FormControl,
-  Select,
-  SelectProps,
+  ButtonProps,
   Text,
   VStack,
 } from '@chakra-ui/react'
 
-export type SelectOptions = {
-  key: string
-  label: string
-}
-
-interface LightSelectInputProps extends SelectProps {
+interface ButtonInputProps extends ButtonProps {
   error?: FieldError
   label: string
-  options: SelectOptions[]
+  title: string
 }
 
 /**
@@ -24,10 +19,10 @@ interface LightSelectInputProps extends SelectProps {
  * fixed points
  */
 
-const LightSelectBase: ForwardRefRenderFunction<
-  HTMLSelectElement,
-  LightSelectInputProps
-> = ({ label, options, error, ...rest }, ref) => {
+const ButtonInputBase: ForwardRefRenderFunction<
+  HTMLButtonElement,
+  ButtonInputProps
+> = ({ label, title, error, ...rest }, ref) => {
   return (
     <FormControl isInvalid={!!error}>
       <VStack as="label" spacing={1} alignItems="flex-start" w="100%">
@@ -40,7 +35,7 @@ const LightSelectBase: ForwardRefRenderFunction<
         >
           {label}
         </Text>
-        <Select
+        <Button
           w="100%"
           h={14}
           color="gray.800"
@@ -49,23 +44,17 @@ const LightSelectBase: ForwardRefRenderFunction<
           borderColor="gray.600"
           bgColor="gray.400"
           variant="unstyled"
+          alignItems="center"
+          justifyContent="center"
           py={2}
           ref={ref}
-          style={{
-            padding: 16,
-          }}
           {...rest}
         >
-          <option value="default">Selecione uma opção</option>
-          {options.map((option) => (
-            <option key={option.key} value={option.key}>
-              {option.label}
-            </option>
-          ))}
-        </Select>
+          {title}
+        </Button>
       </VStack>
     </FormControl>
   )
 }
 
-export const LightSelectInput = forwardRef(LightSelectBase)
+export const ButtonInput = forwardRef(ButtonInputBase)

@@ -1,13 +1,32 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { VStack, Grid } from '@chakra-ui/react'
+import { VStack, Grid, useDisclosure } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { FormButton } from '~components/Buttons'
-import { LabelInput, LabelTextarea } from '~components/Forms/Inputs'
+import {
+  ButtonInput,
+  LabelInput,
+  LabelTextarea,
+} from '~components/Forms/Inputs'
+import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
 import { Container } from '~layouts/Container'
-import { LightSelectInput } from '~components/Forms/Select'
+import { useGetAllCategoriesQuery } from '~services/category.service'
+import { useGetBrandsByStoreUidQuery } from '~services/brands.service'
+import { useCurrentStore } from '~redux/auth'
+import { ModalSelect } from '~components/Forms/ModalSelect'
+
+const selectOptions: SelectOptions[] = [
+  {
+    key: 'product-price',
+    label: 'Product price %',
+  },
+  {
+    key: 'fixed-points',
+    label: 'Fixed points',
+  },
+]
 
 const createStoreProductSchema = z.object({
   name: z.string(),
@@ -23,6 +42,25 @@ const createStoreProductSchema = z.object({
 type CreateStoreProductInputs = z.infer<typeof createStoreProductSchema>
 
 export function NewProduct() {
+  const [modalListType, setModalListType] = useState<'category' | 'brand'>(
+    'category',
+  )
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const store = useCurrentStore()
+
+  const {
+    data: categories,
+    isFetching: isFetchingCategories,
+    isLoading: isLoadingCategories,
+  } = useGetAllCategoriesQuery()
+
+  const {
+    data: brands,
+    isFetching: isFetchingBrands,
+    isLoading: isLoadingBrands,
+  } = useGetBrandsByStoreUidQuery({ uId: store?.uId ?? '' })
+
   const {
     register,
     handleSubmit,
@@ -39,6 +77,35 @@ export function NewProduct() {
     [],
   )
 
+  const handleOpenCorrectModal = useCallback(
+    (type: 'brand' | 'category') => {
+      setModalListType(type)
+      onOpen()
+    },
+    [onOpen],
+  )
+
+  const modalTitle =
+    modalListType === 'brand' ? 'Select a brand' : 'Select a category'
+
+  const isLoadingButton =
+    isFetchingCategories ||
+    isLoadingCategories ||
+    isFetchingBrands ||
+    isLoadingBrands
+
+  const whoDataShouldBeListed = useMemo(() => {
+    if (categories && modalListType === 'category') {
+      return categories?.data
+    }
+
+    if (brands && modalListType === 'brand') {
+      return brands?.data.brands
+    }
+
+    return []
+  }, [modalListType, categories, brands])
+
   return (
     <Container hasGoBackButton title="New Product">
       <VStack
@@ -49,24 +116,13 @@ export function NewProduct() {
         mt={4}
         onSubmit={handleSubmit(handleCreateNewProduct)}
       >
-        <Grid
-          w="100%"
-          gap={2}
-          gridTemplateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
-        >
-          <LabelInput
-            label="Name"
-            id="name"
-            {...register('name')}
-            error={errors.name}
-          />
-          <LabelInput
-            label="Brand"
-            id="brand"
-            {...register('brand')}
-            error={errors.brand}
-          />
-        </Grid>
+        <LabelInput
+          label="Name"
+          id="name"
+          {...register('name')}
+          error={errors.name}
+        />
+
         <LabelTextarea
           label="Description"
           id="about"
@@ -85,7 +141,7 @@ export function NewProduct() {
             error={errors.quantity}
           />
           <LabelInput
-            label="Price"
+            label="Price ($)"
             id="price"
             {...register('price')}
             error={errors.price}
@@ -97,12 +153,30 @@ export function NewProduct() {
           alignItems="center"
           templateColumns={['1fr', '4fr 1fr']}
         >
-          <LightSelectInput label="Point gain option" />
+          <LightSelectInput label="Point gain option" options={selectOptions} />
           <LabelInput
             label="Value"
             id="pointGainValue"
             {...register('pointGainValue')}
             error={errors.pointGainValue}
+          />
+        </Grid>
+        <Grid
+          gap={2}
+          w="100%"
+          alignItems="center"
+          templateColumns={['1fr', '1fr', '1fr 1fr']}
+        >
+          <ButtonInput
+            label="Category"
+            title="Select Category"
+            isLoading={isLoadingButton}
+            onClick={() => handleOpenCorrectModal('category')}
+          />
+          <ButtonInput
+            label="Brand"
+            title="Select Brand"
+            onClick={() => handleOpenCorrectModal('brand')}
           />
         </Grid>
         <FormButton
@@ -114,6 +188,12 @@ export function NewProduct() {
           disabled={isSubmitting || !isValid}
         />
       </VStack>
+      <ModalSelect
+        title={modalTitle}
+        data={whoDataShouldBeListed}
+        isOpen={isOpen}
+        onClose={onClose}
+      />
     </Container>
   )
 }
