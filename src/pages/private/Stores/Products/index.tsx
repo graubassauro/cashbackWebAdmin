@@ -78,13 +78,16 @@ export function Products() {
 
   const handleDeleteProductByProductUid = useCallback(() => {
     deleteProduct({ uId: uIdToDelete })
-  }, [deleteProduct, uIdToDelete])
+    onClose()
+  }, [deleteProduct, uIdToDelete, onClose])
 
   /**
    * useEffect to invalidate product tag
    */
   useEffect(() => {
     if (isDeletedSuccess) {
+      setPage(1)
+      setProductsToCards([])
       dispatch(cashbackApi.util.invalidateTags(['Product']))
     }
   }, [isDeletedSuccess, dispatch])
