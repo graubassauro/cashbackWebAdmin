@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react'
 import { BagSimple, List, Plus } from '@phosphor-icons/react'
 
-import { ModalSelect } from '~components/Forms/ModalSelect'
+// import { ModalSelect } from '~components/Forms/ModalSelect'
 import { ICategoryDTO } from '~models/Category'
 
 type CategoryCardProps = {
@@ -18,7 +18,7 @@ type CategoryCardProps = {
 }
 
 export function CategoryCard({ data }: CategoryCardProps) {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { /* isOpen, onClose, */ onOpen } = useDisclosure()
 
   return (
     <Card
@@ -84,12 +84,12 @@ export function CategoryCard({ data }: CategoryCardProps) {
           </HStack>
         </VStack>
       </Center>
-      <ModalSelect
+      {/* <ModalSelect
         title="Select a category"
         data={data.categories}
         isOpen={isOpen}
         onClose={onClose}
-      />
+      /> */}
     </Card>
   )
 }

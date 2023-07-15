@@ -120,7 +120,13 @@ export function TableFooter({
               {currentPage + siblingsCount < lastPage && (
                 <>
                   {currentPage + 1 + siblingsCount < lastPage && (
-                    <Text color="gray.300" w="8" textAlign="center">
+                    <Text
+                      bgColor="gray.900"
+                      color="white"
+                      w="8"
+                      borderRadius="md"
+                      textAlign="center"
+                    >
                       ...
                     </Text>
                   )}

@@ -1,21 +1,28 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { VStack, Grid, useDisclosure } from '@chakra-ui/react'
+import { useDispatch } from 'react-redux'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { VStack, Grid, useDisclosure, useToast } from '@chakra-ui/react'
 
+import { cashbackApi } from '~api/cashback-api.service'
 import { FormButton } from '~components/Buttons'
 import {
   ButtonInput,
   LabelInput,
   LabelTextarea,
 } from '~components/Forms/Inputs'
+import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
+import { useModalSelectData } from './hooks/useModalSelectData'
 import { Container } from '~layouts/Container'
+import { useCurrentStore } from '~redux/auth'
 import { useGetAllCategoriesQuery } from '~services/category.service'
 import { useGetBrandsByStoreUidQuery } from '~services/brands.service'
-import { useCurrentStore } from '~redux/auth'
-import { ModalSelect } from '~components/Forms/ModalSelect'
+import {
+  ICreateProductForStoreBody,
+  usePostCreateProductForStoreMutation,
+} from '~services/products.service'
 
 const selectOptions: SelectOptions[] = [
   {
@@ -30,13 +37,11 @@ const selectOptions: SelectOptions[] = [
 
 const createStoreProductSchema = z.object({
   name: z.string(),
-  brand: z.string(),
   about: z.string(),
-  quantity: z.number(),
-  price: z.number(),
+  quantity: z.string(),
+  price: z.string(),
   pointGain: z.string(),
-  pointGainValue: z.number(),
-  category: z.string(),
+  pointGainValue: z.string(),
 })
 
 type CreateStoreProductInputs = z.infer<typeof createStoreProductSchema>
@@ -46,9 +51,23 @@ export function NewProduct() {
     'category',
   )
 
+  const modalTitle = modalListType === 'brand' ? 'Brands' : 'Categories'
+
+  const toast = useToast()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const store = useCurrentStore()
+  const dispatch = useDispatch()
 
+  const {
+    selectedCategory,
+    selectedBrand,
+    handleSetSelectedCategory,
+    handleSetSelectedBrand,
+  } = useModalSelectData()
+
+  /**
+   * API
+   */
   const {
     data: categories,
     isFetching: isFetchingCategories,
@@ -61,6 +80,13 @@ export function NewProduct() {
     isLoading: isLoadingBrands,
   } = useGetBrandsByStoreUidQuery({ uId: store?.uId ?? '' })
 
+  const [
+    createProduct,
+    { isSuccess: createdProduct, isLoading: isCreatingProduct },
+  ] = usePostCreateProductForStoreMutation()
+
+  //
+
   const {
     register,
     handleSubmit,
@@ -72,9 +98,22 @@ export function NewProduct() {
 
   const handleCreateNewProduct = useCallback(
     (data: CreateStoreProductInputs) => {
-      console.log(data)
+      const body: ICreateProductForStoreBody = {
+        name: data.name,
+        price: Number(data.price),
+        quantity: Number(data.quantity),
+        storeUId: store?.uId ?? '',
+        highlight: '',
+        about: data.about,
+        brandId: selectedBrand?.id ?? 0,
+        cashbackType: data.pointGain,
+        points: Number(data.pointGainValue),
+        categories: [selectedCategory?.id],
+      }
+
+      createProduct(body)
     },
-    [],
+    [selectedBrand?.id, selectedCategory?.id, store?.uId, createProduct],
   )
 
   const handleOpenCorrectModal = useCallback(
@@ -84,9 +123,6 @@ export function NewProduct() {
     },
     [onOpen],
   )
-
-  const modalTitle =
-    modalListType === 'brand' ? 'Select a brand' : 'Select a category'
 
   const isLoadingButton =
     isFetchingCategories ||
@@ -105,6 +141,21 @@ export function NewProduct() {
 
     return []
   }, [modalListType, categories, brands])
+
+  useEffect(() => {
+    if (createdProduct) {
+      dispatch(cashbackApi.util.invalidateTags(['Product']))
+
+      toast({
+        title: `New product was created`,
+        description: 'Now your clients you be able to buy it!',
+        status: 'info',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      })
+    }
+  }, [dispatch, createdProduct, toast])
 
   return (
     <Container hasGoBackButton title="New Product">
@@ -153,7 +204,13 @@ export function NewProduct() {
           alignItems="center"
           templateColumns={['1fr', '4fr 1fr']}
         >
-          <LightSelectInput label="Point gain option" options={selectOptions} />
+          <LightSelectInput
+            label="Point gain option"
+            id="pointGain"
+            {...register('pointGain')}
+            error={errors.pointGain}
+            options={selectOptions}
+          />
           <LabelInput
             label="Value"
             id="pointGainValue"
@@ -169,13 +226,13 @@ export function NewProduct() {
         >
           <ButtonInput
             label="Category"
-            title="Select Category"
+            title={selectedCategory?.name}
             isLoading={isLoadingButton}
             onClick={() => handleOpenCorrectModal('category')}
           />
           <ButtonInput
             label="Brand"
-            title="Select Brand"
+            title={selectedBrand?.name}
             onClick={() => handleOpenCorrectModal('brand')}
           />
         </Grid>
@@ -184,7 +241,7 @@ export function NewProduct() {
           title="Create"
           alignSelf="flex-end"
           formButtonType="SUBMIT"
-          isLoading={isSubmitting}
+          isLoading={isSubmitting || isCreatingProduct}
           disabled={isSubmitting || !isValid}
         />
       </VStack>
@@ -193,6 +250,8 @@ export function NewProduct() {
         data={whoDataShouldBeListed}
         isOpen={isOpen}
         onClose={onClose}
+        handleSetSelectedCategory={handleSetSelectedCategory}
+        handleSetSelectedBrand={handleSetSelectedBrand}
       />
     </Container>
   )

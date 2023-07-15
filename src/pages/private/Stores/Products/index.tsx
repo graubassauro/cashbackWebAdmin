@@ -1,131 +1,56 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import {
-  Center,
-  Checkbox,
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuGroup,
-  MenuItem,
-  MenuList,
-  Table,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
+  Button,
+  Grid,
+  VStack,
   useBreakpointValue,
+  useDisclosure,
 } from '@chakra-ui/react'
-import { DotsThreeVertical } from '@phosphor-icons/react'
 
 import { cashbackApi } from '~api/cashback-api.service'
-import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
-import { Loading } from '~components/Loading'
-import { TableFooter } from '~components/Table/TableFooter'
+import { IProductStoreDTO } from '~models/Store'
 import { useCurrentStore } from '~redux/auth'
 import {
   useDeleteProductMutation,
   useGetProductsByStoreUidQuery,
 } from '~services/products.service'
 
-type MenuItemComponentProps = {
-  productUid: string
-  onHandleDeleteProduct: (productUid: string) => void
-}
-
-function MenuItemComponent({
-  productUid,
-  onHandleDeleteProduct,
-}: MenuItemComponentProps) {
-  return (
-    <Menu>
-      <MenuButton
-        p={2}
-        bgColor="transparent"
-        borderWidth={1}
-        borderColor="white"
-        _hover={{ bgColor: 'gray.300' }}
-        transition="ease-in 0.35s"
-      >
-        <DotsThreeVertical size={24} />
-      </MenuButton>
-      <MenuList>
-        <MenuGroup title="Options">
-          <MenuDivider />
-          {/* <MenuItem
-            bgColor="white"
-            textColor="gray.700"
-            _hover={{
-              bgColor: 'purple.900',
-              textColor: 'white',
-            }}
-          >
-            See product
-          </MenuItem> */}
-          <MenuItem
-            bgColor="white"
-            textColor="gray.700"
-            _hover={{
-              bgColor: 'purple.900',
-              textColor: 'white',
-            }}
-          >
-            Edit
-          </MenuItem>
-          <MenuItem
-            bgColor="white"
-            textColor="gray.700"
-            _hover={{
-              bgColor: 'purple.900',
-              textColor: 'white',
-            }}
-          >
-            Highlight
-          </MenuItem>
-          <MenuItem
-            bgColor="white"
-            textColor="gray.700"
-            _hover={{
-              bgColor: 'purple.900',
-              textColor: 'white',
-            }}
-            onClick={() => onHandleDeleteProduct(productUid)}
-          >
-            Delete
-          </MenuItem>
-        </MenuGroup>
-      </MenuList>
-    </Menu>
-  )
-}
+import { DeleteModalComponent, ProductCard, ProductTable } from './components'
 
 export function Products() {
   const [page, setPage] = useState(1)
+  const [productsToCards, setProductsToCards] = useState<IProductStoreDTO[]>([])
+  const [uIdToDelete, setUIdToDelete] = useState('')
 
   const dispatch = useDispatch()
   const store = useCurrentStore()
   const isWideVersion = useBreakpointValue({
     base: false,
-    lg: true,
+    sm: false,
+    md: false,
+    lg: false,
+    xl: true,
+    '2xl': true,
   })
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const { data: products, isLoading: isProductsLoading } =
-    useGetProductsByStoreUidQuery({
-      page,
-      uId: store?.uId ?? '',
-    })
+  const {
+    data: products,
+    isLoading: isProductsLoading,
+    isSuccess: isLoadedProducts,
+  } = useGetProductsByStoreUidQuery({
+    page,
+    uId: store?.uId ?? '',
+  })
 
   const pageParams = useMemo(() => {
     return {
-      startPosition: products?.data.currentpage ?? 1,
       endPosition: products?.data.totalPages ?? 5,
       totalOfItems: products?.data.totalRecords ?? 0,
       totalOfItemsPerPage: products?.data.products.length ?? 10,
     }
   }, [
-    products?.data.currentpage,
     products?.data.totalPages,
     products?.data.totalRecords,
     products?.data.products.length,
@@ -137,14 +62,23 @@ export function Products() {
   ] = useDeleteProductMutation()
 
   /**
-   * Handlers table item
+   * Handlers item
    */
-  const handleDeleteProductByProductUid = useCallback(
-    (productUid: string) => {
-      deleteProduct({ uId: productUid })
+  const handleSetPage = useCallback((page: number) => {
+    setPage(page)
+  }, [])
+
+  const handleSetUidToDelete = useCallback(
+    (uId: string) => {
+      onOpen()
+      setUIdToDelete(uId)
     },
-    [deleteProduct],
+    [onOpen, setUIdToDelete],
   )
+
+  const handleDeleteProductByProductUid = useCallback(() => {
+    deleteProduct({ uId: uIdToDelete })
+  }, [deleteProduct, uIdToDelete])
 
   /**
    * useEffect to invalidate product tag
@@ -155,70 +89,80 @@ export function Products() {
     }
   }, [isDeletedSuccess, dispatch])
 
+  /**
+   * useEffect to load products
+   */
+  useEffect(() => {
+    if (isLoadedProducts) {
+      setProductsToCards((prevState) => {
+        const updatedProductsList = [...prevState, ...products?.data.products]
+        return updatedProductsList
+      })
+    }
+  }, [isLoadedProducts, products?.data.products])
+
   return (
-    <Table mt={8} bgColor="white" borderRadius={6}>
-      {isProductsLoading || isDeleting ? (
-        <Center w="100%" h={250}>
-          <Loading />
-        </Center>
+    <>
+      {isWideVersion ? (
+        <ProductTable
+          products={products?.data.products ?? []}
+          isLoading={isProductsLoading}
+          isDeleting={isDeleting}
+          isWideVersion={isWideVersion}
+          page={page}
+          endPosition={pageParams.endPosition}
+          totalOfItems={pageParams.totalOfItems}
+          totalOfItemsPerPage={pageParams.totalOfItemsPerPage}
+          onHandleSetUidToDelete={handleSetUidToDelete}
+          onPageChange={handleSetPage}
+        />
       ) : (
-        <>
-          <Thead>
-            <Tr borderBottomWidth={1} pb={4}>
-              <Th>
-                <Checkbox />
-              </Th>
-              {isWideVersion ? <TableTh title="IMAGE" /> : null}
-              <TableTh title="PRODUCT" />
-              {/* <TableTh title="BRAND NAME" /> */}
-              <TableTh title="QUANTITY" />
-              <TableTh title="PRICE ($)" />
-              {isWideVersion ? <TableTh title="STATUS" /> : null}
-              <TableTh title="ACTIONS" />
-            </Tr>
-          </Thead>
-          <Tbody>
-            {products?.data.products.map((item) => (
-              <Tr key={item.id}>
-                <Td>
-                  <Checkbox />
-                </Td>
-                {isWideVersion ? (
-                  <ImageTd
-                    product={item.name}
-                    src="https://github.com/thereallucas98.png"
-                  />
-                ) : null}
-                <TableTd title={item.name} />
-                {/* {isWideVersion ? <TableTd title={item.brandName} /> : null} */}
-                <TableTd title={String(item.quantity)} />
-                <TableTd title={String(item.price)} />
-                {isWideVersion ? <StatusTd quantity={item.quantity} /> : null}
-                <Td>
-                  <MenuItemComponent
-                    productUid={item.uId}
-                    onHandleDeleteProduct={handleDeleteProductByProductUid}
-                  />
-                </Td>
-              </Tr>
+        <VStack w="100%">
+          <Grid
+            w="100%"
+            templateColumns={[
+              '1fr',
+              '1fr',
+              '1fr 1fr',
+              '1fr 1fr 1fr',
+              'repeat(3, 1fr)',
+            ]}
+            gap={[2, 4]}
+            mt={8}
+          >
+            {productsToCards.map((product) => (
+              <ProductCard
+                key={product.uId}
+                product={product}
+                onHandleSetUidToDelete={handleSetUidToDelete}
+              />
             ))}
-          </Tbody>
-        </>
+          </Grid>
+          {page < pageParams.endPosition ? (
+            <Button
+              bgColor="transparent"
+              fontSize={[14, 16, 18]}
+              fontWeight={500}
+              color="gray.800"
+              transition="all 0.35s"
+              _hover={{
+                bgColor: 'transparent',
+                fontWeight: 700,
+              }}
+              onClick={() => handleSetPage(page + 1)}
+            >
+              Load more products
+            </Button>
+          ) : null}
+        </VStack>
       )}
-      <Tfoot>
-        <Tr>
-          <Td colSpan={8}>
-            <TableFooter
-              isWideVersion={isWideVersion}
-              currentPage={page}
-              currentPageEndAmount={pageParams.endPosition}
-              currentPageTotalItems={pageParams.totalOfItemsPerPage}
-              totalItems={pageParams.totalOfItems}
-              onPageChange={setPage}
-            />
-          </Td>
-        </Tr>
-      </Tfoot>
-    </Table>
+
+      <DeleteModalComponent
+        isDeleting={isDeleting}
+        isOpen={isOpen}
+        onClose={onClose}
+        onHandleDeleteProductByProductUid={handleDeleteProductByProductUid}
+      />
+    </>
   )
 }

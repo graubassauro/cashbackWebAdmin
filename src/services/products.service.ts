@@ -2,6 +2,19 @@ import { cashbackApi } from '~api/cashback-api.service'
 import { IProductStoreDTO } from '~models/Store'
 import { DataWrapper } from './types'
 
+export interface ICreateProductForStoreBody {
+  name: string
+  price: number
+  quantity: number
+  storeUId: string
+  highlight: string
+  about: string
+  brandId: number
+  cashbackType: string
+  points: number
+  categories: Array<number>
+}
+
 interface IProductsByStoreParams {
   uId: string
   page: number
@@ -20,12 +33,21 @@ interface IDeleteProductsByUid {
 
 export const productServiceApi = cashbackApi.injectEndpoints({
   endpoints: (build) => ({
+    postCreateProductForStore: build.mutation<void, ICreateProductForStoreBody>(
+      {
+        query: (body) => ({
+          url: 'product/create',
+          body,
+          method: 'POST',
+        }),
+      },
+    ),
     getProductsByStoreUid: build.query<
       DataWrapper<IProductByStoreResponse>,
       IProductsByStoreParams
     >({
       query: ({ uId, page }) => ({
-        url: `product/store/${uId}/all/${page}/2`,
+        url: `product/store/${uId}/all/${page}/10`,
         method: 'GET',
       }),
       providesTags: ['Product'],
@@ -40,5 +62,8 @@ export const productServiceApi = cashbackApi.injectEndpoints({
   }),
 })
 
-export const { useGetProductsByStoreUidQuery, useDeleteProductMutation } =
-  productServiceApi
+export const {
+  usePostCreateProductForStoreMutation,
+  useGetProductsByStoreUidQuery,
+  useDeleteProductMutation,
+} = productServiceApi

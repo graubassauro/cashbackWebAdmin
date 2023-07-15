@@ -1,3 +1,5 @@
+import { ICategoryDTO } from './Category'
+
 export interface IProductStoreDTO {
   id: number
   uId: string
@@ -11,6 +13,7 @@ export interface IProductStoreDTO {
   brandId: null
   brandName: string
   images: Array<string | null>
+  categories?: ICategoryDTO[]
 }
 
 export interface IStoreDTO {
