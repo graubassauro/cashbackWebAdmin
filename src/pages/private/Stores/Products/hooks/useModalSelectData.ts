@@ -3,12 +3,14 @@ import { useCallback, useState } from 'react'
 import { ICategoryDTO } from '~models/Category'
 
 export function useModalSelectData() {
-  const [selectedCategory, setSelectedCategory] = useState<ICategoryDTO>({
-    id: 0,
-    uId: '',
-    name: 'Select category',
-    categories: [],
-  })
+  const [selectedCategory, setSelectedCategory] = useState<ICategoryDTO[]>([
+    {
+      id: 0,
+      uId: '',
+      name: 'Select category',
+      categories: [],
+    },
+  ])
 
   const [selectedBrand, setSelectedBrand] = useState<ICategoryDTO>({
     id: 0,
@@ -18,7 +20,7 @@ export function useModalSelectData() {
   })
 
   const handleSetSelectedCategory = useCallback((item: ICategoryDTO) => {
-    setSelectedCategory(item)
+    setSelectedCategory((prevState) => [...prevState, item])
   }, [])
 
   const handleSetSelectedBrand = useCallback((item: ICategoryDTO) => {

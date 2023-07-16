@@ -140,8 +140,9 @@ export function ModalSelect({
   const handleCategoryClick = useCallback(
     (category: ICategoryDTO) => {
       setCategoryStack([...categoryStack, category])
+      handleSetSelectedCategory(category)
     },
-    [categoryStack],
+    [categoryStack, handleSetSelectedCategory],
   )
 
   const handleGoBack = useCallback(() => {

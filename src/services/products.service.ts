@@ -15,6 +15,23 @@ export interface ICreateProductForStoreBody {
   categories: Array<number>
 }
 
+interface ICreateProductForStoreResponse {
+  id: number
+  uId: string
+  name: string
+}
+
+interface ICreateProductImageRequestURLBody {
+  productUId: string
+  storeUId: string
+}
+
+interface ICreateProductImageRequestURLResponse {
+  productUId: string
+  storeUId: string
+  url: string
+}
+
 interface IProductsByStoreParams {
   uId: string
   page: number
@@ -42,6 +59,16 @@ export const productServiceApi = cashbackApi.injectEndpoints({
         }),
       },
     ),
+    postToReceiveURLToSaveProductImage: build.mutation<
+      DataWrapper<ICreateProductImageRequestURLResponse>,
+      ICreateProductImageRequestURLBody
+    >({
+      query: (body) => ({
+        url: 'product/image',
+        body,
+        method: 'POST',
+      }),
+    }),
     getProductsByStoreUid: build.query<
       DataWrapper<IProductByStoreResponse>,
       IProductsByStoreParams
@@ -52,7 +79,10 @@ export const productServiceApi = cashbackApi.injectEndpoints({
       }),
       providesTags: ['Product'],
     }),
-    deleteProduct: build.mutation<void, IDeleteProductsByUid>({
+    deleteProduct: build.mutation<
+      DataWrapper<ICreateProductForStoreResponse>,
+      IDeleteProductsByUid
+    >({
       query: (body) => ({
         url: 'product/delete',
         body,

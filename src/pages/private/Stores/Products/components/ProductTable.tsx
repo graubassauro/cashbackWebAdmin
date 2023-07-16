@@ -1,6 +1,8 @@
 import {
+  Badge,
   Center,
   Checkbox,
+  HStack,
   Menu,
   MenuButton,
   MenuDivider,
@@ -10,6 +12,7 @@ import {
   Table,
   Tbody,
   Td,
+  Text,
   Tfoot,
   Th,
   Thead,
@@ -19,6 +22,7 @@ import { DotsThreeVertical } from '@phosphor-icons/react'
 import { Loading } from '~components/Loading'
 import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
 import { TableFooter } from '~components/Table/TableFooter'
+import { ICategoryDTO } from '~models/Category'
 import { IProductStoreDTO } from '~models/Store'
 
 type MenuItemComponentProps = {
@@ -139,7 +143,18 @@ export function ProductTable({
                   product={item.name}
                   src="https://github.com/thereallucas98.png"
                 />
-                <TableTd title={item.name} />
+                <Td>
+                  <Text fontSize={14} fontWeight={400} color="gray.900">
+                    {item.name}
+                  </Text>
+                  <HStack wrap="wrap" mt={2}>
+                    {item.categories?.map((category: ICategoryDTO) => (
+                      <Badge colorScheme="purple" key={category.uId}>
+                        {category.name}
+                      </Badge>
+                    ))}
+                  </HStack>
+                </Td>
                 <TableTd title={item.brandName ? item.brandName : 'TBA'} />
                 <TableTd title={String(item.quantity)} />
                 <TableTd title={String(item.price)} />

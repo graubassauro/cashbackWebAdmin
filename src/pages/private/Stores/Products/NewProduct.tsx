@@ -98,6 +98,10 @@ export function NewProduct() {
 
   const handleCreateNewProduct = useCallback(
     (data: CreateStoreProductInputs) => {
+      const categoriesId = selectedCategory
+        .filter((category) => category.id !== 0)
+        .map((category) => category.id)
+
       const body: ICreateProductForStoreBody = {
         name: data.name,
         price: Number(data.price),
@@ -108,12 +112,12 @@ export function NewProduct() {
         brandId: selectedBrand?.id ?? 0,
         cashbackType: data.pointGain,
         points: Number(data.pointGainValue),
-        categories: [selectedCategory?.id],
+        categories: categoriesId,
       }
 
       createProduct(body)
     },
-    [selectedBrand?.id, selectedCategory?.id, store?.uId, createProduct],
+    [selectedBrand?.id, selectedCategory, store?.uId, createProduct],
   )
 
   const handleOpenCorrectModal = useCallback(
@@ -141,6 +145,14 @@ export function NewProduct() {
 
     return []
   }, [modalListType, categories, brands])
+
+  const categoriesLabel =
+    selectedCategory.length > 1
+      ? selectedCategory
+          .filter((category) => category.id !== 0)
+          .map((category) => category.name)
+          .join(', ')
+      : selectedCategory[0].name
 
   useEffect(() => {
     if (createdProduct) {
@@ -226,7 +238,7 @@ export function NewProduct() {
         >
           <ButtonInput
             label="Category"
-            title={selectedCategory?.name}
+            title={categoriesLabel}
             isLoading={isLoadingButton}
             onClick={() => handleOpenCorrectModal('category')}
           />

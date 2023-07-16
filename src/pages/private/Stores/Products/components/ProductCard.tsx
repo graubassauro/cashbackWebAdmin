@@ -44,7 +44,7 @@ export function ProductCard({ product, onHandleSetUidToDelete }: ProductProps) {
           >
             {product.name}
           </Heading>
-          <HStack>
+          <HStack wrap="wrap">
             {product.categories?.map((category: ICategoryDTO) => (
               <Badge colorScheme="purple" key={category.uId}>
                 {category.name}
