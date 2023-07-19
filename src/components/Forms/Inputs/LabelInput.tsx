@@ -1,5 +1,12 @@
 import { FieldError } from 'react-hook-form'
-import { FormControl, Input, InputProps, Text, VStack } from '@chakra-ui/react'
+import {
+  FormControl,
+  FormErrorMessage,
+  Input,
+  InputProps,
+  Text,
+  VStack,
+} from '@chakra-ui/react'
 import { ForwardRefRenderFunction, forwardRef } from 'react'
 
 type LabelInputProps = InputProps & {
@@ -32,6 +39,7 @@ const LabelInputBase: ForwardRefRenderFunction<
           {...rest}
         />
       </VStack>
+      {!!error && <FormErrorMessage>{error.message}</FormErrorMessage>}
     </FormControl>
   )
 }

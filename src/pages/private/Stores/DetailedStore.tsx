@@ -77,8 +77,8 @@ const optionsTabData = [
   {
     inputPlaceholder: 'Search for a product',
     groupedData: {
-      title: 'Categories',
-      urlEndpoint: 'products/categories',
+      title: 'Brands',
+      urlEndpoint: 'products/brands',
     },
     newData: {
       title: 'New product',
