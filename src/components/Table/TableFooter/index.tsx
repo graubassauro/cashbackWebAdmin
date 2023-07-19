@@ -57,6 +57,7 @@ export function TableFooter({
 
   return (
     <HStack
+      as="label"
       spacing={2}
       justifyContent={
         isWideVersion && currentPageEndAmount > 1 ? 'space-between' : 'center'

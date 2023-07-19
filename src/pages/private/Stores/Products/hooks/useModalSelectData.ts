@@ -23,14 +23,36 @@ export function useModalSelectData() {
     setSelectedCategory((prevState) => [...prevState, item])
   }, [])
 
+  const handleRemoveSelectedCategory = useCallback(
+    (item: ICategoryDTO) => {
+      const filteredCategories = selectedCategory.filter(
+        (c) => c.name !== item.name,
+      )
+
+      setSelectedCategory(filteredCategories)
+    },
+    [selectedCategory],
+  )
+
   const handleSetSelectedBrand = useCallback((item: ICategoryDTO) => {
     setSelectedBrand(item)
   }, [])
+
+  const handleRemoveSelectedBrand = useCallback(() => {
+    setSelectedBrand({
+      id: 0,
+      uId: '',
+      name: 'Select brand',
+      categories: [],
+    })
+  }, [setSelectedBrand])
 
   return {
     selectedCategory,
     selectedBrand,
     handleSetSelectedCategory,
+    handleRemoveSelectedCategory,
     handleSetSelectedBrand,
+    handleRemoveSelectedBrand,
   }
 }

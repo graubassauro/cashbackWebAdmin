@@ -54,7 +54,18 @@ export function NewProduct() {
   const modalTitle = modalListType === 'brand' ? 'Brands' : 'Categories'
 
   const toast = useToast()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  // Hook to select brand or categories
+  const {
+    isOpen: isSelectButtonOpen,
+    onOpen: onOpenSelectButton,
+    onClose: onCloseSelectButton,
+  } = useDisclosure()
+  // hook to unselect brand or categories
+  const {
+    isOpen: isUnselectButtonOpen,
+    onOpen: onOpenUnselectButton,
+    onClose: onCloseUnselectButton,
+  } = useDisclosure()
   const store = useCurrentStore()
   const dispatch = useDispatch()
 
@@ -62,7 +73,9 @@ export function NewProduct() {
     selectedCategory,
     selectedBrand,
     handleSetSelectedCategory,
+    handleRemoveSelectedCategory,
     handleSetSelectedBrand,
+    handleRemoveSelectedBrand,
   } = useModalSelectData()
 
   /**
@@ -123,9 +136,9 @@ export function NewProduct() {
   const handleOpenCorrectModal = useCallback(
     (type: 'brand' | 'category') => {
       setModalListType(type)
-      onOpen()
+      onOpenSelectButton()
     },
-    [onOpen],
+    [onOpenSelectButton],
   )
 
   const isLoadingButton =
@@ -168,6 +181,10 @@ export function NewProduct() {
       })
     }
   }, [dispatch, createdProduct, toast])
+
+  const filteredCategories = selectedCategory.filter((c) => c.uId !== '')
+
+  const selectedsData = [...filteredCategories, selectedBrand]
 
   return (
     <Container hasGoBackButton title="New Product">
@@ -239,13 +256,20 @@ export function NewProduct() {
           <ButtonInput
             label="Category"
             title={categoriesLabel}
+            modalButton="category"
             isLoading={isLoadingButton}
-            onClick={() => handleOpenCorrectModal('category')}
+            hasSelectedItems={selectedCategory.length > 1}
+            onHandleOpenCorrectModal={handleOpenCorrectModal}
+            onHandleOpenCorrectUnselectModal={onOpenUnselectButton}
           />
           <ButtonInput
             label="Brand"
             title={selectedBrand?.name}
-            onClick={() => handleOpenCorrectModal('brand')}
+            modalButton="brand"
+            isLoading={isLoadingButton}
+            hasSelectedItems={selectedBrand.name !== 'Select brand'}
+            onHandleOpenCorrectModal={handleOpenCorrectModal}
+            onHandleOpenCorrectUnselectModal={onOpenUnselectButton}
           />
         </Grid>
         <FormButton
@@ -260,10 +284,22 @@ export function NewProduct() {
       <ModalSelect
         title={modalTitle}
         data={whoDataShouldBeListed}
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isSelectButtonOpen}
+        onClose={onCloseSelectButton}
         handleSetSelectedCategory={handleSetSelectedCategory}
         handleSetSelectedBrand={handleSetSelectedBrand}
+      />
+
+      <ModalSelect
+        title={modalTitle}
+        data={selectedsData}
+        isUnSelectModal
+        isOpen={isUnselectButtonOpen}
+        onClose={onCloseUnselectButton}
+        handleSetSelectedCategory={handleSetSelectedCategory}
+        handleRemoveSelectedCategory={handleRemoveSelectedCategory}
+        handleSetSelectedBrand={handleSetSelectedBrand}
+        handleRemoveSelectedBrand={handleRemoveSelectedBrand}
       />
     </Container>
   )
