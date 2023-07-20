@@ -14,6 +14,7 @@ import { NewStore } from '~pages/private/Stores/NewStore'
 import { DetailedStore } from '~pages/private/Stores/DetailedStore'
 import { Settings } from '~pages/private/Settings'
 import { Brands } from '~pages/private/Stores/Products/Brands'
+import { Categories } from '~pages/private/Categories'
 
 export function AppRoutes() {
   const location = useLocation()
@@ -26,6 +27,7 @@ export function AppRoutes() {
           <Route path="onboard" element={<Onboard />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="categories" element={<Categories />} />
           <Route path="stores" element={<Stores />}>
             <Route path="detail-store" element={<DetailedStore />} />
             <Route path="edit-store" element={<EditStore />} />

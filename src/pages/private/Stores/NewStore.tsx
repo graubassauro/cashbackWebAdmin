@@ -34,7 +34,25 @@ const createMerchantStoreSchema = z.object({
 
 type CreateMerchantStoreInputs = z.infer<typeof createMerchantStoreSchema>
 
+function useDebouncedValue(value: string, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
+
 export function NewStore() {
+  const debounceDelay = 850
+
   const [canShowInput, setCanShowInput] = useState(false)
 
   const toast = useToast()
@@ -46,7 +64,7 @@ export function NewStore() {
     formState: { errors, isSubmitting, isValid },
   } = useForm<CreateMerchantStoreInputs>({
     resolver: zodResolver(createMerchantStoreSchema),
-    mode: 'onChange',
+    mode: 'onTouched',
   })
 
   /*
@@ -78,11 +96,16 @@ export function NewStore() {
 
   const streetFieldValue = watch('street')
 
+  const debouncedAddress = useDebouncedValue(streetFieldValue, debounceDelay)
+
   const {
     isFetching: isFetchingAddress,
     isLoading: isLoadingAddress,
     data: addressList,
-  } = useGetAdressLocationQuery({ address: streetFieldValue })
+  } = useGetAdressLocationQuery(
+    { address: debouncedAddress },
+    { skip: !debouncedAddress },
+  )
 
   /**
    * Handling to create a new store

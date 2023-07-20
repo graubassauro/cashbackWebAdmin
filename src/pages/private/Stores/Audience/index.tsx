@@ -1,11 +1,9 @@
 import {
   Button,
-  Checkbox,
   Table,
   Tbody,
   Td,
   Tfoot,
-  Th,
   Thead,
   Tr,
   useBreakpointValue,
@@ -26,9 +24,6 @@ export function Audience() {
     <Table mt={8} bgColor="white" borderRadius={6}>
       <Thead>
         <Tr borderBottomWidth={1} pb={4}>
-          <Th>
-            <Checkbox />
-          </Th>
           {isWideVersion ? <TableTh title="IMAGE" /> : null}
           <TableTh title="TITLE" />
           {isWideVersion ? <TableTh title="DISCOUNT PERCENTAGE" /> : null}
@@ -41,9 +36,6 @@ export function Audience() {
       <Tbody>
         {products.map((item) => (
           <Tr key={item.id}>
-            <Td>
-              <Checkbox />
-            </Td>
             {isWideVersion ? (
               <ImageTd
                 product={item.name}

@@ -31,7 +31,12 @@ function StoreContainer() {
   useEffect(() => {
     if (isStoresSuccess && stores) {
       setStoresData((previousStore) => {
-        return [...previousStore, ...stores.data.stores]
+        const existingIds = previousStore.map((item) => item.uId)
+        const newStores = stores.data.stores.filter(
+          (item) => !existingIds.includes(item.uId),
+        )
+
+        return [...previousStore, ...newStores]
       })
     }
   }, [isStoresSuccess, stores])
@@ -73,7 +78,7 @@ function StoreContainer() {
               <StoreCard key={item.uId} data={item} />
             ))}
           </Grid>
-          {currentPage <= totalPages && (
+          {currentPage < totalPages && (
             <ActionButton
               alignSelf="flex-end"
               title="Load more stores"

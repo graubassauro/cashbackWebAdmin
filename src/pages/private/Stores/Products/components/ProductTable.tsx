@@ -1,7 +1,6 @@
 import {
   Badge,
   Center,
-  Checkbox,
   HStack,
   Menu,
   MenuButton,
@@ -14,11 +13,11 @@ import {
   Td,
   Text,
   Tfoot,
-  Th,
   Thead,
   Tr,
 } from '@chakra-ui/react'
 import { DotsThreeVertical } from '@phosphor-icons/react'
+
 import { Loading } from '~components/Loading'
 import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
 import { TableFooter } from '~components/Table/TableFooter'
@@ -121,9 +120,6 @@ export function ProductTable({
         <>
           <Thead>
             <Tr borderBottomWidth={1} pb={4}>
-              <Th>
-                <Checkbox />
-              </Th>
               <TableTh title="IMAGE" />
               <TableTh title="PRODUCT" />
               <TableTh title="BRAND NAME" />
@@ -136,9 +132,6 @@ export function ProductTable({
           <Tbody>
             {products.map((item) => (
               <Tr key={item.id}>
-                <Td>
-                  <Checkbox />
-                </Td>
                 <ImageTd
                   product={item.name}
                   src="https://github.com/thereallucas98.png"
