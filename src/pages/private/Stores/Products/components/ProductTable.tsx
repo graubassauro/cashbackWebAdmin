@@ -134,7 +134,11 @@ export function ProductTable({
               <Tr key={item.id}>
                 <ImageTd
                   product={item.name}
-                  src="https://github.com/thereallucas98.png"
+                  src={
+                    item.images.length > 0
+                      ? item.images[0].url
+                      : 'https://github.com/thereallucas98.png'
+                  }
                 />
                 <Td>
                   <Text fontSize={14} fontWeight={400} color="gray.900">

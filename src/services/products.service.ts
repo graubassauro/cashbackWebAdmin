@@ -50,15 +50,16 @@ interface IDeleteProductsByUid {
 
 export const productServiceApi = cashbackApi.injectEndpoints({
   endpoints: (build) => ({
-    postCreateProductForStore: build.mutation<void, ICreateProductForStoreBody>(
-      {
-        query: (body) => ({
-          url: 'product/create',
-          body,
-          method: 'POST',
-        }),
-      },
-    ),
+    postCreateProductForStore: build.mutation<
+      DataWrapper<IProductStoreDTO>,
+      ICreateProductForStoreBody
+    >({
+      query: (body) => ({
+        url: 'product/create',
+        body,
+        method: 'POST',
+      }),
+    }),
     postToReceiveURLToSaveProductImage: build.mutation<
       DataWrapper<ICreateProductImageRequestURLResponse>,
       ICreateProductImageRequestURLBody
@@ -93,6 +94,7 @@ export const productServiceApi = cashbackApi.injectEndpoints({
 })
 
 export const {
+  usePostToReceiveURLToSaveProductImageMutation,
   usePostCreateProductForStoreMutation,
   useGetProductsByStoreUidQuery,
   useDeleteProductMutation,

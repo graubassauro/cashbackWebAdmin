@@ -1,5 +1,10 @@
 import { ICategoryDTO } from './Category'
 
+interface ImageFile {
+  imageUid: string
+  url: string
+}
+
 export interface IProductStoreDTO {
   id: number
   uId: string
@@ -12,7 +17,7 @@ export interface IProductStoreDTO {
   points: number
   brandId: null
   brandName: string
-  images: Array<string | null>
+  images: ImageFile[]
   categories?: ICategoryDTO[]
 }
 

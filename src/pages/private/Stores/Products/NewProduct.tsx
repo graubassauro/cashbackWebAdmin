@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -9,6 +9,7 @@ import { cashbackApi } from '~api/cashback-api.service'
 import { FormButton } from '~components/Buttons'
 import {
   ButtonInput,
+  LabelFileInput,
   LabelInput,
   LabelTextarea,
 } from '~components/Forms/Inputs'
@@ -22,6 +23,7 @@ import { useGetBrandsByStoreUidQuery } from '~services/brands.service'
 import {
   ICreateProductForStoreBody,
   usePostCreateProductForStoreMutation,
+  usePostToReceiveURLToSaveProductImageMutation,
 } from '~services/products.service'
 
 const selectOptions: SelectOptions[] = [
@@ -49,6 +51,24 @@ type CreateStoreProductInputs = z.infer<typeof createStoreProductSchema>
 export function NewProduct() {
   const [modalListType, setModalListType] = useState<'category' | 'brand'>(
     'category',
+  )
+  const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
+
+  const handleAddFile = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files?.[0]) {
+      const file = event.target.files?.[0]
+      setSelectedFiles((prevState) => [...(prevState ?? []), file])
+    }
+  }, [])
+
+  const handleRemoveFileFromIndex = useCallback(
+    (position: number) => {
+      const filteredFilesArray =
+        selectedFiles?.filter((_, index) => index !== position) ?? []
+
+      setSelectedFiles(filteredFilesArray ?? [])
+    },
+    [selectedFiles],
   )
 
   const modalTitle = modalListType === 'brand' ? 'Brands' : 'Categories'
@@ -95,7 +115,11 @@ export function NewProduct() {
 
   const [
     createProduct,
-    { isSuccess: createdProduct, isLoading: isCreatingProduct },
+    {
+      data: productCreated,
+      isSuccess: createdProduct,
+      isLoading: isCreatingProduct,
+    },
   ] = usePostCreateProductForStoreMutation()
 
   //
@@ -141,12 +165,6 @@ export function NewProduct() {
     [onOpenSelectButton],
   )
 
-  const isLoadingButton =
-    isFetchingCategories ||
-    isLoadingCategories ||
-    isFetchingBrands ||
-    isLoadingBrands
-
   const whoDataShouldBeListed = useMemo(() => {
     if (categories && modalListType === 'category') {
       return categories?.data
@@ -167,20 +185,96 @@ export function NewProduct() {
           .join(', ')
       : selectedCategory[0].name
 
-  useEffect(() => {
-    if (createdProduct) {
-      dispatch(cashbackApi.util.invalidateTags(['Product']))
+  const [
+    requestImageURL,
+    { isSuccess: isRequested, data: requestUrl, isLoading: isRequestingUrl },
+  ] = usePostToReceiveURLToSaveProductImageMutation()
 
-      toast({
-        title: `New product was created`,
-        description: 'Now your clients you be able to buy it!',
-        status: 'info',
-        duration: 3000,
-        isClosable: true,
-        position: 'top',
+  const fetchSelectedFilesAsBinary = useCallback(
+    async (url: string) => {
+      if (!selectedFiles) {
+        toast({
+          title: `No file was provided`,
+          description: 'This product will be create without images',
+          status: 'warning',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        })
+        return
+      }
+
+      const fetchPromises: Promise<Response>[] = selectedFiles.map((file) => {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const headers = new Headers()
+        headers.append('Content-Type', file.type)
+        headers.append('x-ms-blob-type', 'BlockBlob')
+
+        return fetch(url, {
+          method: 'PUT',
+          body: formData,
+          headers,
+        })
+      })
+
+      try {
+        const responses = await Promise.all(fetchPromises)
+        const successfulResponses = responses.filter((response) => response.ok)
+        if (successfulResponses) {
+          dispatch(cashbackApi.util.invalidateTags(['Product']))
+
+          toast({
+            title: `New product was created`,
+            description: 'Now your clients you be able to buy it!',
+            status: 'success',
+            duration: 3000,
+            isClosable: true,
+            position: 'top',
+          })
+        }
+      } catch (error) {
+        toast({
+          title: `New product was created`,
+          description: 'But we could not add the images',
+          status: 'info',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        })
+      }
+    },
+    [dispatch, selectedFiles, toast],
+  )
+
+  /**
+   * useEffect to create product
+   */
+  useEffect(() => {
+    if (createdProduct && productCreated) {
+      requestImageURL({
+        storeUId: store?.uId ?? '',
+        productUId: productCreated.data.uId,
       })
     }
-  }, [dispatch, createdProduct, toast])
+  }, [createdProduct, productCreated, requestImageURL, store?.uId])
+
+  /**
+   * useEffect to request Image URL to send photos
+   */
+  useEffect(() => {
+    if (isRequested && requestUrl) {
+      fetchSelectedFilesAsBinary(requestUrl.data.url)
+    }
+  }, [isRequested, requestUrl, fetchSelectedFilesAsBinary])
+
+  const isLoadingButton =
+    isFetchingCategories ||
+    isLoadingCategories ||
+    isFetchingBrands ||
+    isLoadingBrands ||
+    isRequestingUrl
 
   const filteredCategories = selectedCategory.filter((c) => c.uId !== '')
 
@@ -245,6 +339,56 @@ export function NewProduct() {
             id="pointGainValue"
             {...register('pointGainValue')}
             error={errors.pointGainValue}
+          />
+        </Grid>
+        <Grid
+          gap={2}
+          w="100%"
+          alignItems="center"
+          justifyContent="center"
+          templateColumns={[
+            '1fr',
+            'repeat(3, 1fr)',
+            'repeat(4, 1fr)',
+            'repeat(5, 1fr)',
+            'repeat(6, 1fr)',
+          ]}
+        >
+          <LabelFileInput
+            index={0}
+            selectedFile={selectedFiles?.[0]}
+            onChange={handleAddFile}
+            onHandleRemoveFile={handleRemoveFileFromIndex}
+          />
+          <LabelFileInput
+            index={1}
+            selectedFile={selectedFiles?.[1]}
+            onChange={handleAddFile}
+            onHandleRemoveFile={handleRemoveFileFromIndex}
+          />
+          <LabelFileInput
+            index={2}
+            selectedFile={selectedFiles?.[2]}
+            onChange={handleAddFile}
+            onHandleRemoveFile={handleRemoveFileFromIndex}
+          />
+          <LabelFileInput
+            index={3}
+            selectedFile={selectedFiles?.[3]}
+            onChange={handleAddFile}
+            onHandleRemoveFile={handleRemoveFileFromIndex}
+          />
+          <LabelFileInput
+            index={4}
+            selectedFile={selectedFiles?.[4]}
+            onChange={handleAddFile}
+            onHandleRemoveFile={handleRemoveFileFromIndex}
+          />
+          <LabelFileInput
+            index={5}
+            selectedFile={selectedFiles?.[5]}
+            onChange={handleAddFile}
+            onHandleRemoveFile={handleRemoveFileFromIndex}
           />
         </Grid>
         <Grid
