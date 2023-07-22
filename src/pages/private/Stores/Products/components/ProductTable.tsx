@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom'
 import {
   Badge,
   Center,
@@ -48,16 +49,18 @@ function MenuItemComponent({
       <MenuList>
         <MenuGroup title="Options">
           <MenuDivider />
-          <MenuItem
-            bgColor="white"
-            textColor="gray.700"
-            _hover={{
-              bgColor: 'purple.900',
-              textColor: 'white',
-            }}
-          >
-            Edit
-          </MenuItem>
+          <NavLink to={`/products/edit-product/${productUid}`}>
+            <MenuItem
+              bgColor="white"
+              textColor="gray.700"
+              _hover={{
+                bgColor: 'purple.900',
+                textColor: 'white',
+              }}
+            >
+              Edit
+            </MenuItem>
+          </NavLink>
           <MenuItem
             bgColor="white"
             textColor="gray.700"

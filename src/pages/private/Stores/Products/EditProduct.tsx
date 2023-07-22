@@ -1,5 +1,6 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
+import { useParams } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
@@ -16,16 +17,18 @@ import {
 } from '~components/Forms/Inputs'
 import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
+import { Loading } from '~components/Loading'
 import { Container } from '~layouts/Container'
 import { useCurrentStore } from '~redux/merchant'
+import { useAppSelector } from '~redux/store'
 import { useGetAllCategoriesQuery } from '~services/category.service'
 import { useGetBrandsByStoreUidQuery } from '~services/brands.service'
 import {
   ICreateProductForStoreBody,
+  useGetProductQuery,
   usePostCreateProductForStoreMutation,
   usePostToReceiveURLToSaveProductImageMutation,
 } from '~services/products.service'
-import { useAppSelector } from '~redux/store'
 
 const selectOptions: SelectOptions[] = [
   {
@@ -49,7 +52,7 @@ const createStoreProductSchema = z.object({
 
 type CreateStoreProductInputs = z.infer<typeof createStoreProductSchema>
 
-export function NewProduct() {
+export function EditProduct() {
   const [modalListType, setModalListType] = useState<'category' | 'brand'>(
     'category',
   )
@@ -75,6 +78,8 @@ export function NewProduct() {
 
   const modalTitle = modalListType === 'brand' ? 'Brands' : 'Categories'
 
+  const { id } = useParams()
+
   const toast = useToast()
   // Hook to select brand or categories
   const {
@@ -93,15 +98,6 @@ export function NewProduct() {
   const { selectedCategory, selectedBrand } = useAppSelector(
     (state) => state.form,
   )
-
-  // const {
-  //   selectedCategory,
-  //   selectedBrand,
-  //   handleSetSelectedCategory,
-  //   handleRemoveSelectedCategory,
-  //   handleSetSelectedBrand,
-  //   handleRemoveSelectedBrand,
-  // } = useModalSelectData()
 
   /**
    * API
@@ -126,6 +122,14 @@ export function NewProduct() {
       isLoading: isCreatingProduct,
     },
   ] = usePostCreateProductForStoreMutation()
+
+  const {
+    data: product,
+    isLoading: isLoadingProduct,
+    isSuccess: isProductLoaded,
+  } = useGetProductQuery({
+    uId: id ?? '',
+  })
 
   //
 
@@ -305,6 +309,24 @@ export function NewProduct() {
     currentSelectedFileIndex,
   ])
 
+  /**
+   * useEffect to load the product to edit
+   */
+  useEffect(() => {
+    if (isProductLoaded && product) {
+      // mount categories
+      //   product.data.categories.forEach((category) => {
+      //     const categoryPayload: ICategoryDTO = {
+      //       id: category.id,
+      //       uid: category.uid,
+      //     }
+      //     handleSetSelectedBrand(category)
+      // })
+      // mount brand
+      // mount form
+    }
+  }, [isProductLoaded, product])
+
   const isLoadingButton =
     isFetchingCategories ||
     isLoadingCategories ||
@@ -316,164 +338,170 @@ export function NewProduct() {
 
   return (
     <Container hasGoBackButton title="New Product">
-      <VStack
-        as="form"
-        w="100%"
-        alignItems="flex-start"
-        spacing={4}
-        mt={4}
-        onSubmit={handleSubmit(handleCreateNewProduct)}
-      >
-        <LabelInput
-          label="Name"
-          id="name"
-          {...register('name')}
-          error={errors.name}
-        />
+      {isLoadingProduct ? (
+        <Loading />
+      ) : (
+        <>
+          <VStack
+            as="form"
+            w="100%"
+            alignItems="flex-start"
+            spacing={4}
+            mt={4}
+            onSubmit={handleSubmit(handleCreateNewProduct)}
+          >
+            <LabelInput
+              label="Name"
+              id="name"
+              {...register('name')}
+              error={errors.name}
+            />
 
-        <LabelTextarea
-          label="Description"
-          id="about"
-          {...register('about')}
-          error={errors.about}
-        />
-        <Grid
-          gap={2}
-          gridTemplateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
-          w="100%"
-        >
-          <LabelInput
-            label="Quantity"
-            id="quantity"
-            {...register('quantity')}
-            error={errors.quantity}
+            <LabelTextarea
+              label="Description"
+              id="about"
+              {...register('about')}
+              error={errors.about}
+            />
+            <Grid
+              gap={2}
+              gridTemplateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
+              w="100%"
+            >
+              <LabelInput
+                label="Quantity"
+                id="quantity"
+                {...register('quantity')}
+                error={errors.quantity}
+              />
+              <LabelInput
+                label="Price ($)"
+                id="price"
+                {...register('price')}
+                error={errors.price}
+              />
+            </Grid>
+            <Grid
+              gap={2}
+              w="100%"
+              alignItems="center"
+              templateColumns={['1fr', '4fr 1fr']}
+            >
+              <LightSelectInput
+                label="Point gain option"
+                id="pointGain"
+                {...register('pointGain')}
+                error={errors.pointGain}
+                options={selectOptions}
+              />
+              <LabelInput
+                label="Value"
+                id="pointGainValue"
+                {...register('pointGainValue')}
+                error={errors.pointGainValue}
+              />
+            </Grid>
+            <Grid
+              gap={2}
+              w="100%"
+              alignItems="center"
+              justifyContent="center"
+              templateColumns={[
+                '1fr',
+                'repeat(3, 1fr)',
+                'repeat(4, 1fr)',
+                'repeat(5, 1fr)',
+                'repeat(6, 1fr)',
+              ]}
+            >
+              <LabelFileInput
+                index={0}
+                selectedFile={selectedFiles?.[0]}
+                onChange={handleAddFile}
+                onHandleRemoveFile={handleRemoveFileFromIndex}
+              />
+              <LabelFileInput
+                index={1}
+                selectedFile={selectedFiles?.[1]}
+                onChange={handleAddFile}
+                onHandleRemoveFile={handleRemoveFileFromIndex}
+              />
+              <LabelFileInput
+                index={2}
+                selectedFile={selectedFiles?.[2]}
+                onChange={handleAddFile}
+                onHandleRemoveFile={handleRemoveFileFromIndex}
+              />
+              <LabelFileInput
+                index={3}
+                selectedFile={selectedFiles?.[3]}
+                onChange={handleAddFile}
+                onHandleRemoveFile={handleRemoveFileFromIndex}
+              />
+              <LabelFileInput
+                index={4}
+                selectedFile={selectedFiles?.[4]}
+                onChange={handleAddFile}
+                onHandleRemoveFile={handleRemoveFileFromIndex}
+              />
+              <LabelFileInput
+                index={5}
+                selectedFile={selectedFiles?.[5]}
+                onChange={handleAddFile}
+                onHandleRemoveFile={handleRemoveFileFromIndex}
+              />
+            </Grid>
+            <Grid
+              gap={2}
+              w="100%"
+              alignItems="center"
+              templateColumns={['1fr', '1fr', '1fr 1fr']}
+            >
+              <ButtonInput
+                label="Category"
+                title={categoriesLabel}
+                modalButton="category"
+                isLoading={isLoadingButton}
+                hasSelectedItems={selectedCategory.length > 1}
+                onHandleOpenCorrectModal={handleOpenCorrectModal}
+                onHandleOpenCorrectUnselectModal={onOpenUnselectButton}
+              />
+              <ButtonInput
+                label="Brand"
+                title={selectedBrand?.name ?? 'Select brand'}
+                modalButton="brand"
+                isLoading={isLoadingButton}
+                onHandleOpenCorrectModal={handleOpenCorrectModal}
+                onHandleOpenCorrectUnselectModal={onOpenUnselectButton}
+              />
+            </Grid>
+            <FormButton
+              type="submit"
+              title="Create"
+              alignSelf="flex-end"
+              formButtonType="SUBMIT"
+              isLoading={isSubmitting || isCreatingProduct}
+              disabled={isSubmitting || !isValid}
+            />
+          </VStack>
+          <ModalSelect
+            title={modalTitle}
+            data={whoDataShouldBeListed}
+            isOpen={isSelectButtonOpen}
+            onClose={onCloseSelectButton}
           />
-          <LabelInput
-            label="Price ($)"
-            id="price"
-            {...register('price')}
-            error={errors.price}
-          />
-        </Grid>
-        <Grid
-          gap={2}
-          w="100%"
-          alignItems="center"
-          templateColumns={['1fr', '4fr 1fr']}
-        >
-          <LightSelectInput
-            label="Point gain option"
-            id="pointGain"
-            {...register('pointGain')}
-            error={errors.pointGain}
-            options={selectOptions}
-          />
-          <LabelInput
-            label="Value"
-            id="pointGainValue"
-            {...register('pointGainValue')}
-            error={errors.pointGainValue}
-          />
-        </Grid>
-        <Grid
-          gap={2}
-          w="100%"
-          alignItems="center"
-          justifyContent="center"
-          templateColumns={[
-            '1fr',
-            'repeat(3, 1fr)',
-            'repeat(4, 1fr)',
-            'repeat(5, 1fr)',
-            'repeat(6, 1fr)',
-          ]}
-        >
-          <LabelFileInput
-            index={0}
-            selectedFile={selectedFiles?.[0]}
-            onChange={handleAddFile}
-            onHandleRemoveFile={handleRemoveFileFromIndex}
-          />
-          <LabelFileInput
-            index={1}
-            selectedFile={selectedFiles?.[1]}
-            onChange={handleAddFile}
-            onHandleRemoveFile={handleRemoveFileFromIndex}
-          />
-          <LabelFileInput
-            index={2}
-            selectedFile={selectedFiles?.[2]}
-            onChange={handleAddFile}
-            onHandleRemoveFile={handleRemoveFileFromIndex}
-          />
-          <LabelFileInput
-            index={3}
-            selectedFile={selectedFiles?.[3]}
-            onChange={handleAddFile}
-            onHandleRemoveFile={handleRemoveFileFromIndex}
-          />
-          <LabelFileInput
-            index={4}
-            selectedFile={selectedFiles?.[4]}
-            onChange={handleAddFile}
-            onHandleRemoveFile={handleRemoveFileFromIndex}
-          />
-          <LabelFileInput
-            index={5}
-            selectedFile={selectedFiles?.[5]}
-            onChange={handleAddFile}
-            onHandleRemoveFile={handleRemoveFileFromIndex}
-          />
-        </Grid>
-        <Grid
-          gap={2}
-          w="100%"
-          alignItems="center"
-          templateColumns={['1fr', '1fr', '1fr 1fr']}
-        >
-          <ButtonInput
-            label="Category"
-            title={categoriesLabel}
-            modalButton="category"
-            isLoading={isLoadingButton}
-            hasSelectedItems={selectedCategory.length > 1}
-            onHandleOpenCorrectModal={handleOpenCorrectModal}
-            onHandleOpenCorrectUnselectModal={onOpenUnselectButton}
-          />
-          <ButtonInput
-            label="Brand"
-            title={selectedBrand?.name ?? 'Select brand'}
-            modalButton="brand"
-            isLoading={isLoadingButton}
-            onHandleOpenCorrectModal={handleOpenCorrectModal}
-            onHandleOpenCorrectUnselectModal={onOpenUnselectButton}
-          />
-        </Grid>
-        <FormButton
-          type="submit"
-          title="Create"
-          alignSelf="flex-end"
-          formButtonType="SUBMIT"
-          isLoading={isSubmitting || isCreatingProduct}
-          disabled={isSubmitting || !isValid}
-        />
-      </VStack>
-      <ModalSelect
-        title={modalTitle}
-        data={whoDataShouldBeListed}
-        isOpen={isSelectButtonOpen}
-        onClose={onCloseSelectButton}
-      />
 
-      {/* MODAL TO UNSELECT ITEMS */}
+          {/* MODAL TO UNSELECT ITEMS */}
 
-      <ModalSelect
-        title={modalTitle}
-        data={filteredCategories}
-        isUnSelectModal
-        isOpen={isUnselectButtonOpen}
-        onClose={onCloseUnselectButton}
-      />
+          <ModalSelect
+            title={modalTitle}
+            data={filteredCategories}
+            isUnSelectModal
+            isOpen={isUnselectButtonOpen}
+            onClose={onCloseUnselectButton}
+          />
+        </>
+      )}
     </Container>
   )
 }

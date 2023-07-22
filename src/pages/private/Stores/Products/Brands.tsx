@@ -18,18 +18,17 @@ import {
   useToast,
 } from '@chakra-ui/react'
 
+import { cashbackApi } from '~api/cashback-api.service'
+import { BrandCard } from '../components/BrandCard'
 import { BreadCrumb } from '~components/Breadcrumb'
 import { LabelInput } from '~components/Forms/Inputs'
 import { Loading } from '~components/Loading'
 import { BodyLayout } from '~layouts/Body'
-import { useCurrentStore } from '~redux/auth'
+import { useCurrentStore } from '~redux/merchant'
 import {
   useGetBrandsByStoreUidQuery,
   usePostBrandByStoreUidMutation,
 } from '~services/brands.service'
-
-import { BrandCard } from '../components/BrandCard'
-import { cashbackApi } from '~api/cashback-api.service'
 
 const createStoreBrandSchema = z.object({
   name: z.string(),

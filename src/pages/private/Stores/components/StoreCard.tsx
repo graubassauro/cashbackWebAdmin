@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import {
   Button,
   Card,
@@ -27,9 +28,8 @@ import {
 
 import { cashbackApi } from '~api/cashback-api.service'
 import { IStoreDTO } from '~models/Store'
-import { setCurrentStore } from '~redux/auth'
+import { setCurrentStore } from '~redux/merchant'
 import { useDeleteStoreMutation } from '~services/stores.service'
-import { useNavigate } from 'react-router-dom'
 
 type StoreCardProps = {
   data: IStoreDTO

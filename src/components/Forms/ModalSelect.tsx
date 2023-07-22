@@ -1,3 +1,5 @@
+import { useCallback, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import {
   Button,
   Flex,
@@ -16,9 +18,14 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { X } from '@phosphor-icons/react'
-import { useCallback, useState } from 'react'
 
 import { ICategoryDTO } from '~models/Category'
+import {
+  removeBrand,
+  removeCategory,
+  setNewBrand,
+  setNewCategory,
+} from '~redux/form'
 
 type ItemToUnselectProps = {
   data: ICategoryDTO
@@ -42,7 +49,7 @@ function ItemToUnselect({ data, handleUnselectItem }: ItemToUnselectProps) {
       }}
       onClick={() => handleUnselectItem(data)}
     >
-      {data.name}
+      {data?.name}
     </Button>
   )
 }
@@ -132,10 +139,6 @@ type ModalSelectProps = {
   isUnSelectModal?: boolean
   isOpen: boolean
   onClose: () => void
-  handleSetSelectedCategory: (category: ICategoryDTO) => void
-  handleRemoveSelectedCategory?: (category: ICategoryDTO) => void
-  handleSetSelectedBrand: (category: ICategoryDTO) => void
-  handleRemoveSelectedBrand?: () => void
 }
 
 export function ModalSelect({
@@ -144,52 +147,44 @@ export function ModalSelect({
   isOpen = false,
   isUnSelectModal = false,
   onClose,
-  handleSetSelectedCategory,
-  handleRemoveSelectedCategory,
-  handleSetSelectedBrand,
-  handleRemoveSelectedBrand,
 }: ModalSelectProps) {
   const [categoryStack, setCategoryStack] = useState<ICategoryDTO[]>([])
+
+  const dispatch = useDispatch()
 
   const handleSelectItem = useCallback(
     (item: ICategoryDTO) => {
       setCategoryStack([])
 
       if (title.includes('Categories')) {
-        handleSetSelectedCategory(item)
+        dispatch(setNewCategory({ item }))
       } else {
-        handleSetSelectedBrand(item)
+        dispatch(setNewBrand({ item }))
       }
 
       onClose()
     },
-    [
-      // setCategoryStack,
-      title,
-      handleSetSelectedCategory,
-      handleSetSelectedBrand,
-      onClose,
-    ],
+    [title, dispatch, onClose],
   )
 
   const handleUnselectItem = useCallback(
     (item: ICategoryDTO) => {
       if (title.includes('Categories')) {
-        handleRemoveSelectedCategory?.(item)
+        dispatch(removeCategory({ item }))
       } else {
-        handleRemoveSelectedBrand?.()
+        dispatch(removeBrand())
         onClose()
       }
     },
-    [title, handleRemoveSelectedCategory, handleRemoveSelectedBrand, onClose],
+    [title, dispatch, onClose],
   )
 
   const handleCategoryClick = useCallback(
     (category: ICategoryDTO) => {
       setCategoryStack([...categoryStack, category])
-      handleSetSelectedCategory(category)
+      dispatch(setNewCategory({ item: category }))
     },
-    [categoryStack, handleSetSelectedCategory],
+    [categoryStack, dispatch],
   )
 
   const handleGoBack = useCallback(() => {
@@ -215,10 +210,10 @@ export function ModalSelect({
           <ModalBody>
             <Flex rowGap={2} columnGap={4} wrap="wrap" flex={1} w="100%">
               {currentCategories
-                ?.filter((item) => item.name !== 'Select brand')
-                .map((item) => (
+                ?.filter((item) => item?.name !== 'Select brand')
+                ?.map((item) => (
                   <ItemToUnselect
-                    key={`${item.uId}-${item.name}`}
+                    key={`${item?.uId}-${item?.name}`}
                     data={item}
                     handleUnselectItem={handleUnselectItem}
                   />

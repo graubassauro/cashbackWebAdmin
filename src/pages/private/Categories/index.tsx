@@ -20,7 +20,7 @@ import { CategoryCard } from './components/CategoryCard'
 import { Loading } from '~components/Loading'
 import { BodyLayout } from '~layouts/Body'
 import { IStoreDTO } from '~models/Store'
-import { setCurrentStore, useCurrentStore } from '~redux/auth'
+import { setCurrentStore, useCurrentStore } from '~redux/merchant'
 import { useGetAllCategoriesQuery } from '~services/category.service'
 
 import { useGetMerchantStores } from '../Stores/hooks/useGetMerchantStores'

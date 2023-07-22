@@ -15,6 +15,7 @@ import { DetailedStore } from '~pages/private/Stores/DetailedStore'
 import { Settings } from '~pages/private/Settings'
 import { Brands } from '~pages/private/Stores/Products/Brands'
 import { Categories } from '~pages/private/Categories'
+import { EditProduct } from '~pages/private/Stores/Products/EditProduct'
 
 export function AppRoutes() {
   const location = useLocation()
@@ -35,6 +36,7 @@ export function AppRoutes() {
           </Route>
           <Route path="products/brands" element={<Brands />} />
           <Route path="products/new-product" element={<NewProduct />} />
+          <Route path="products/edit-product/:id" element={<EditProduct />} />
           <Route path="audience/segments" element={<Segments />} />
           <Route path="audience/new-highlight" element={<NewHighlight />} />
         </Route>

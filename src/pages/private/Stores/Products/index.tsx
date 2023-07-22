@@ -10,7 +10,7 @@ import {
 
 import { cashbackApi } from '~api/cashback-api.service'
 import { IProductStoreDTO } from '~models/Store'
-import { useCurrentStore } from '~redux/auth'
+import { useCurrentStore } from '~redux/merchant'
 import {
   useDeleteProductMutation,
   useGetProductsByStoreUidQuery,
@@ -55,6 +55,8 @@ export function Products() {
     products?.data.totalRecords,
     products?.data.products.length,
   ])
+
+  console.log('pageParams', pageParams)
 
   const [
     deleteProduct,

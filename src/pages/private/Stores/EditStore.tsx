@@ -17,7 +17,7 @@ import { FormButton } from '~components/Buttons'
 import { Container } from '~layouts/Container'
 import { LabelInput, LabelTextarea } from '~components/Forms/Inputs'
 import { Loading } from '~components/Loading'
-import { useCurrentStore } from '~redux/auth'
+import { useCurrentStore } from '~redux/merchant'
 import {
   IAddressLocationDTO,
   useGetAdressLocationQuery,

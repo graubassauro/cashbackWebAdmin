@@ -27,7 +27,7 @@ import {
 import { ActionButton } from '~components/Buttons'
 import { FeedbackCard } from './components/FeedbackCard'
 import { BodyLayout } from '~layouts/Body'
-import { useCurrentStore } from '~redux/auth'
+import { useCurrentStore } from '~redux/merchant'
 
 import { Audience } from './Audience'
 import { Products } from './Products'
