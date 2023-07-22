@@ -94,15 +94,6 @@ export function NewProduct() {
     (state) => state.form,
   )
 
-  // const {
-  //   selectedCategory,
-  //   selectedBrand,
-  //   handleSetSelectedCategory,
-  //   handleRemoveSelectedCategory,
-  //   handleSetSelectedBrand,
-  //   handleRemoveSelectedBrand,
-  // } = useModalSelectData()
-
   /**
    * API
    */
