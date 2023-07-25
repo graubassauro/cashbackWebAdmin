@@ -19,7 +19,6 @@ import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
 import { Loading } from '~components/Loading'
 import { Container } from '~layouts/Container'
-import { useCurrentStore } from '~redux/merchant'
 import { useAppSelector } from '~redux/store'
 import { useGetAllCategoriesQuery } from '~services/category.service'
 import { useGetBrandsByStoreUidQuery } from '~services/brands.service'
@@ -93,7 +92,9 @@ export function EditProduct() {
     onOpen: onOpenUnselectButton,
     onClose: onCloseUnselectButton,
   } = useDisclosure()
-  const store = useCurrentStore()
+  const store = useAppSelector((state) => {
+    return state.merchant.currentStore
+  })
   const dispatch = useDispatch()
   const { selectedCategory, selectedBrand } = useAppSelector(
     (state) => state.form,

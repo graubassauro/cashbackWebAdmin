@@ -17,7 +17,7 @@ import { FormButton } from '~components/Buttons'
 import { Container } from '~layouts/Container'
 import { LabelInput, LabelTextarea } from '~components/Forms/Inputs'
 import { Loading } from '~components/Loading'
-import { useCurrentStore } from '~redux/merchant'
+import { useAppSelector } from '~redux/store'
 import {
   IAddressLocationDTO,
   useGetAdressLocationQuery,
@@ -46,7 +46,10 @@ type UpdateMerchantStoreInputs = z.infer<typeof updateMerchantStoreSchema>
 export function EditStore() {
   const [canShowInput, setCanShowInput] = useState(false)
 
-  const store = useCurrentStore()
+  const store = useAppSelector((state) => {
+    return state.merchant.currentStore
+  })
+
   const toast = useToast()
   const {
     register,

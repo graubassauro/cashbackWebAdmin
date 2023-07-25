@@ -26,8 +26,8 @@ import {
 
 import { ActionButton } from '~components/Buttons'
 import { FeedbackCard } from './components/FeedbackCard'
+import { useAppSelector } from '~redux/store'
 import { BodyLayout } from '~layouts/Body'
-import { useCurrentStore } from '~redux/merchant'
 
 import { Audience } from './Audience'
 import { Products } from './Products'
@@ -311,7 +311,9 @@ export function DetailedStore() {
   const [selectedTab, setSelectedTab] = useState<DetailStoreTab>('products')
   const [selectedFeedback, setSelectedFeedback] = useState('all')
 
-  const store = useCurrentStore()
+  const store = useAppSelector((state) => {
+    return state.merchant.currentStore
+  })
 
   const titleCapitalize =
     selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)

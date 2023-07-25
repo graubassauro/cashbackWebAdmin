@@ -17,9 +17,8 @@ import {
 import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
 import { Container } from '~layouts/Container'
-import { useCurrentStore } from '~redux/merchant'
 import { useGetAllCategoriesQuery } from '~services/category.service'
-import { useGetBrandsByStoreUidQuery } from '~services/brands.service'
+import { useGetBrandsByNameQuery } from '~services/brands.service'
 import {
   ICreateProductForStoreBody,
   usePostCreateProductForStoreMutation,
@@ -51,11 +50,14 @@ const createStoreProductSchema = z.object({
 type CreateStoreProductInputs = z.infer<typeof createStoreProductSchema>
 
 export function NewProduct() {
+  const [inputSearch, setInputSearch] = useState('')
   const [modalListType, setModalListType] = useState<'category' | 'brand'>(
     'category',
   )
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
   const [currentSelectedFileIndex, setCurrentSelectedFileIndex] = useState(0)
+
+  const debounceDelay = 850
 
   const handleAddFile = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
@@ -89,7 +91,9 @@ export function NewProduct() {
     onOpen: onOpenUnselectButton,
     onClose: onCloseUnselectButton,
   } = useDisclosure()
-  const store = useCurrentStore()
+  const store = useAppSelector((state) => {
+    return state.merchant.currentStore
+  })
   const dispatch = useDispatch()
   const { selectedCategory, selectedBrand } = useAppSelector(
     (state) => state.form,
@@ -104,11 +108,38 @@ export function NewProduct() {
     isLoading: isLoadingCategories,
   } = useGetAllCategoriesQuery()
 
+  // const {
+  //   data: brands,
+  //   isFetching: isFetchingBrands,
+  //   isLoading: isLoadingBrands,
+  // } = useGetBrandsByStoreUidQuery({ uId: store?.uId ?? '' })
+
+  function useDebouncedValue(value: string, delay: number) {
+    const [debouncedValue, setDebouncedValue] = useState(value)
+
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        setDebouncedValue(value)
+      }, delay)
+
+      return () => {
+        clearTimeout(handler)
+      }
+    }, [value, delay])
+
+    return debouncedValue
+  }
+
+  const debouncedInputSearch = useDebouncedValue(inputSearch, debounceDelay)
+
   const {
     data: brands,
     isFetching: isFetchingBrands,
     isLoading: isLoadingBrands,
-  } = useGetBrandsByStoreUidQuery({ uId: store?.uId ?? '' })
+  } = useGetBrandsByNameQuery({
+    uId: store?.uId ?? '',
+    name: debouncedInputSearch,
+  })
 
   const [
     createProduct,
@@ -463,6 +494,7 @@ export function NewProduct() {
         data={whoDataShouldBeListed}
         isOpen={isSelectButtonOpen}
         onClose={onCloseSelectButton}
+        onChange={(e) => setInputSearch(e.target.value)}
       />
 
       {/* MODAL TO UNSELECT ITEMS */}

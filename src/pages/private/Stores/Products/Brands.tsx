@@ -24,7 +24,7 @@ import { BreadCrumb } from '~components/Breadcrumb'
 import { LabelInput } from '~components/Forms/Inputs'
 import { Loading } from '~components/Loading'
 import { BodyLayout } from '~layouts/Body'
-import { useCurrentStore } from '~redux/merchant'
+import { useAppSelector } from '~redux/store'
 import {
   useGetBrandsByStoreUidQuery,
   usePostBrandByStoreUidMutation,
@@ -37,7 +37,9 @@ const createStoreBrandSchema = z.object({
 type CreateStoreBrandInputs = z.infer<typeof createStoreBrandSchema>
 
 export function Brands() {
-  const store = useCurrentStore()
+  const store = useAppSelector((state) => {
+    return state.merchant.currentStore
+  })
   const dispatch = useDispatch()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const toast = useToast()

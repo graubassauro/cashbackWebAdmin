@@ -20,13 +20,16 @@ import { CategoryCard } from './components/CategoryCard'
 import { Loading } from '~components/Loading'
 import { BodyLayout } from '~layouts/Body'
 import { IStoreDTO } from '~models/Store'
-import { setCurrentStore, useCurrentStore } from '~redux/merchant'
+import { setCurrentStore } from '~redux/merchant'
+import { useAppSelector } from '~redux/store'
 import { useGetAllCategoriesQuery } from '~services/category.service'
 
 import { useGetMerchantStores } from '../Stores/hooks/useGetMerchantStores'
 
 export function Categories() {
-  const store = useCurrentStore()
+  const store = useAppSelector((state) => {
+    return state.merchant.currentStore
+  })
   const dispatch = useDispatch()
 
   const [storesData, setStoresData] = useState<IStoreDTO[]>([])

@@ -1,9 +1,12 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import {
   Button,
+  Center,
   Flex,
   Icon,
+  Input,
+  InputProps,
   Menu,
   MenuButton,
   MenuItem,
@@ -16,9 +19,12 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useToast,
 } from '@chakra-ui/react'
 import { X } from '@phosphor-icons/react'
 
+import { cashbackApi } from '~api/cashback-api.service'
+import { Loading } from '~components/Loading'
 import { ICategoryDTO } from '~models/Category'
 import {
   removeBrand,
@@ -26,6 +32,8 @@ import {
   setNewBrand,
   setNewCategory,
 } from '~redux/form'
+import { useAppSelector } from '~redux/store'
+import { usePostBrandByStoreUidMutation } from '~services/brands.service'
 
 type ItemToUnselectProps = {
   data: ICategoryDTO
@@ -133,7 +141,7 @@ function ItemComponent({
   )
 }
 
-type ModalSelectProps = {
+type ModalSelectProps = InputProps & {
   title: string
   data: ICategoryDTO[]
   isUnSelectModal?: boolean
@@ -147,10 +155,15 @@ export function ModalSelect({
   isOpen = false,
   isUnSelectModal = false,
   onClose,
+  ...rest
 }: ModalSelectProps) {
   const [categoryStack, setCategoryStack] = useState<ICategoryDTO[]>([])
 
+  const store = useAppSelector((state) => {
+    return state.merchant.currentStore
+  })
   const dispatch = useDispatch()
+  const toast = useToast()
 
   const handleSelectItem = useCallback(
     (item: ICategoryDTO) => {
@@ -193,10 +206,44 @@ export function ModalSelect({
     setCategoryStack(updatedStack)
   }, [categoryStack])
 
+  // ADD BRAND
+
+  const [createBrand, { isLoading: isCreatingBrand, isSuccess: hasCreated }] =
+    usePostBrandByStoreUidMutation()
+
+  const captureNewBrandName = useCallback(() => {
+    const brandName: string | null = window.prompt('Please, enter a brand name')
+
+    if (brandName) {
+      createBrand({
+        name: brandName,
+        storeUId: store?.uId ?? '',
+      })
+    }
+  }, [createBrand, store?.uId])
+
   const currentCategories =
     categoryStack.length > 0
       ? categoryStack[categoryStack.length - 1].categories
       : data
+
+  /**
+   * useEffect after createBrand
+   */
+  useEffect(() => {
+    if (hasCreated) {
+      dispatch(cashbackApi.util.invalidateTags(['Brands']))
+
+      toast({
+        title: `New brand was created`,
+        description: 'Now you can associate to your products!',
+        status: 'info',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      })
+    }
+  }, [hasCreated, dispatch, toast])
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -241,6 +288,25 @@ export function ModalSelect({
                 ? 'Here is the children list. You can add to your product'
                 : 'There is no data to list'}
             </Text>
+            {title.includes('Brands') ? (
+              <Input
+                w="100%"
+                h={14}
+                color="gray.800"
+                borderRadius="10"
+                borderWidth={1}
+                borderColor="gray.600"
+                bgColor="gray.400"
+                variant="unstyled"
+                px="4"
+                my="4"
+                placeholder="Search by name (3 caracteres to start)"
+                _placeholder={{
+                  color: 'gray.700',
+                }}
+                {...rest}
+              />
+            ) : null}
             <Flex rowGap={2} columnGap={4} wrap="wrap" flex={1} w="100%">
               {currentCategories?.map((item) => (
                 <ItemComponent
@@ -252,6 +318,36 @@ export function ModalSelect({
                   handleSelectItem={handleSelectItem}
                 />
               ))}
+
+              {currentCategories.length === 0 ? (
+                <Center flexDirection="column" alignItems="flex-start" gap={4}>
+                  {isCreatingBrand ? (
+                    <Center>
+                      <Loading />
+                    </Center>
+                  ) : (
+                    <>
+                      <Text fontFamily="body" fontSize={16} fontWeight={400}>
+                        Add or create a new brand that you are interest to your
+                        product
+                      </Text>
+                      <Button
+                        borderRadius={6}
+                        bgColor="purple.900"
+                        textColor="white"
+                        mr={3}
+                        isLoading={false}
+                        _hover={{
+                          opacity: 0.8,
+                        }}
+                        onClick={captureNewBrandName}
+                      >
+                        Click here
+                      </Button>
+                    </>
+                  )}
+                </Center>
+              ) : null}
             </Flex>
           </ModalBody>
         )}

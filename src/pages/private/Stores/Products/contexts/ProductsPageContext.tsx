@@ -10,7 +10,7 @@ import {
 } from 'react'
 
 import { IProductStoreDTO } from '~models/Store'
-import { useCurrentStore } from '~redux/merchant'
+import { useAppSelector } from '~redux/store'
 import { useGetProductsByStoreUidQuery } from '~services/products.service'
 
 interface ProductProdiverProps {
@@ -42,7 +42,9 @@ export function ProductPageProvider({ children }: ProductProdiverProps) {
   const [page, setPage] = useState(1)
   const [productsToCards, setProductsToCards] = useState<IProductStoreDTO[]>([])
 
-  const store = useCurrentStore()
+  const store = useAppSelector((state) => {
+    return state.merchant.currentStore
+  })
 
   const {
     data: products,

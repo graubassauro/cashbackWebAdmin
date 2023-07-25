@@ -1,7 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 import { IStoreDTO } from '~models/Store'
-import { useAppSelector } from '~redux/store'
 
 type MerchantState = {
   currentStore: IStoreDTO | null
@@ -29,9 +28,3 @@ const merchantSlice = createSlice({
 export const { setCurrentStore } = merchantSlice.actions
 
 export const merchant = merchantSlice
-
-export const useCurrentStore = () => {
-  return useAppSelector((state) => {
-    return state.merchant.currentStore
-  })
-}
