@@ -4,8 +4,10 @@ import { PersistGate } from 'redux-persist/integration/react'
 import { ChakraProvider } from '@chakra-ui/react'
 
 import { SidebarDrawerProvider } from '~contexts/SidebarDrawerContext'
-import { theme } from '~styles/theme'
+import { ProductPageProvider } from '~pages/private/Stores/Products/contexts/ProductsPageContext'
 import { persistor, store } from '~redux/store'
+import { theme } from '~styles/theme'
+
 import { Routes } from 'routes'
 
 export function App() {
@@ -14,9 +16,11 @@ export function App() {
       <PersistGate loading={null} persistor={persistor}>
         <ChakraProvider theme={theme}>
           <SidebarDrawerProvider>
-            <BrowserRouter>
-              <Routes />
-            </BrowserRouter>
+            <ProductPageProvider>
+              <BrowserRouter>
+                <Routes />
+              </BrowserRouter>
+            </ProductPageProvider>
           </SidebarDrawerProvider>
         </ChakraProvider>
       </PersistGate>

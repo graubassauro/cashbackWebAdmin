@@ -23,7 +23,9 @@ import { Loading } from '~components/Loading'
 import { ImageTd, StatusTd, TableTd, TableTh } from '~components/Table'
 import { TableFooter } from '~components/Table/TableFooter'
 import { ICategoryDTO } from '~models/Category'
-import { IProductStoreDTO } from '~models/Store'
+
+import { useProduct } from '../contexts/ProductsPageContext'
+import { memo } from 'react'
 
 type MenuItemComponentProps = {
   productUid: string
@@ -89,30 +91,19 @@ function MenuItemComponent({
 }
 
 type ProductTableProps = {
-  products: IProductStoreDTO[]
-  isLoading: boolean
   isDeleting: boolean
   isWideVersion?: boolean
-  page: number
-  endPosition: number
-  totalOfItems: number
-  totalOfItemsPerPage: number
   onHandleSetUidToDelete: (uId: string) => void
-  onPageChange: (page: number) => void
 }
 
-export function ProductTable({
-  products,
-  isLoading,
+function ProductTableComponent({
   isDeleting,
   isWideVersion,
-  page,
-  endPosition,
-  totalOfItems,
-  totalOfItemsPerPage,
   onHandleSetUidToDelete,
-  onPageChange,
 }: ProductTableProps) {
+  const { isLoading, products, page, pageParams, handleChangePage } =
+    useProduct()
+
   return (
     <Table mt={8} bgColor="white" borderRadius={6}>
       {isLoading || isDeleting ? (
@@ -176,10 +167,10 @@ export function ProductTable({
             <TableFooter
               isWideVersion={isWideVersion}
               currentPage={page}
-              currentPageEndAmount={endPosition}
-              currentPageTotalItems={totalOfItemsPerPage}
-              totalItems={totalOfItems}
-              onPageChange={onPageChange}
+              currentPageEndAmount={pageParams.endPosition}
+              currentPageTotalItems={pageParams.totalOfItemsPerPage}
+              totalItems={pageParams.totalOfItems}
+              onPageChange={handleChangePage}
             />
           </Td>
         </Tr>
@@ -187,3 +178,5 @@ export function ProductTable({
     </Table>
   )
 }
+
+export const ProductTable = memo(ProductTableComponent)

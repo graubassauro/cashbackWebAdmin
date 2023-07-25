@@ -26,6 +26,7 @@ import {
   usePostToReceiveURLToSaveProductImageMutation,
 } from '~services/products.service'
 import { useAppSelector } from '~redux/store'
+import { resetFields } from '~redux/form'
 
 const selectOptions: SelectOptions[] = [
   {
@@ -191,6 +192,7 @@ export function NewProduct() {
    */
   useEffect(() => {
     if (createdProduct && productCreated) {
+      dispatch(resetFields())
       requestImageURL({
         storeUId: store?.uId ?? '',
         productUId: productCreated.data.uId,
@@ -205,7 +207,14 @@ export function NewProduct() {
         position: 'top',
       })
     }
-  }, [createdProduct, productCreated, requestImageURL, store?.uId, toast])
+  }, [
+    dispatch,
+    createdProduct,
+    productCreated,
+    requestImageURL,
+    store?.uId,
+    toast,
+  ])
 
   // Define the function to upload an image using Axios
   const uploadImage = useCallback(

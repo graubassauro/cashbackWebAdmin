@@ -31,11 +31,6 @@ export function TableFooter({
   isWideVersion = false,
   onPageChange,
 }: TableFooterProps) {
-  const lastPage = useMemo(
-    () => Math.floor(totalItems / currentPageTotalItems),
-    [totalItems, currentPageTotalItems],
-  )
-
   const previousPages = useMemo(
     () =>
       currentPage > 1
@@ -46,18 +41,17 @@ export function TableFooter({
 
   const nextPages = useMemo(
     () =>
-      currentPage < lastPage
+      currentPage < currentPageEndAmount
         ? generatePagesArray(
             currentPage,
-            Math.min(currentPage + siblingsCount, lastPage),
+            Math.min(currentPage + siblingsCount, currentPageEndAmount),
           )
         : [],
-    [currentPage, lastPage],
+    [currentPage, currentPageEndAmount],
   )
 
   return (
     <HStack
-      as="label"
       spacing={2}
       justifyContent={
         isWideVersion && currentPageEndAmount > 1 ? 'space-between' : 'center'
@@ -118,9 +112,9 @@ export function TableFooter({
                     />
                   )
                 })}
-              {currentPage + siblingsCount < lastPage && (
+              {currentPage + siblingsCount < currentPageEndAmount && (
                 <>
-                  {currentPage + 1 + siblingsCount < lastPage && (
+                  {currentPage + 1 + siblingsCount < currentPageEndAmount && (
                     <Text
                       bgColor="gray.900"
                       color="white"
@@ -133,7 +127,7 @@ export function TableFooter({
                   )}
                   <PaginationItem
                     onPageChange={onPageChange}
-                    number={lastPage}
+                    number={currentPageEndAmount}
                   />
                 </>
               )}

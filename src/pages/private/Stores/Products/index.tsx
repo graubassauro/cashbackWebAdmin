@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import {
   Button,
@@ -9,22 +9,23 @@ import {
 } from '@chakra-ui/react'
 
 import { cashbackApi } from '~api/cashback-api.service'
-import { IProductStoreDTO } from '~models/Store'
-import { useCurrentStore } from '~redux/merchant'
-import {
-  useDeleteProductMutation,
-  useGetProductsByStoreUidQuery,
-} from '~services/products.service'
+import { useDeleteProductMutation } from '~services/products.service'
 
 import { DeleteModalComponent, ProductCard, ProductTable } from './components'
+import { useProduct } from './contexts/ProductsPageContext'
 
 export function Products() {
-  const [page, setPage] = useState(1)
-  const [productsToCards, setProductsToCards] = useState<IProductStoreDTO[]>([])
+  const {
+    page,
+    pageParams,
+    productsToCards,
+    handleChangePage,
+    handleResetProductsToCards,
+  } = useProduct()
+
   const [uIdToDelete, setUIdToDelete] = useState('')
 
   const dispatch = useDispatch()
-  const store = useCurrentStore()
   const isWideVersion = useBreakpointValue({
     base: false,
     sm: false,
@@ -35,29 +36,6 @@ export function Products() {
   })
   const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const {
-    data: products,
-    isLoading: isProductsLoading,
-    isSuccess: isLoadedProducts,
-  } = useGetProductsByStoreUidQuery({
-    page,
-    uId: store?.uId ?? '',
-  })
-
-  const pageParams = useMemo(() => {
-    return {
-      endPosition: products?.data.totalPages ?? 5,
-      totalOfItems: products?.data.totalRecords ?? 0,
-      totalOfItemsPerPage: products?.data.products.length ?? 10,
-    }
-  }, [
-    products?.data.totalPages,
-    products?.data.totalRecords,
-    products?.data.products.length,
-  ])
-
-  console.log('pageParams', pageParams)
-
   const [
     deleteProduct,
     { isSuccess: isDeletedSuccess, isLoading: isDeleting },
@@ -66,9 +44,12 @@ export function Products() {
   /**
    * Handlers item
    */
-  const handleSetPage = useCallback((page: number) => {
-    setPage(page)
-  }, [])
+  const onHandleSetPage = useCallback(
+    (page: number) => {
+      handleChangePage(page)
+    },
+    [handleChangePage],
+  )
 
   const handleSetUidToDelete = useCallback(
     (uId: string) => {
@@ -88,38 +69,19 @@ export function Products() {
    */
   useEffect(() => {
     if (isDeletedSuccess) {
-      setPage(1)
-      setProductsToCards([])
+      onHandleSetPage(1)
+      handleResetProductsToCards()
       dispatch(cashbackApi.util.invalidateTags(['Product']))
     }
-  }, [isDeletedSuccess, dispatch])
-
-  /**
-   * useEffect to load products
-   */
-  useEffect(() => {
-    if (isLoadedProducts) {
-      setProductsToCards((prevState) => {
-        const updatedProductsList = [...prevState, ...products?.data.products]
-        return updatedProductsList
-      })
-    }
-  }, [isLoadedProducts, products?.data.products])
+  }, [isDeletedSuccess, onHandleSetPage, handleResetProductsToCards, dispatch])
 
   return (
     <>
       {isWideVersion ? (
         <ProductTable
-          products={products?.data.products ?? []}
-          isLoading={isProductsLoading}
           isDeleting={isDeleting}
           isWideVersion={isWideVersion}
-          page={page}
-          endPosition={pageParams.endPosition}
-          totalOfItems={pageParams.totalOfItems}
-          totalOfItemsPerPage={pageParams.totalOfItemsPerPage}
           onHandleSetUidToDelete={handleSetUidToDelete}
-          onPageChange={handleSetPage}
         />
       ) : (
         <VStack w="100%">
@@ -135,7 +97,7 @@ export function Products() {
             gap={[2, 4]}
             mt={8}
           >
-            {productsToCards.map((product) => (
+            {productsToCards?.map((product) => (
               <ProductCard
                 key={product.uId}
                 product={product}
@@ -143,7 +105,7 @@ export function Products() {
               />
             ))}
           </Grid>
-          {page < pageParams.endPosition ? (
+          {page < pageParams?.endPosition ? (
             <Button
               bgColor="transparent"
               fontSize={[14, 16, 18]}
@@ -154,7 +116,7 @@ export function Products() {
                 bgColor: 'transparent',
                 fontWeight: 700,
               }}
-              onClick={() => handleSetPage(page + 1)}
+              onClick={() => handleChangePage(page + 1)}
             >
               Load more products
             </Button>
