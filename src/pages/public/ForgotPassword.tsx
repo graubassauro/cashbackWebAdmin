@@ -82,8 +82,6 @@ const TOTAL_STEPS = 3
 export function ForgotPassword() {
   const [currentStep, setCurrentStep] = useState(1)
 
-  console.log('current step: ' + currentStep)
-
   const handleStepForward = useCallback(() => {
     if (currentStep <= TOTAL_STEPS) {
       setCurrentStep(currentStep + 1)

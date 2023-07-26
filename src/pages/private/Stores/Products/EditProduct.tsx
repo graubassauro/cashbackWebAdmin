@@ -1,11 +1,20 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { VStack, Grid, useDisclosure, useToast } from '@chakra-ui/react'
+import {
+  VStack,
+  Grid,
+  useDisclosure,
+  useToast,
+  Box,
+  HStack,
+  Icon,
+} from '@chakra-ui/react'
+import { ArrowLeft } from '@phosphor-icons/react'
 
 import { cashbackApi } from '~api/cashback-api.service'
 import { FormButton } from '~components/Buttons'
@@ -17,8 +26,9 @@ import {
 } from '~components/Forms/Inputs'
 import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
+import { Title } from '~components/Typograph/Title'
+import { BodyLayout } from '~layouts/Body'
 import { Loading } from '~components/Loading'
-import { Container } from '~layouts/Container'
 import { useAppSelector } from '~redux/store'
 import { useGetAllCategoriesQuery } from '~services/category.service'
 import { useGetBrandsByStoreUidQuery } from '~services/brands.service'
@@ -56,6 +66,7 @@ export function EditProduct() {
     'category',
   )
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
+  const [imageUrl, setImageUrl] = useState<string[] | null>(null)
   const [currentSelectedFileIndex, setCurrentSelectedFileIndex] = useState(0)
 
   const handleAddFile = useCallback((event: ChangeEvent<HTMLInputElement>) => {
@@ -70,9 +81,13 @@ export function EditProduct() {
       const filteredFilesArray =
         selectedFiles?.filter((_, index) => index !== position) ?? []
 
+      const filteredFilesStringArray =
+        imageUrl?.filter((_, index) => index !== position) ?? []
+
       setSelectedFiles(filteredFilesArray ?? [])
+      setImageUrl(filteredFilesStringArray ?? [])
     },
-    [selectedFiles],
+    [selectedFiles, imageUrl],
   )
 
   const modalTitle = modalListType === 'brand' ? 'Brands' : 'Categories'
@@ -137,6 +152,7 @@ export function EditProduct() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting, isValid },
   } = useForm<CreateStoreProductInputs>({
     resolver: zodResolver(createStoreProductSchema),
@@ -315,6 +331,12 @@ export function EditProduct() {
    */
   useEffect(() => {
     if (isProductLoaded && product) {
+      setValue('name', product?.data?.name ?? '')
+      setValue('quantity', String(product?.data?.quantity) ?? '')
+      setValue('price', String(product?.data?.price) ?? '')
+      setValue('pointGain', product?.data?.cashbackType ?? '')
+      setValue('pointGainValue', String(product?.data?.points) ?? '')
+
       // mount categories
       //   product.data.categories.forEach((category) => {
       //     const categoryPayload: ICategoryDTO = {
@@ -324,9 +346,13 @@ export function EditProduct() {
       //     handleSetSelectedBrand(category)
       // })
       // mount brand
-      // mount form
+      if (product?.data.images.length > 0) {
+        const imagesUrls = product?.data.images.map((image) => image.url)
+
+        setImageUrl(imagesUrls)
+      }
     }
-  }, [isProductLoaded, product])
+  }, [isProductLoaded, product, setValue])
 
   const isLoadingButton =
     isFetchingCategories ||
@@ -337,12 +363,36 @@ export function EditProduct() {
 
   const filteredCategories = selectedCategory.filter((c) => c.uId !== '')
 
+  const navigate = useNavigate()
+
+  const handleGoBack = useCallback(() => {
+    navigate(-1)
+  }, [navigate])
+
   return (
-    <Container hasGoBackButton title="New Product">
+    <BodyLayout>
       {isLoadingProduct ? (
         <Loading />
       ) : (
-        <>
+        <Box mt="4" px="4" py="5" borderRadius={10} bgColor="white">
+          <HStack w="100%" justifyContent="space-between">
+            <Icon
+              as={ArrowLeft}
+              w={8}
+              h={8}
+              borderRadius={6}
+              color="gray.700"
+              transition="ease-in 0.35s"
+              _hover={{
+                bgColor: 'gray.700',
+                color: 'white',
+                cursor: 'pointer',
+              }}
+              onClick={handleGoBack}
+            />
+
+            <Title title="Edit product" />
+          </HStack>
           <VStack
             as="form"
             w="100%"
@@ -418,36 +468,42 @@ export function EditProduct() {
               <LabelFileInput
                 index={0}
                 selectedFile={selectedFiles?.[0]}
+                backgroundImageString={imageUrl?.[0]}
                 onChange={handleAddFile}
                 onHandleRemoveFile={handleRemoveFileFromIndex}
               />
               <LabelFileInput
                 index={1}
                 selectedFile={selectedFiles?.[1]}
+                backgroundImageString={imageUrl?.[1]}
                 onChange={handleAddFile}
                 onHandleRemoveFile={handleRemoveFileFromIndex}
               />
               <LabelFileInput
                 index={2}
                 selectedFile={selectedFiles?.[2]}
+                backgroundImageString={imageUrl?.[2]}
                 onChange={handleAddFile}
                 onHandleRemoveFile={handleRemoveFileFromIndex}
               />
               <LabelFileInput
                 index={3}
                 selectedFile={selectedFiles?.[3]}
+                backgroundImageString={imageUrl?.[3]}
                 onChange={handleAddFile}
                 onHandleRemoveFile={handleRemoveFileFromIndex}
               />
               <LabelFileInput
                 index={4}
                 selectedFile={selectedFiles?.[4]}
+                backgroundImageString={imageUrl?.[4]}
                 onChange={handleAddFile}
                 onHandleRemoveFile={handleRemoveFileFromIndex}
               />
               <LabelFileInput
                 index={5}
                 selectedFile={selectedFiles?.[5]}
+                backgroundImageString={imageUrl?.[5]}
                 onChange={handleAddFile}
                 onHandleRemoveFile={handleRemoveFileFromIndex}
               />
@@ -501,8 +557,8 @@ export function EditProduct() {
             isOpen={isUnselectButtonOpen}
             onClose={onCloseUnselectButton}
           />
-        </>
+        </Box>
       )}
-    </Container>
+    </BodyLayout>
   )
 }

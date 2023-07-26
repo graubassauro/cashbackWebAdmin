@@ -76,8 +76,6 @@ export function CreateAccount() {
    */
   useEffect(() => {
     if (isCreateMerchantSuccess && merchantData) {
-      console.log(merchantData)
-
       requestAuthLogin({
         PhoneNumber: merchantData.data.phoneNumber,
         Password: passwordFieldValue,
