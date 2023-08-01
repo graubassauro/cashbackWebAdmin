@@ -31,7 +31,11 @@ function ProductCardComponent({
   product,
   onHandleSetUidToDelete,
 }: ProductProps) {
-  const [isAvailable, setIsAvailable] = useState(product.quantity !== 0)
+  const hasProducts = product.quantity > 0
+
+  const [isAvailable, setIsAvailable] = useState(hasProducts)
+
+  console.log(isAvailable)
 
   const navigate = useNavigate()
 
@@ -116,7 +120,7 @@ function ProductCardComponent({
         <HStack>
           <Text>{isAvailable ? 'Available' : 'Unavailable'}</Text>
           <Switch
-            checked={isAvailable}
+            isChecked={isAvailable}
             onChange={() => setIsAvailable(!isAvailable)}
           />
         </HStack>
