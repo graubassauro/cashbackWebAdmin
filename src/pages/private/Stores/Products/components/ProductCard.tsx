@@ -1,16 +1,20 @@
+import { memo, useCallback, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Badge,
-  Button,
   ButtonGroup,
   Card,
   CardBody,
   CardFooter,
+  CardHeader,
   Divider,
   HStack,
   Heading,
   Icon,
+  IconButton,
   Image,
   Stack,
+  Switch,
   Text,
 } from '@chakra-ui/react'
 import { PencilSimpleLine, Trash } from '@phosphor-icons/react'
@@ -23,19 +27,38 @@ type ProductProps = {
   onHandleSetUidToDelete: (uId: string) => void
 }
 
-export function ProductCard({ product, onHandleSetUidToDelete }: ProductProps) {
+function ProductCardComponent({
+  product,
+  onHandleSetUidToDelete,
+}: ProductProps) {
+  const [isAvailable, setIsAvailable] = useState(product.quantity !== 0)
+
+  const navigate = useNavigate()
+
+  const handleNavigateToEditProduct = useCallback(() => {
+    navigate(`/products/edit-product/${product.uId}`)
+  }, [navigate, product.uId])
+
   return (
     <Card w="100%">
-      <CardBody>
+      <CardHeader p="0">
         <Image
-          src="https://github.com/thereallucas98.png"
-          alt="Green double couch with wooden legs"
+          src={
+            product.images.length > 0
+              ? product.images[0].url
+              : 'https://github.com/thereallucas98.png'
+          }
+          alt={product.name}
           maxH="10rem"
           w="100%"
           fit="cover"
           borderRadius="md"
+          borderBottomLeftRadius={0}
+          borderBottomRightRadius={0}
         />
-        <Stack mt="4" spacing="2">
+      </CardHeader>
+      <CardBody>
+        <Stack mt="2" spacing="2">
           <Heading
             fontSize={24}
             color="gray.900"
@@ -60,42 +83,46 @@ export function ProductCard({ product, onHandleSetUidToDelete }: ProductProps) {
         </Stack>
       </CardBody>
       <Divider color="gray.400" />
-      <CardFooter>
+      <CardFooter bgColor="gray.300" justifyContent="space-between">
         <ButtonGroup spacing="2">
-          <Button
-            bgColor="purple.900"
-            textColor="white"
+          <IconButton
+            aria-label="Edit Product"
+            bgColor="white"
             transition="ease-in 0.35s"
             fontSize={18}
             fontWeight={700}
             _hover={{
               bgColor: 'purple.900',
               opacity: 0.85,
+              svg: { fill: 'white' },
             }}
-            leftIcon={<Icon as={PencilSimpleLine} color="white" size={32} />}
-          >
-            Edit
-          </Button>
-          <Button
-            borderWidth={1}
-            borderRadius="md"
-            borderColor="transparent"
-            bgColor="transparent"
+            icon={<Icon as={PencilSimpleLine} color="gray.700" size={32} />}
+            onClick={handleNavigateToEditProduct}
+          />
+          <IconButton
+            aria-label="Delete Product"
+            bgColor="white"
             transition="ease-in 0.35s"
-            textColor="purple.900"
             fontSize={18}
             fontWeight={700}
             _hover={{
-              bgColor: 'transparent',
-              borderColor: 'purple.900',
+              bgColor: 'purple.900',
+              svg: { fill: 'white' },
             }}
-            leftIcon={<Icon as={Trash} color="purple.900" size={32} />}
+            icon={<Icon as={Trash} color="gray.700" size={32} />}
             onClick={() => onHandleSetUidToDelete(product.uId)}
-          >
-            Delete
-          </Button>
+          />
         </ButtonGroup>
+        <HStack>
+          <Text>{isAvailable ? 'Available' : 'Unavailable'}</Text>
+          <Switch
+            checked={isAvailable}
+            onChange={() => setIsAvailable(!isAvailable)}
+          />
+        </HStack>
       </CardFooter>
     </Card>
   )
 }
+
+export const ProductCard = memo(ProductCardComponent)

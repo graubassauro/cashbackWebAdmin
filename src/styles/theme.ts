@@ -1,6 +1,25 @@
-import { extendTheme } from '@chakra-ui/react'
+import { extendTheme, createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { switchAnatomy } from '@chakra-ui/anatomy'
+
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(switchAnatomy.keys)
+
+const baseStyle = definePartsStyle({
+  thumb: {
+    bg: 'white',
+  },
+  track: {
+    bg: 'gray.700',
+    _checked: {
+      bg: 'purple.900',
+    },
+  },
+})
+
+const switchTheme = defineMultiStyleConfig({ baseStyle })
 
 export const theme = extendTheme({
+  components: { Switch: switchTheme },
   colors: {
     white: '#FFF',
 
