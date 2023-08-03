@@ -21,6 +21,7 @@ import {
   LabelFileInput,
   LabelInput,
   LabelTextarea,
+  LightCheckbox,
 } from '~components/Forms/Inputs'
 import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
@@ -37,7 +38,6 @@ import { resetFields } from '~redux/form'
 import { ArrowLeft } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
 import { Title } from '~components/Typograph/Title'
-import { LightCheckbox } from '~components/Forms/Inputs/LightCheckbox'
 
 const selectOptions: SelectOptions[] = [
   {

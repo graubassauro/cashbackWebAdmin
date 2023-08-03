@@ -23,6 +23,7 @@ import {
   LabelFileInput,
   LabelInput,
   LabelTextarea,
+  LightCheckbox,
 } from '~components/Forms/Inputs'
 import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
@@ -57,6 +58,8 @@ const createStoreProductSchema = z.object({
   price: z.string(),
   pointGain: z.string(),
   pointGainValue: z.string(),
+  acceptCoins: z.boolean(),
+  percentCoins: z.string(),
 })
 
 type CreateStoreProductInputs = z.infer<typeof createStoreProductSchema>
@@ -175,6 +178,8 @@ export function EditProduct() {
         brandId: selectedBrand.id ?? 0,
         cashbackType: data.pointGain,
         points: Number(data.pointGainValue),
+        acceptCoins: data.acceptCoins,
+        percentCoins: data.acceptCoins ? Number(data.percentCoins) : 0,
         categories: categoriesId,
       }
 
@@ -436,7 +441,7 @@ export function EditProduct() {
               gap={2}
               w="100%"
               alignItems="center"
-              templateColumns={['1fr', '4fr 1fr']}
+              templateColumns={['1fr', '2fr 2fr', 'repeat(4, 1fr)']}
             >
               <LightSelectInput
                 label="Point gain option"
@@ -450,6 +455,19 @@ export function EditProduct() {
                 id="pointGainValue"
                 {...register('pointGainValue')}
                 error={errors.pointGainValue}
+              />
+
+              <LabelInput
+                label="Coins percentage"
+                id="percentCoins"
+                {...register('percentCoins')}
+                error={errors.percentCoins}
+              />
+              <LightCheckbox
+                label="Can accept coins"
+                id="acceptCoins"
+                {...register('acceptCoins')}
+                error={errors.acceptCoins}
               />
             </Grid>
             <Grid
