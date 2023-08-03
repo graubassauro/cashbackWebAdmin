@@ -35,8 +35,6 @@ function ProductCardComponent({
 
   const [isAvailable, setIsAvailable] = useState(hasProducts)
 
-  console.log(isAvailable)
-
   const navigate = useNavigate()
 
   const handleNavigateToEditProduct = useCallback(() => {

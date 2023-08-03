@@ -12,6 +12,8 @@ export interface ICreateProductForStoreBody {
   brandId: number
   cashbackType: string
   points: number
+  acceptCoins: boolean
+  percentCoins: number
   categories: Array<number>
 }
 

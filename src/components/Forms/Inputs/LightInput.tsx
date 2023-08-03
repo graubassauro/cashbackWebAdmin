@@ -13,8 +13,8 @@ const LightInputBase: ForwardRefRenderFunction<
   return (
     <FormControl isInvalid={!!error}>
       <Input
-        h={54}
-        p={8}
+        h={[10, 12, 14]}
+        p={[6, 8]}
         bgColor="white"
         borderWidth={1}
         borderColor="gray.700"

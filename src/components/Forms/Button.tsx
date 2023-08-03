@@ -7,8 +7,8 @@ interface ButtonComponentProps extends ButtonProps {
 export function ButtonComponent({ title, ...rest }: ButtonComponentProps) {
   return (
     <Button
-      h={54}
-      p={8}
+      h={[10, 12, 14]}
+      p={[6, 8]}
       w="100%"
       bgColor="yellow.700"
       textColor="white"

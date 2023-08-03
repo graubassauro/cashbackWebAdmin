@@ -146,6 +146,7 @@ type ModalSelectProps = InputProps & {
   data: ICategoryDTO[]
   isUnSelectModal?: boolean
   isOpen: boolean
+  isLoadingBrands?: boolean
   onClose: () => void
 }
 
@@ -154,6 +155,7 @@ export function ModalSelect({
   data,
   isOpen = false,
   isUnSelectModal = false,
+  isLoadingBrands = false,
   onClose,
   ...rest
 }: ModalSelectProps) {
@@ -307,7 +309,19 @@ export function ModalSelect({
                 {...rest}
               />
             ) : null}
-            <Flex rowGap={2} columnGap={4} wrap="wrap" flex={1} w="100%">
+            <Flex
+              rowGap={2}
+              columnGap={4}
+              wrap="wrap"
+              flex={1}
+              w="100%"
+              alignItems={
+                isCreatingBrand || isLoadingBrands ? 'center' : 'flex-start'
+              }
+              justifyContent={
+                isCreatingBrand || isLoadingBrands ? 'center' : 'flex-start'
+              }
+            >
               {currentCategories?.map((item) => (
                 <ItemComponent
                   key={`${item.uId}-${item.name}`}
@@ -321,7 +335,7 @@ export function ModalSelect({
 
               {currentCategories.length === 0 ? (
                 <Center flexDirection="column" alignItems="flex-start" gap={4}>
-                  {isCreatingBrand ? (
+                  {isCreatingBrand || isLoadingBrands ? (
                     <Center>
                       <Loading />
                     </Center>

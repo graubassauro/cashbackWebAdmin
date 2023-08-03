@@ -37,6 +37,7 @@ import { resetFields } from '~redux/form'
 import { ArrowLeft } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router-dom'
 import { Title } from '~components/Typograph/Title'
+import { LightCheckbox } from '~components/Forms/Inputs/LightCheckbox'
 
 const selectOptions: SelectOptions[] = [
   {
@@ -56,6 +57,8 @@ const createStoreProductSchema = z.object({
   price: z.string(),
   pointGain: z.string(),
   pointGainValue: z.string(),
+  acceptCoins: z.boolean(),
+  percentCoins: z.string(),
 })
 
 type CreateStoreProductInputs = z.infer<typeof createStoreProductSchema>
@@ -68,7 +71,7 @@ export function NewProduct() {
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
   const [currentSelectedFileIndex, setCurrentSelectedFileIndex] = useState(0)
 
-  const debounceDelay = 850
+  const debounceDelay = 150
 
   const handleAddFile = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
@@ -188,6 +191,8 @@ export function NewProduct() {
         brandId: selectedBrand.id ?? 0,
         cashbackType: data.pointGain,
         points: Number(data.pointGainValue),
+        acceptCoins: data.acceptCoins,
+        percentCoins: data.acceptCoins ? Number(data.percentCoins) : 0,
         categories: categoriesId,
       }
 
@@ -331,12 +336,7 @@ export function NewProduct() {
         return
       }
 
-      if (currentSelectedFileIndex + 1 < selectedFiles.length) {
-        uploadImage(
-          selectedFiles[currentSelectedFileIndex],
-          requestUrl.data.url,
-        )
-      }
+      uploadImage(selectedFiles[currentSelectedFileIndex], requestUrl.data.url)
     }
   }, [
     isRequested,
@@ -348,11 +348,9 @@ export function NewProduct() {
   ])
 
   const isLoadingButton =
-    isFetchingCategories ||
-    isLoadingCategories ||
-    isFetchingBrands ||
-    isLoadingBrands ||
-    isRequestingUrl
+    isFetchingCategories || isLoadingCategories || isRequestingUrl
+
+  const isLoadingBrandsStatus = isFetchingBrands || isLoadingBrands
 
   const filteredCategories = selectedCategory.filter((c) => c.uId !== '')
 
@@ -426,7 +424,7 @@ export function NewProduct() {
             gap={2}
             w="100%"
             alignItems="center"
-            templateColumns={['1fr', '4fr 1fr']}
+            templateColumns={['1fr', '2fr 2fr', 'repeat(4, 1fr)']}
           >
             <LightSelectInput
               label="Point gain option"
@@ -440,6 +438,19 @@ export function NewProduct() {
               id="pointGainValue"
               {...register('pointGainValue')}
               error={errors.pointGainValue}
+            />
+
+            <LabelInput
+              label="Coins percentage"
+              id="percentCoins"
+              {...register('percentCoins')}
+              error={errors.percentCoins}
+            />
+            <LightCheckbox
+              label="Can accept coins"
+              id="acceptCoins"
+              {...register('acceptCoins')}
+              error={errors.acceptCoins}
             />
           </Grid>
           <Grid
@@ -529,6 +540,7 @@ export function NewProduct() {
           title={modalTitle}
           data={whoDataShouldBeListed}
           isOpen={isSelectButtonOpen}
+          isLoadingBrands={isLoadingBrandsStatus}
           onClose={onCloseSelectButton}
           onChange={(e) => setInputSearch(e.target.value)}
         />

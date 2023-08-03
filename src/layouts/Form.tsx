@@ -73,7 +73,7 @@ export function FormLayout({
 
         <Center
           width="100%"
-          p={8}
+          p={[2, 4, 6, 8]}
           alignItems="center"
           justifyContent="center"
           flexDir="column"
@@ -83,8 +83,8 @@ export function FormLayout({
             maxW={728}
             borderWidth={1}
             borderRadius={8}
-            px={10}
-            py={10}
+            px={[2, 4, 6, 8, 10]}
+            py={[6, 8, 10]}
             mt={centeredForm ? '50%' : 0}
             position="relative"
             spacing="4"
@@ -93,11 +93,15 @@ export function FormLayout({
             <Box
               position="absolute"
               bgColor="gray.300"
-              top={-5}
-              left={8}
-              px={2}
+              top={[-3, -5]}
+              left={[4, 8]}
+              px={[0, 2]}
             >
-              <Heading fontFamily="heading" fontSize="2rem" color="gray.700">
+              <Heading
+                fontFamily="heading"
+                fontSize={['1rem', '2rem']}
+                color="gray.700"
+              >
                 {title}
               </Heading>
             </Box>
