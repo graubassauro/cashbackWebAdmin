@@ -11,7 +11,7 @@ export function useGetMerchantStores({ page }: MerchantStoreParams) {
     isSuccess: isStoresSuccess,
   } = useGetAllMerchantStoresQuery({
     page,
-    pagesize: 6,
+    pagesize: 4,
   })
 
   return {
