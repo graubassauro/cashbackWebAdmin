@@ -18,9 +18,7 @@ function StoreContainer() {
     page: currentPage,
   })
 
-  const totalPages = stores
-    ? Math.ceil(stores.data.totalPages / 4)
-    : currentPage + 1
+  const totalPages = stores?.data.totalPages ?? 1
 
   const handleIncreaseCurrentPage = useCallback(() => {
     if (currentPage + 1 <= totalPages) {
