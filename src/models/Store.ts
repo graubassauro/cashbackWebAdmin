@@ -9,6 +9,7 @@ export interface IProductStoreDTO {
   id: number
   uId: string
   name: string
+  about: string
   price: number
   quantity: number
   storeId: number

@@ -3,7 +3,9 @@ import axios, { AxiosResponse } from 'axios'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowLeft } from '@phosphor-icons/react'
 import {
   VStack,
   Grid,
@@ -25,7 +27,10 @@ import {
 } from '~components/Forms/Inputs'
 import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
+import { Title } from '~components/Typograph/Title'
 import { BodyLayout } from '~layouts/Body'
+import { useAppSelector } from '~redux/store'
+import { resetFields } from '~redux/form'
 import { useGetAllCategoriesQuery } from '~services/category.service'
 import { useGetBrandsByNameQuery } from '~services/brands.service'
 import {
@@ -33,13 +38,12 @@ import {
   usePostCreateProductForStoreMutation,
   usePostToReceiveURLToSaveProductImageMutation,
 } from '~services/products.service'
-import { useAppSelector } from '~redux/store'
-import { resetFields } from '~redux/form'
-import { ArrowLeft } from '@phosphor-icons/react'
-import { useNavigate } from 'react-router-dom'
-import { Title } from '~components/Typograph/Title'
 
 const selectOptions: SelectOptions[] = [
+  {
+    key: 'empty',
+    label: 'Select an option',
+  },
   {
     key: 'product-price',
     label: 'Product price %',
@@ -113,6 +117,12 @@ export function NewProduct() {
     (state) => state.form,
   )
 
+  const navigate = useNavigate()
+
+  const handleGoBack = useCallback(() => {
+    navigate(-1)
+  }, [navigate])
+
   /**
    * API
    */
@@ -169,6 +179,7 @@ export function NewProduct() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting, isValid },
   } = useForm<CreateStoreProductInputs>({
     resolver: zodResolver(createStoreProductSchema),
@@ -240,6 +251,15 @@ export function NewProduct() {
   useEffect(() => {
     if (createdProduct && productCreated) {
       dispatch(resetFields())
+      setValue('name', '')
+      setValue('about', '')
+      setValue('quantity', '')
+      setValue('price', '')
+      setValue('pointGain', 'empty')
+      setValue('pointGainValue', '')
+      setValue('acceptCoins', false)
+      setValue('percentCoins', '')
+
       requestImageURL({
         storeUId: store?.uId ?? '',
         productUId: productCreated.data.uId,
@@ -261,6 +281,7 @@ export function NewProduct() {
     requestImageURL,
     store?.uId,
     toast,
+    setValue,
   ])
 
   // Define the function to upload an image using Axios
@@ -336,7 +357,16 @@ export function NewProduct() {
         return
       }
 
-      uploadImage(selectedFiles[currentSelectedFileIndex], requestUrl.data.url)
+      if (currentSelectedFileIndex < selectedFiles.length) {
+        uploadImage(
+          selectedFiles[currentSelectedFileIndex],
+          requestUrl.data.url,
+        )
+      } else {
+        setSelectedFiles(null)
+        dispatch(cashbackApi.util.invalidateTags(['Product']))
+        handleGoBack()
+      }
     }
   }, [
     isRequested,
@@ -345,6 +375,8 @@ export function NewProduct() {
     toast,
     uploadImage,
     currentSelectedFileIndex,
+    dispatch,
+    handleGoBack,
   ])
 
   const isLoadingButton =
@@ -353,12 +385,6 @@ export function NewProduct() {
   const isLoadingBrandsStatus = isFetchingBrands || isLoadingBrands
 
   const filteredCategories = selectedCategory.filter((c) => c.uId !== '')
-
-  const navigate = useNavigate()
-
-  const handleGoBack = useCallback(() => {
-    navigate(-1)
-  }, [navigate])
 
   return (
     <BodyLayout>

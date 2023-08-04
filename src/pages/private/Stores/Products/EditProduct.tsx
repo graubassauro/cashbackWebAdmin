@@ -42,6 +42,10 @@ import {
 
 const selectOptions: SelectOptions[] = [
   {
+    key: 'empty',
+    label: 'Select an option',
+  },
+  {
     key: 'product-price',
     label: 'Product price %',
   },
@@ -337,10 +341,13 @@ export function EditProduct() {
   useEffect(() => {
     if (isProductLoaded && product) {
       setValue('name', product?.data?.name ?? '')
+      setValue('about', product?.data?.about ?? '')
       setValue('quantity', String(product?.data?.quantity) ?? '')
       setValue('price', String(product?.data?.price) ?? '')
       setValue('pointGain', product?.data?.cashbackType ?? '')
       setValue('pointGainValue', String(product?.data?.points) ?? '')
+      setValue('acceptCoins', product?.data?.acceptCoins ?? false)
+      setValue('percentCoins', String(product?.data?.amountCoins) ?? '')
 
       // mount categories
       //   product.data.categories.forEach((category) => {

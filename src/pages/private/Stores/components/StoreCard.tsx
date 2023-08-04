@@ -58,6 +58,7 @@ function StoreCardComponent({ data }: StoreCardProps) {
 
   const handleNavigateToDetailStore = useCallback(() => {
     dispatch(setCurrentStore({ currentStore: data }))
+    dispatch(cashbackApi.util.invalidateTags(['Product']))
     navigate('/stores/detail-store')
   }, [dispatch, data, navigate])
 

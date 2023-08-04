@@ -56,7 +56,6 @@ const LightSelectBase: ForwardRefRenderFunction<
           }}
           {...rest}
         >
-          <option value="default">Selecione uma opção</option>
           {options.map((option) => (
             <option key={option.key} value={option.key}>
               {option.label}

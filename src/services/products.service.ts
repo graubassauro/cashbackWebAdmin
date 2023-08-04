@@ -70,12 +70,15 @@ interface IProductDetailResponse {
   categories: Category[]
   uId: string
   name: string
+  about: string
   price: number
   quantity: number
   storeId: number
   photoUrl: any
   cashbackType: string
   points: number
+  acceptCoins: boolean
+  amountCoins: number
   brandId: number
   brandName: string
   images: Image[]

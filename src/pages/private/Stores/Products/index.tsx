@@ -1,21 +1,99 @@
-import { useCallback, useEffect, useState } from 'react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Button, Grid, VStack, useDisclosure } from '@chakra-ui/react'
 
 import { cashbackApi } from '~api/cashback-api.service'
-import { useDeleteProductMutation } from '~services/products.service'
+import { IProductStoreDTO } from '~models/Store'
+import { useAppSelector } from '~redux/store'
+import {
+  useDeleteProductMutation,
+  useGetProductsByStoreUidQuery,
+} from '~services/products.service'
 
 import { DeleteModalComponent, ProductCard } from './components'
-import { useProduct } from './contexts/ProductsPageContext'
 
 export function Products() {
+  const containerRef = useRef<HTMLDivElement>(null)
+  /** START */
+  const [page, setPage] = useState(1)
+  const [productsToCards, setProductsToCards] = useState<IProductStoreDTO[]>([])
+
+  const store = useAppSelector((state) => {
+    return state.merchant.currentStore
+  })
+
   const {
+    data: products,
+    isLoading: isProductsLoading,
+    isFetching: isProductsFetching,
+    isSuccess: isLoadedProducts,
+  } = useGetProductsByStoreUidQuery({
     page,
-    pageParams,
-    productsToCards,
-    handleChangePage,
-    handleResetProductsToCards,
-  } = useProduct()
+    uId: store?.uId ?? '',
+  })
+
+  const isLoading = isProductsLoading || isProductsFetching
+
+  const pageParams = useMemo(() => {
+    return {
+      endPosition: products?.data.totalPages ?? 5,
+      totalOfItems: products?.data.totalRecords ?? 0,
+      totalOfItemsPerPage: products?.data.products.length ?? 10,
+    }
+  }, [
+    products?.data.totalPages,
+    products?.data.totalRecords,
+    products?.data.products.length,
+  ])
+
+  const handleChangePage = useCallback((page: number) => {
+    setPage(page)
+  }, [])
+
+  const handleResetProductsToCards = useCallback(() => {
+    setProductsToCards([])
+  }, [])
+
+  const removeDuplicateProducts = (
+    array: IProductStoreDTO[],
+  ): IProductStoreDTO[] => {
+    const uniqueProducts: IProductStoreDTO[] = []
+    const productSet = new Set<string>()
+
+    for (const product of array) {
+      const serializedProduct = JSON.stringify(product)
+      if (!productSet.has(serializedProduct)) {
+        productSet.add(serializedProduct)
+        uniqueProducts.push(product)
+      }
+    }
+
+    return uniqueProducts
+  }
+
+  useEffect(() => {
+    if (isLoadedProducts) {
+      if (page === 1) {
+        setProductsToCards(products?.data.products ?? [])
+      } else {
+        const productsToAdd = products?.data?.products ?? []
+        const updatedProductsList = [...productsToCards, ...productsToAdd]
+        const uniqueProducts = removeDuplicateProducts(updatedProductsList)
+        setProductsToCards(uniqueProducts)
+      }
+
+      if (containerRef.current) {
+        containerRef.current.scrollTop = containerRef.current.scrollHeight
+      }
+    }
+  }, [isLoadedProducts, page, products?.data.products, store])
+
+  useEffect(() => {
+    setPage(1)
+  }, [])
+
+  /** END */
 
   const [uIdToDelete, setUIdToDelete] = useState('')
 
@@ -63,7 +141,7 @@ export function Products() {
 
   return (
     <>
-      <VStack w="100%">
+      <VStack w="100%" ref={containerRef}>
         <Grid
           w="100%"
           templateColumns={[
@@ -84,7 +162,7 @@ export function Products() {
             />
           ))}
         </Grid>
-        {page < pageParams?.endPosition ? (
+        {page < pageParams?.endPosition && !isLoading ? (
           <Button
             bgColor="transparent"
             fontSize={[14, 16, 18]}
