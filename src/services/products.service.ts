@@ -37,6 +37,7 @@ interface ICreateProductImageRequestURLResponse {
 interface IProductsByStoreParams {
   uId: string
   page: number
+  size?: number
 }
 
 interface IProductByStoreResponse {
@@ -110,8 +111,8 @@ export const productServiceApi = cashbackApi.injectEndpoints({
       DataWrapper<IProductByStoreResponse>,
       IProductsByStoreParams
     >({
-      query: ({ uId, page }) => ({
-        url: `product/store/${uId}/all/${page}/10`,
+      query: ({ uId, page, size = 10 }) => ({
+        url: `product/store/${uId}/all/${page}/${size}`,
         method: 'GET',
       }),
       providesTags: ['Product'],

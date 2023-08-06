@@ -29,10 +29,10 @@ import { FeedbackCard } from './components/FeedbackCard'
 import { useAppSelector } from '~redux/store'
 import { BodyLayout } from '~layouts/Body'
 
-import { Audience } from './Audience'
+import { Promotions } from './Promotions'
 import { Products } from './Products'
 
-const detailStoreTabs = ['products', 'audience', 'feedback'] as const
+const detailStoreTabs = ['products', 'promotions', 'feedback'] as const
 type DetailStoreTab = (typeof detailStoreTabs)[number]
 
 /**
@@ -89,11 +89,11 @@ const optionsTabData = [
     inputPlaceholder: 'Search for a promotion',
     groupedData: {
       title: 'Segments',
-      urlEndpoint: 'audience/segments',
+      urlEndpoint: 'promotions/segments',
     },
     newData: {
-      title: 'New highlight',
-      urlEndpoint: 'audience/new-highlight',
+      title: 'New promotion',
+      urlEndpoint: 'promotions/new-promotion',
     },
   },
 ]
@@ -321,7 +321,7 @@ export function DetailedStore() {
   const tabs = useMemo((): Record<DetailStoreTab, React.JSX.Element | null> => {
     return {
       products: <Products />,
-      audience: <Audience />,
+      promotions: <Promotions />,
       feedback: (
         <VStack w="100%" spacing={2}>
           <FeedbackCard />
@@ -341,7 +341,7 @@ export function DetailedStore() {
   > => {
     return {
       products: <TabOptions data={optionsTabData[0]} />,
-      audience: <TabOptions data={optionsTabData[1]} />,
+      promotions: <TabOptions data={optionsTabData[1]} />,
       feedback: (
         <FeedbackTab
           activeFeedbackFilter={selectedFeedback}

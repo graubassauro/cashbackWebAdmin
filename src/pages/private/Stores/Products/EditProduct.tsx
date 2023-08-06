@@ -1,20 +1,11 @@
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  VStack,
-  Grid,
-  useDisclosure,
-  useToast,
-  Box,
-  HStack,
-  Icon,
-} from '@chakra-ui/react'
-import { ArrowLeft } from '@phosphor-icons/react'
+import { VStack, Grid, useDisclosure, useToast, Box } from '@chakra-ui/react'
 
 import { cashbackApi } from '~api/cashback-api.service'
 import { FormButton } from '~components/Buttons'
@@ -25,9 +16,9 @@ import {
   LabelTextarea,
   LightCheckbox,
 } from '~components/Forms/Inputs'
+import { HeaderForm } from '~components/Forms/HeaderForm'
 import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
-import { Title } from '~components/Typograph/Title'
 import { BodyLayout } from '~layouts/Body'
 import { Loading } from '~components/Loading'
 import { useAppSelector } from '~redux/store'
@@ -375,36 +366,13 @@ export function EditProduct() {
 
   const filteredCategories = selectedCategory.filter((c) => c.uId !== '')
 
-  const navigate = useNavigate()
-
-  const handleGoBack = useCallback(() => {
-    navigate(-1)
-  }, [navigate])
-
   return (
     <BodyLayout>
       {isLoadingProduct ? (
         <Loading />
       ) : (
         <Box mt="4" px="4" py="5" borderRadius={10} bgColor="white">
-          <HStack w="100%" justifyContent="space-between">
-            <Icon
-              as={ArrowLeft}
-              w={8}
-              h={8}
-              borderRadius={6}
-              color="gray.700"
-              transition="ease-in 0.35s"
-              _hover={{
-                bgColor: 'gray.700',
-                color: 'white',
-                cursor: 'pointer',
-              }}
-              onClick={handleGoBack}
-            />
-
-            <Title title="Edit product" />
-          </HStack>
+          <HeaderForm title="Edit product" />
           <VStack
             as="form"
             w="100%"

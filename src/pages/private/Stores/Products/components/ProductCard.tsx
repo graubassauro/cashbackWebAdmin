@@ -2,6 +2,7 @@ import { memo, useCallback, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Badge,
+  Box,
   ButtonGroup,
   Card,
   CardBody,
@@ -41,6 +42,10 @@ function ProductCardComponent({
     navigate(`/products/edit-product/${product.uId}`)
   }, [navigate, product.uId])
 
+  const priceOffString = product.promotion?.priceOff
+    ? product.price - product.promotion.priceOff
+    : product.price
+
   return (
     <Card w="100%">
       <CardHeader p="0">
@@ -79,9 +84,28 @@ function ProductCardComponent({
           <Text fontSize={16} color="gray.700" fontWeight={400}>
             {product.quantity} product(s)
           </Text>
-          <Text fontSize={20} color="purple.900" fontWeight={500}>
-            ${product.price}
-          </Text>
+          {product.promotion ? (
+            <Box position="relative">
+              <Text
+                position="absolute"
+                left="0%"
+                bottom="60%"
+                fontSize={14}
+                color="red.700"
+                fontWeight={500}
+                textDecor="line-through"
+              >
+                ${product.price}
+              </Text>
+              <Text fontSize={20} color="purple.900" fontWeight={500}>
+                ${priceOffString}
+              </Text>
+            </Box>
+          ) : (
+            <Text fontSize={20} color="purple.900" fontWeight={500}>
+              ${product.price}
+            </Text>
+          )}
         </Stack>
       </CardBody>
       <Divider color="gray.400" />

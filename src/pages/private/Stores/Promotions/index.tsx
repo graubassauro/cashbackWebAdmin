@@ -1,5 +1,6 @@
 import {
   Button,
+  Center,
   Table,
   Tbody,
   Td,
@@ -10,21 +11,41 @@ import {
 } from '@chakra-ui/react'
 import { DotsThreeVertical } from '@phosphor-icons/react'
 
-import { products } from 'mock/products'
-import { ImageTd, /* StatusTd, */ TableTd, TableTh } from '~components/Table'
+import { Loading } from '~components/Loading'
+import { /* StatusTd, */ TableTd, TableTh } from '~components/Table'
+import { useAppSelector } from '~redux/store'
+import { useGetPromotionsByStoreUidQuery } from '~services/promotion.service'
+import { formatDate } from '~utils/formatDate'
 // import { TableFooter } from '~components/Table/TableFooter'
 
-export function Audience() {
+export function Promotions() {
+  const store = useAppSelector((state) => state.merchant.currentStore)
+
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
   })
 
+  const {
+    data: promotions,
+    isLoading: isLoadingPromotions,
+    isFetching: isRequestionPromotions,
+  } = useGetPromotionsByStoreUidQuery({
+    uId: store?.uId ?? '',
+  })
+
+  if (isLoadingPromotions || isRequestionPromotions) {
+    return (
+      <Center>
+        <Loading />
+      </Center>
+    )
+  }
+
   return (
     <Table mt={8} bgColor="white" borderRadius={6}>
       <Thead>
         <Tr borderBottomWidth={1} pb={4}>
-          {isWideVersion ? <TableTh title="IMAGE" /> : null}
           <TableTh title="TITLE" />
           {isWideVersion ? <TableTh title="DISCOUNT PERCENTAGE" /> : null}
           <TableTh title="OPENING DATE" />
@@ -34,21 +55,12 @@ export function Audience() {
         </Tr>
       </Thead>
       <Tbody>
-        {products.map((item) => (
-          <Tr key={item.id}>
-            {isWideVersion ? (
-              <ImageTd
-                product={item.name}
-                src="https://github.com/thereallucas98.png"
-              />
-            ) : null}
-            <TableTd title={item.category} />
-            <TableTd title={item.brand} />
-            <TableTd title={String(item.quantity)} />
-            <TableTd title={String(item.price)} />
-            {/* {isWideVersion ? (
-              <StatusTd status={item.status} title="Available" />
-            ) : null} */}
+        {promotions?.data.map((item) => (
+          <Tr key={item.uId}>
+            <TableTd title={item.name} />
+            <TableTd title={String(item.promotionPriceOff)} />
+            <TableTd title={formatDate(item.initialDate)} />
+            <TableTd title={formatDate(item.finalDate)} />
             <Td>
               <Button
                 bgColor="transparent"

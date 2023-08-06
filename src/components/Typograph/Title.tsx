@@ -6,7 +6,7 @@ type TitleProps = HeadingProps & {
 
 export function Title({ title, ...rest }: TitleProps) {
   return (
-    <Heading fontFamily="heading" fontSize={32} fontWeight="bold" {...rest}>
+    <Heading fontFamily="heading" fontSize={24} fontWeight="bold" {...rest}>
       {title}
     </Heading>
   )

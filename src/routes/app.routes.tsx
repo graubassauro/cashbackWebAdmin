@@ -6,16 +6,19 @@ import { Dashboard } from '~pages/private/Dashboard'
 import { Onboard } from '~pages/private/Onboard'
 import { Analytics } from '~pages/private/Analytics'
 import { Stores } from '~pages/private/Stores'
-import { Segments } from '~pages/private/Stores/Audience/Segments'
-import { NewHighlight } from '~pages/private/Stores/Audience/NewHighlight'
-import { NewProduct } from '~pages/private/Stores/Products/NewProduct'
-import { EditStore } from '~pages/private/Stores/EditStore'
-import { NewStore } from '~pages/private/Stores/NewStore'
-import { DetailedStore } from '~pages/private/Stores/DetailedStore'
 import { Settings } from '~pages/private/Settings'
-import { Brands } from '~pages/private/Stores/Products/Brands'
 import { Categories } from '~pages/private/Categories'
+
+import { NewStore } from '~pages/private/Stores/NewStore'
+import { EditStore } from '~pages/private/Stores/EditStore'
+import { DetailedStore } from '~pages/private/Stores/DetailedStore'
+
+import { Brands } from '~pages/private/Stores/Products/Brands'
 import { EditProduct } from '~pages/private/Stores/Products/EditProduct'
+import { NewProduct } from '~pages/private/Stores/Products/NewProduct'
+
+import { Segments } from '~pages/private/Stores/Promotions/Segments'
+import { NewPromotion } from '~pages/private/Stores/Promotions/NewPromotion'
 
 export function AppRoutes() {
   const location = useLocation()
@@ -37,8 +40,8 @@ export function AppRoutes() {
           <Route path="products/brands" element={<Brands />} />
           <Route path="products/new-product" element={<NewProduct />} />
           <Route path="products/edit-product/:id" element={<EditProduct />} />
-          <Route path="audience/segments" element={<Segments />} />
-          <Route path="audience/new-highlight" element={<NewHighlight />} />
+          <Route path="promotions/segments" element={<Segments />} />
+          <Route path="promotions/new-promotion" element={<NewPromotion />} />
         </Route>
       </Routes>
     </AnimatePresence>

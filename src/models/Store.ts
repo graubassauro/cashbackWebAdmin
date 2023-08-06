@@ -20,6 +20,13 @@ export interface IProductStoreDTO {
   brandName: string
   images: ImageFile[]
   categories?: ICategoryDTO[]
+  promotion: {
+    uid: string
+    id: number
+    initialDate: string
+    finalDate: string
+    priceOff: number
+  }
 }
 
 export interface IStoreDTO {
