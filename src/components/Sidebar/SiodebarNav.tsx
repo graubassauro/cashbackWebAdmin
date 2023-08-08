@@ -1,5 +1,9 @@
 import { Stack } from '@chakra-ui/react'
-import { ChartLine, House, Package, Storefront } from '@phosphor-icons/react'
+import {
+  /* ChartLine , */ House,
+  Package,
+  Storefront,
+} from '@phosphor-icons/react'
 
 import { NavLink } from './NavLink'
 
@@ -15,9 +19,9 @@ export function SidebarNav() {
       <NavLink hrefString="/stores" icon={Package}>
         Stores
       </NavLink>
-      <NavLink hrefString="/analytics" icon={ChartLine}>
+      {/* <NavLink hrefString="/analytics" icon={ChartLine}>
         Analytics
-      </NavLink>
+      </NavLink> */}
     </Stack>
   )
 }

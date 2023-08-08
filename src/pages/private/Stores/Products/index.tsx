@@ -55,6 +55,15 @@ export function Products() {
     setProductsToCards([])
   }, [])
 
+  const handleScroll = useCallback(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      })
+    }
+  }, [])
+
   const removeDuplicateProducts = (
     array: IProductStoreDTO[],
   ): IProductStoreDTO[] => {
@@ -92,6 +101,10 @@ export function Products() {
   useEffect(() => {
     setPage(1)
   }, [])
+
+  useEffect(() => {
+    handleScroll()
+  }, [handleScroll, productsToCards])
 
   /** END */
 

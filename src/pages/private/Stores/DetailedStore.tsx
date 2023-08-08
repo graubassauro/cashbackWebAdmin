@@ -76,10 +76,6 @@ const TabItem = ({ title, tab, isActive, onSelected }: TabItemProps) => {
 const optionsTabData = [
   {
     inputPlaceholder: 'Search for a product',
-    groupedData: {
-      title: 'Brands',
-      urlEndpoint: 'products/brands',
-    },
     newData: {
       title: 'New product',
       urlEndpoint: 'products/new-product',
@@ -87,10 +83,6 @@ const optionsTabData = [
   },
   {
     inputPlaceholder: 'Search for a promotion',
-    groupedData: {
-      title: 'Segments',
-      urlEndpoint: 'promotions/segments',
-    },
     newData: {
       title: 'New promotion',
       urlEndpoint: 'promotions/new-promotion',
@@ -105,10 +97,6 @@ const optionsTabData = [
 type TabOptionsProps = {
   data: {
     inputPlaceholder: string
-    groupedData: {
-      title: string
-      urlEndpoint: string
-    }
     newData: {
       title: string
       urlEndpoint: string
@@ -136,18 +124,6 @@ const TabOptions = ({ data }: TabOptionsProps) => {
           Options
         </MenuButton>
         <MenuList>
-          <MenuItem
-            bgColor="white"
-            textColor="gray.700"
-            _hover={{
-              bgColor: 'purple.900',
-              textColor: 'white',
-            }}
-            title={data.groupedData.title}
-            onClick={() => navigate(`../../${data.groupedData.urlEndpoint}`)}
-          >
-            {data.groupedData.title}
-          </MenuItem>
           <MenuItem
             bgColor="white"
             textColor="gray.700"
@@ -188,10 +164,6 @@ const TabOptions = ({ data }: TabOptionsProps) => {
         _focus={{
           borderColor: 'gray.700',
         }}
-      />
-      <ActionButton
-        title={data.groupedData.title}
-        onClick={() => navigate(`../../${data.groupedData.urlEndpoint}`)}
       />
       <ActionButton
         title={data.newData.title}

@@ -11,6 +11,16 @@ const baseStyle = definePartsStyle({
     _checked: {
       bg: 'purple.900',
       borderColor: 'purple.900',
+
+      _hover: {
+        bg: 'purple.900',
+        borderColor: 'purple.900',
+      },
+    },
+
+    _hover: {
+      bg: 'purple.900',
+      borderColor: 'purple.900',
     },
   },
 })

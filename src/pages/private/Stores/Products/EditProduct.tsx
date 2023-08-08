@@ -46,7 +46,7 @@ const selectOptions: SelectOptions[] = [
   },
 ]
 
-const createStoreProductSchema = z.object({
+const updateStoreProductSchema = z.object({
   name: z.string(),
   about: z.string(),
   quantity: z.string(),
@@ -57,7 +57,7 @@ const createStoreProductSchema = z.object({
   percentCoins: z.string(),
 })
 
-type CreateStoreProductInputs = z.infer<typeof createStoreProductSchema>
+type UpdateStoreProductInputs = z.infer<typeof updateStoreProductSchema>
 
 export function EditProduct() {
   const [modalListType, setModalListType] = useState<'category' | 'brand'>(
@@ -152,13 +152,13 @@ export function EditProduct() {
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<CreateStoreProductInputs>({
-    resolver: zodResolver(createStoreProductSchema),
+  } = useForm<UpdateStoreProductInputs>({
+    resolver: zodResolver(updateStoreProductSchema),
     mode: 'onChange',
   })
 
   const handleCreateNewProduct = useCallback(
-    (data: CreateStoreProductInputs) => {
+    (data: UpdateStoreProductInputs) => {
       const categoriesId = selectedCategory
         .filter((category) => category.id !== 0)
         .map((category) => category.id)
@@ -433,7 +433,7 @@ export function EditProduct() {
               />
 
               <LabelInput
-                label="Coins percentage"
+                label="Coins amount"
                 id="percentCoins"
                 {...register('percentCoins')}
                 error={errors.percentCoins}
@@ -527,7 +527,7 @@ export function EditProduct() {
             </Grid>
             <FormButton
               type="submit"
-              title="Create"
+              title="Update"
               alignSelf="flex-end"
               formButtonType="SUBMIT"
               isLoading={isSubmitting || isCreatingProduct}

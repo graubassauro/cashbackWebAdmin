@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Grid, VStack } from '@chakra-ui/react'
 
@@ -14,6 +14,8 @@ function StoreContainer() {
   const [storesData, setStoresData] = useState<IStoreDTO[]>([])
   const [currentPage, setCurrentPage] = useState(1)
 
+  const mainContainerRef = useRef<HTMLDivElement>(null)
+
   const { stores, isStoresLoading, isStoresSuccess } = useGetMerchantStores({
     page: currentPage,
   })
@@ -26,6 +28,15 @@ function StoreContainer() {
     }
   }, [currentPage, totalPages])
 
+  const handleScroll = useCallback(() => {
+    if (mainContainerRef.current) {
+      mainContainerRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+      })
+    }
+  }, [])
+
   useEffect(() => {
     if (isStoresSuccess && stores) {
       setStoresData((previousStore) => {
@@ -37,10 +48,14 @@ function StoreContainer() {
         return [...previousStore, ...newStores]
       })
     }
-  }, [isStoresSuccess, stores])
+  }, [isStoresSuccess, stores, handleScroll])
+
+  useEffect(() => {
+    handleScroll()
+  }, [handleScroll, storesData])
 
   return (
-    <BodyLayout>
+    <BodyLayout ref={mainContainerRef}>
       <VStack alignItems="flex-end">
         <ActionButton
           title="New Store"

@@ -42,10 +42,6 @@ function ProductCardComponent({
     navigate(`/products/edit-product/${product.uId}`)
   }, [navigate, product.uId])
 
-  const priceOffString = product.promotion?.priceOff
-    ? product.price - product.promotion.priceOff
-    : product.price
-
   return (
     <Card w="100%">
       <CardHeader p="0">
@@ -98,7 +94,7 @@ function ProductCardComponent({
                 ${product.price}
               </Text>
               <Text fontSize={20} color="purple.900" fontWeight={500}>
-                ${priceOffString}
+                ${product.promotion.priceOff}
               </Text>
             </Box>
           ) : (
