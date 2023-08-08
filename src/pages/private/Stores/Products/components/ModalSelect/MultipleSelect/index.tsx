@@ -15,6 +15,7 @@ import {
 
 import { ICategoryDTO } from '~models/Category'
 import { removeCategory, setNewCategory } from '~redux/form'
+import { useAppSelector } from '~redux/store'
 
 import { ItemComponent } from '../components/ItemSelect'
 import { ItemToUnselect } from '../components/ItemToUnselect'
@@ -37,6 +38,26 @@ export function MultipleSelect({
   const [categoryStack, setCategoryStack] = useState<ICategoryDTO[]>([])
 
   const dispatch = useDispatch()
+  const selectedCategories = useAppSelector(
+    (state) => state.form.selectedCategory,
+  )
+
+  const categoryIsSelectedAlready = useCallback(
+    (category: ICategoryDTO) => {
+      for (const item of selectedCategories) {
+        if (item.id === category.id || item.uId === category.uId) {
+          return true
+        } else if (item.categories.length > 0) {
+          const foundInSubCategories = categoryIsSelectedAlready(category)
+          if (foundInSubCategories) {
+            return true
+          }
+          return false
+        }
+      }
+    },
+    [selectedCategories],
+  )
 
   const handleSelectItem = useCallback(
     (item: ICategoryDTO) => {
@@ -132,6 +153,7 @@ export function MultipleSelect({
                   key={`${item.uId}-${item.name}`}
                   data={item}
                   title={title}
+                  isSelected={categoryIsSelectedAlready(item)}
                   hasChildren={item.categories?.length > 0}
                   handleSeeChildren={handleCategoryClick}
                   handleSelectItem={handleSelectItem}

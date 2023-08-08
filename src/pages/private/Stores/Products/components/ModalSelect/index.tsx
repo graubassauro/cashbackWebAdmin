@@ -97,7 +97,7 @@ export function ModalSelect() {
           title={selectedBrand?.name ?? 'Select brand'}
           modalButton="brand"
           isLoading={isLoadingButton}
-          onHandleOpenCorrectModal={onOpenMultipleSelectButton}
+          onHandleOpenCorrectModal={onOpenUniqueModalButton}
           onHandleOpenCorrectUnselectModal={onOpenMultipleSelectButton}
         />
       </Grid>

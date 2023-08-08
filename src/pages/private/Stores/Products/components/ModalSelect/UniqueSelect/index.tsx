@@ -78,10 +78,13 @@ export function UniqueSelect({
     data: brands,
     isFetching: isFetchingBrands,
     isLoading: isLoadingBrands,
-  } = useGetBrandsByNameQuery({
-    uId: store?.uId ?? '',
-    name: debouncedInputSearch,
-  })
+  } = useGetBrandsByNameQuery(
+    {
+      uId: store?.uId ?? '',
+      name: debouncedInputSearch,
+    },
+    { skip: debouncedInputSearch.length < 2 },
+  )
 
   const handleSelectItem = useCallback(
     (item: ICategoryDTO) => {
