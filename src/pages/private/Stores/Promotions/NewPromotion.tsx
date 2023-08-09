@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { z } from 'zod'
 import {
   Box,
@@ -15,6 +16,7 @@ import {
 import { Plus, X } from '@phosphor-icons/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { cashbackApi } from '~api/cashback-api.service'
 import { FormButton } from '~components/Buttons'
 import { HeaderForm } from '~components/Forms/HeaderForm'
 import { LabelInput, LabelTextarea } from '~components/Forms/Inputs'
@@ -53,6 +55,7 @@ export function NewPromotion() {
   const [productsUids, setProductsUids] = useState<string[] | null>()
   const [promo, setPromo] = useState<PromotionGroup | null>()
 
+  const dispatch = useDispatch()
   const store = useAppSelector((state) => state.merchant.currentStore)
 
   const toast = useToast()
@@ -292,7 +295,7 @@ export function NewPromotion() {
         </VStack>
         <FormButton
           type="submit"
-          title="Vinculate products"
+          title="Vinculate product"
           alignSelf="flex-end"
           formButtonType="SUBMIT"
           isLoading={
@@ -332,6 +335,8 @@ export function NewPromotion() {
 
   useEffect(() => {
     if (createdProGroup && proGroup) {
+      dispatch(cashbackApi.util.invalidateTags(['Promotion']))
+
       toast({
         title: `New promotion was created`,
         description: 'Now you can vinculate one product',
@@ -345,7 +350,7 @@ export function NewPromotion() {
       setPromo(proGroup.data)
       setSelectedTab('product')
     }
-  }, [createdProGroup, proGroup, toast, storePromoReset])
+  }, [createdProGroup, proGroup, toast, storePromoReset, dispatch])
 
   useEffect(() => {
     if (productWasVinculated) {
@@ -358,10 +363,18 @@ export function NewPromotion() {
         position: 'top',
       })
 
+      dispatch(cashbackApi.util.invalidateTags(['Promotion']))
+
       vinculateProductToPromoReset()
       navigate(-1)
     }
-  }, [productWasVinculated, toast, vinculateProductToPromoReset, navigate])
+  }, [
+    productWasVinculated,
+    toast,
+    vinculateProductToPromoReset,
+    navigate,
+    dispatch,
+  ])
 
   return (
     <BodyLayout>

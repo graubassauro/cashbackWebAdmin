@@ -50,5 +50,5 @@ export const cashbackApi = createApi({
   baseQuery: cashbackApiWithReauth,
   endpoints: () => ({}),
   reducerPath: 'cashbackApi',
-  tagTypes: ['Auth', 'Merchant', 'Product', 'Brands'],
+  tagTypes: ['Auth', 'Merchant', 'Product', 'Brands', 'Promotion'],
 })

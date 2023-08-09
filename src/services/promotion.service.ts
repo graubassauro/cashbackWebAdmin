@@ -34,6 +34,7 @@ export const promotionsServiceApi = cashbackApi.injectEndpoints({
         url: generateBaseUrl(`store/${params.uId}`),
         method: 'GET',
       }),
+      providesTags: ['Promotion'],
     }),
     postPromotionGroup: build.mutation<
       DataWrapper<PromotionGroup>,

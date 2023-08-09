@@ -1,8 +1,23 @@
+type PromotionImage = {
+  productImageUId: string
+  url: string
+}
+
+type PromotionProduct = {
+  brand: string
+  images: PromotionImage[]
+  name: string
+  productId: number
+  productPrice: number
+  productUid: string
+  promotionPriceOff: number
+}
+
 export type Promotion = {
   uId: string
   name: string
   initialDate: string
-  finalDate: string
+  endDate: string
   about: string
   highlight: string
   productUid: string
@@ -11,10 +26,12 @@ export type Promotion = {
   productPrice: number
   promotionPriceOff: number
   images: string[]
+  status: 'Active'
+  products: PromotionProduct[]
   id: number
 }
 
 export type PromotionGroup = Pick<
   Promotion,
-  'uId' | 'name' | 'initialDate' | 'finalDate'
+  'uId' | 'name' | 'initialDate' | 'endDate'
 >
