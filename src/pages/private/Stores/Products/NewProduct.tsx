@@ -78,7 +78,6 @@ export function NewProduct() {
   )
 
   const toast = useToast()
-  // Hook to select brand or categories
   const store = useAppSelector((state) => {
     return state.merchant.currentStore
   })

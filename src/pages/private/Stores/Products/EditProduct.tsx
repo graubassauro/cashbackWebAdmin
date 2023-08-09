@@ -1,35 +1,33 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
+import { ChangeEvent, useCallback, useEffect, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
 import { useParams } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { VStack, Grid, useDisclosure, useToast, Box } from '@chakra-ui/react'
+import { VStack, Grid, useToast, Box } from '@chakra-ui/react'
 
 import { cashbackApi } from '~api/cashback-api.service'
 import { FormButton } from '~components/Buttons'
 import {
-  ButtonInput,
   LabelFileInput,
   LabelInput,
   LabelTextarea,
   LightCheckbox,
 } from '~components/Forms/Inputs'
 import { HeaderForm } from '~components/Forms/HeaderForm'
-import { ModalSelect } from '~components/Forms/ModalSelect'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
 import { BodyLayout } from '~layouts/Body'
 import { Loading } from '~components/Loading'
 import { useAppSelector } from '~redux/store'
-import { useGetAllCategoriesQuery } from '~services/category.service'
-import { useGetBrandsByStoreUidQuery } from '~services/brands.service'
 import {
   ICreateProductForStoreBody,
   useGetProductQuery,
   usePostCreateProductForStoreMutation,
   usePostToReceiveURLToSaveProductImageMutation,
 } from '~services/products.service'
+
+import { ModalSelect } from './components/ModalSelect'
 
 const selectOptions: SelectOptions[] = [
   {
@@ -60,9 +58,6 @@ const updateStoreProductSchema = z.object({
 type UpdateStoreProductInputs = z.infer<typeof updateStoreProductSchema>
 
 export function EditProduct() {
-  const [modalListType, setModalListType] = useState<'category' | 'brand'>(
-    'category',
-  )
   const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
   const [imageUrl, setImageUrl] = useState<string[] | null>(null)
   const [currentSelectedFileIndex, setCurrentSelectedFileIndex] = useState(0)
@@ -88,23 +83,9 @@ export function EditProduct() {
     [selectedFiles, imageUrl],
   )
 
-  const modalTitle = modalListType === 'brand' ? 'Brands' : 'Categories'
-
   const { id } = useParams()
 
   const toast = useToast()
-  // Hook to select brand or categories
-  const {
-    isOpen: isSelectButtonOpen,
-    onOpen: onOpenSelectButton,
-    onClose: onCloseSelectButton,
-  } = useDisclosure()
-  // hook to unselect brand or categories
-  const {
-    isOpen: isUnselectButtonOpen,
-    onOpen: onOpenUnselectButton,
-    onClose: onCloseUnselectButton,
-  } = useDisclosure()
   const store = useAppSelector((state) => {
     return state.merchant.currentStore
   })
@@ -112,21 +93,6 @@ export function EditProduct() {
   const { selectedCategory, selectedBrand } = useAppSelector(
     (state) => state.form,
   )
-
-  /**
-   * API
-   */
-  const {
-    data: categories,
-    isFetching: isFetchingCategories,
-    isLoading: isLoadingCategories,
-  } = useGetAllCategoriesQuery()
-
-  const {
-    data: brands,
-    isFetching: isFetchingBrands,
-    isLoading: isLoadingBrands,
-  } = useGetBrandsByStoreUidQuery({ uId: store?.uId ?? '' })
 
   const [
     createProduct,
@@ -157,6 +123,7 @@ export function EditProduct() {
     mode: 'onChange',
   })
 
+  // TODO: update to edit product
   const handleCreateNewProduct = useCallback(
     (data: UpdateStoreProductInputs) => {
       const categoriesId = selectedCategory
@@ -183,41 +150,11 @@ export function EditProduct() {
     [selectedBrand?.id, selectedCategory, store?.uId, createProduct],
   )
 
-  const handleOpenCorrectModal = useCallback(
-    (type: 'brand' | 'category') => {
-      setModalListType(type)
-      onOpenSelectButton()
-    },
-    [onOpenSelectButton],
-  )
-
-  const whoDataShouldBeListed = useMemo(() => {
-    if (categories && modalListType === 'category') {
-      return categories?.data
-    }
-
-    if (brands && modalListType === 'brand') {
-      return brands?.data.brands
-    }
-
-    return []
-  }, [modalListType, categories, brands])
-
-  const categoriesLabel =
-    selectedCategory.length > 1
-      ? selectedCategory
-          .filter((category) => category.id !== 0)
-          .map((category) => category.name)
-          .join(', ')
-      : selectedCategory[0].name
-
-  const [
-    requestImageURL,
-    { isSuccess: isRequested, data: requestUrl, isLoading: isRequestingUrl },
-  ] = usePostToReceiveURLToSaveProductImageMutation()
+  const [requestImageURL, { isSuccess: isRequested, data: requestUrl }] =
+    usePostToReceiveURLToSaveProductImageMutation()
 
   /**
-   * useEffect to create product
+   * useEffect to create product, TODO: update to edit product
    */
   useEffect(() => {
     if (createdProduct && productCreated) {
@@ -357,15 +294,6 @@ export function EditProduct() {
     }
   }, [isProductLoaded, product, setValue])
 
-  const isLoadingButton =
-    isFetchingCategories ||
-    isLoadingCategories ||
-    isFetchingBrands ||
-    isLoadingBrands ||
-    isRequestingUrl
-
-  const filteredCategories = selectedCategory.filter((c) => c.uId !== '')
-
   return (
     <BodyLayout>
       {isLoadingProduct ? (
@@ -501,30 +429,7 @@ export function EditProduct() {
                 onHandleRemoveFile={handleRemoveFileFromIndex}
               />
             </Grid>
-            <Grid
-              gap={2}
-              w="100%"
-              alignItems="center"
-              templateColumns={['1fr', '1fr', '1fr 1fr']}
-            >
-              <ButtonInput
-                label="Category"
-                title={categoriesLabel}
-                modalButton="category"
-                isLoading={isLoadingButton}
-                hasSelectedItems={selectedCategory.length > 1}
-                onHandleOpenCorrectModal={handleOpenCorrectModal}
-                onHandleOpenCorrectUnselectModal={onOpenUnselectButton}
-              />
-              <ButtonInput
-                label="Brand"
-                title={selectedBrand?.name ?? 'Select brand'}
-                modalButton="brand"
-                isLoading={isLoadingButton}
-                onHandleOpenCorrectModal={handleOpenCorrectModal}
-                onHandleOpenCorrectUnselectModal={onOpenUnselectButton}
-              />
-            </Grid>
+            <ModalSelect />
             <FormButton
               type="submit"
               title="Update"
@@ -534,22 +439,6 @@ export function EditProduct() {
               disabled={isSubmitting || !isValid}
             />
           </VStack>
-          <ModalSelect
-            title={modalTitle}
-            data={whoDataShouldBeListed}
-            isOpen={isSelectButtonOpen}
-            onClose={onCloseSelectButton}
-          />
-
-          {/* MODAL TO UNSELECT ITEMS */}
-
-          <ModalSelect
-            title={modalTitle}
-            data={filteredCategories}
-            isUnSelectModal
-            isOpen={isUnselectButtonOpen}
-            onClose={onCloseUnselectButton}
-          />
         </Box>
       )}
     </BodyLayout>

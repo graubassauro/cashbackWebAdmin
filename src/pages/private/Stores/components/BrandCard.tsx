@@ -1,5 +1,5 @@
-import { Card, Center, Heading, Icon, VStack } from '@chakra-ui/react'
 import { memo } from 'react'
+import { Card, Center, Heading, Icon, VStack } from '@chakra-ui/react'
 import { BagSimple } from '@phosphor-icons/react'
 
 import { ICategoryDTO } from '~models/Category'
@@ -35,12 +35,6 @@ function BrandCardComponent({ data }: BrandCardProps) {
           </Heading>
         </VStack>
       </Center>
-      {/* <ModalSelect
-        title="Select a category"
-        data={data.categories}
-        isOpen={isOpen}
-        onClose={onClose}
-      /> */}
     </Card>
   )
 }
