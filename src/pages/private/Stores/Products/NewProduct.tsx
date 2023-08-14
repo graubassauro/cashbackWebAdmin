@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -9,14 +9,16 @@ import { VStack, Grid, useToast, Box } from '@chakra-ui/react'
 
 import { cashbackApi } from '~api/cashback-api.service'
 import { FormButton } from '~components/Buttons'
+import * as FileInput from '~components/Forms/Inputs/FileInput'
 import {
-  LabelFileInput,
+  // LabelFileInput,
   LabelInput,
   LabelTextarea,
   LightCheckbox,
 } from '~components/Forms/Inputs'
 import { HeaderForm } from '~components/Forms/HeaderForm'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
+import { useFileInputContext } from '~contexts/FileListInputContext'
 import { BodyLayout } from '~layouts/Body'
 import { useAppSelector } from '~redux/store'
 import { resetFields } from '~redux/form'
@@ -57,26 +59,9 @@ const createStoreProductSchema = z.object({
 type CreateStoreProductInputs = z.infer<typeof createStoreProductSchema>
 
 export function NewProduct() {
-  const [selectedFiles, setSelectedFiles] = useState<File[] | null>(null)
   const [currentSelectedFileIndex, setCurrentSelectedFileIndex] = useState(0)
 
-  const handleAddFile = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files?.[0]) {
-      const file = event.target.files?.[0]
-      setSelectedFiles((prevState) => [...(prevState ?? []), file])
-    }
-  }, [])
-
-  const handleRemoveFileFromIndex = useCallback(
-    (position: number) => {
-      const filteredFilesArray =
-        selectedFiles?.filter((_, index) => index !== position) ?? []
-
-      setSelectedFiles(filteredFilesArray ?? [])
-    },
-    [selectedFiles],
-  )
-
+  const { files: selectedFiles } = useFileInputContext()
   const toast = useToast()
   const store = useAppSelector((state) => {
     return state.merchant.currentStore
@@ -260,7 +245,6 @@ export function NewProduct() {
           requestUrl.data.url,
         )
       } else {
-        setSelectedFiles(null)
         dispatch(cashbackApi.util.invalidateTags(['Product']))
         handleGoBack()
       }
@@ -352,56 +336,13 @@ export function NewProduct() {
               error={errors.acceptCoins}
             />
           </Grid>
-          <Grid
-            gap={2}
-            w="100%"
-            alignItems="center"
-            justifyContent="center"
-            templateColumns={[
-              '1fr',
-              'repeat(3, 1fr)',
-              'repeat(4, 1fr)',
-              'repeat(5, 1fr)',
-              'repeat(6, 1fr)',
-            ]}
-          >
-            <LabelFileInput
-              index={0}
-              selectedFile={selectedFiles?.[0]}
-              onChange={handleAddFile}
-              onHandleRemoveFile={handleRemoveFileFromIndex}
-            />
-            <LabelFileInput
-              index={1}
-              selectedFile={selectedFiles?.[1]}
-              onChange={handleAddFile}
-              onHandleRemoveFile={handleRemoveFileFromIndex}
-            />
-            <LabelFileInput
-              index={2}
-              selectedFile={selectedFiles?.[2]}
-              onChange={handleAddFile}
-              onHandleRemoveFile={handleRemoveFileFromIndex}
-            />
-            <LabelFileInput
-              index={3}
-              selectedFile={selectedFiles?.[3]}
-              onChange={handleAddFile}
-              onHandleRemoveFile={handleRemoveFileFromIndex}
-            />
-            <LabelFileInput
-              index={4}
-              selectedFile={selectedFiles?.[4]}
-              onChange={handleAddFile}
-              onHandleRemoveFile={handleRemoveFileFromIndex}
-            />
-            <LabelFileInput
-              index={5}
-              selectedFile={selectedFiles?.[5]}
-              onChange={handleAddFile}
-              onHandleRemoveFile={handleRemoveFileFromIndex}
-            />
-          </Grid>
+          <VStack w="100%">
+            <FileInput.Root>
+              <FileInput.Trigger />
+              <FileInput.FileList />
+              <FileInput.Control multiple />
+            </FileInput.Root>
+          </VStack>
           <ModalSelect />
           <FormButton
             type="submit"

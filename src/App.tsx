@@ -3,6 +3,7 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { ChakraProvider } from '@chakra-ui/react'
 
+import { FileListInputProvider } from '~contexts/FileListInputContext'
 import { SidebarDrawerProvider } from '~contexts/SidebarDrawerContext'
 import { persistor, store } from '~redux/store'
 import { theme } from '~styles/theme'
@@ -15,9 +16,11 @@ export function App() {
       <PersistGate loading={null} persistor={persistor}>
         <ChakraProvider theme={theme}>
           <SidebarDrawerProvider>
-            <BrowserRouter>
-              <Routes />
-            </BrowserRouter>
+            <FileListInputProvider>
+              <BrowserRouter>
+                <Routes />
+              </BrowserRouter>
+            </FileListInputProvider>
           </SidebarDrawerProvider>
         </ChakraProvider>
       </PersistGate>

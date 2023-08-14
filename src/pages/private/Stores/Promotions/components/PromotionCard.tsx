@@ -41,8 +41,6 @@ export function PromotionCard({ item }: PromotionCardProps) {
 
   const distance = distanceRelativeFromToday(item.initialDate)
 
-  console.log('item', item)
-
   const statusBadge = useMemo(() => {
     if (distance.includes('days')) {
       if (Number(distance.split('')[0]) <= 10) {

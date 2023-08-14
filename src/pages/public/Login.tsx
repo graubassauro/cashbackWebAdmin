@@ -2,20 +2,19 @@ import { useCallback, useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { NavLink } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
 import { Text, VStack } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { ButtonComponent } from '~components/Forms/Button'
 import { LightInput } from '~components/Forms/Inputs'
 import { FormLayout } from '~layouts/Form'
-// import { useAppDispatch } from '~redux/store'
 import { setCredentials } from '~redux/auth'
 import { usePostAuthLoginMutation } from '~services/auth.service'
-import { useDispatch } from 'react-redux'
 
 const loginFormSchema = z.object({
-  phoneNumber: z.string(),
-  password: z.string(),
+  phoneNumber: z.string().min(1, 'Inform your cellphone number'),
+  password: z.string().min(6, 'The password must have at least 6 characteres'),
 })
 
 type LoginFormInputs = z.infer<typeof loginFormSchema>
@@ -29,7 +28,7 @@ export function Login() {
     formState: { errors, isSubmitting, isValid },
   } = useForm<LoginFormInputs>({
     resolver: zodResolver(loginFormSchema),
-    mode: 'onChange',
+    mode: 'all',
   })
 
   const [requestAuthLogin, { isLoading, isSuccess, data: loginData }] =
@@ -99,6 +98,10 @@ export function Login() {
         <ButtonComponent
           title="Login"
           type="submit"
+          _disabled={{
+            opacity: 0.6,
+            cursor: 'not-allowed',
+          }}
           isLoading={isSubmitting}
           disabled={isSubmitting || isLoading || !isValid}
         />

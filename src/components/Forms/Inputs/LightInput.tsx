@@ -1,6 +1,11 @@
 import { ForwardRefRenderFunction, forwardRef } from 'react'
 import { FieldError } from 'react-hook-form'
-import { FormControl, Input, InputProps } from '@chakra-ui/react'
+import {
+  FormControl,
+  FormErrorMessage,
+  Input,
+  InputProps,
+} from '@chakra-ui/react'
 
 interface LightInputProps extends InputProps {
   error?: FieldError
@@ -34,6 +39,7 @@ const LightInputBase: ForwardRefRenderFunction<
         ref={ref}
         {...rest}
       />
+      {!!error && <FormErrorMessage>{error.message}</FormErrorMessage>}
     </FormControl>
   )
 }

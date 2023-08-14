@@ -14,12 +14,16 @@ import { usePostCreateMerchantMutation } from '~services/merchant.service'
 import { usePostAuthLoginMutation } from '~services/auth.service'
 
 const createMerchantAccountSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  email: z.string(),
-  phoneNumber: z.string(),
+  firstName: z
+    .string()
+    .min(5, 'The first name must have at least 5 characters'),
+  lastName: z.string().min(5, 'The last name must have at least 5 characters'),
+  email: z.string().email('Inform a valid email address'),
+  phoneNumber: z
+    .string()
+    .min(6, 'Inform a valid phone number without special characters'),
   address: z.string(),
-  password: z.string(),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
 })
 
 type CreateMerchantAccountInputs = z.infer<typeof createMerchantAccountSchema>
