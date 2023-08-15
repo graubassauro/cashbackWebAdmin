@@ -1,7 +1,7 @@
 import { ICategoryDTO } from './Category'
 
 interface ImageFile {
-  imageUid: string
+  imageUId: string
   url: string
 }
 

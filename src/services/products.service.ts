@@ -62,7 +62,7 @@ interface Category {
 }
 
 interface Image {
-  imageUid: string
+  imageUId: string
   url: string
 }
 
@@ -85,6 +85,19 @@ interface IProductDetailResponse {
   images: Image[]
 }
 
+interface IProductDeleteImageBody {
+  productUid: string
+  imageUid: string
+  storeUid: string
+}
+
+export type IUpdateProductBody = Omit<
+  ICreateProductForStoreBody,
+  'categories'
+> & {
+  uId: string
+}
+
 export const productServiceApi = cashbackApi.injectEndpoints({
   endpoints: (build) => ({
     postCreateProductForStore: build.mutation<
@@ -95,6 +108,13 @@ export const productServiceApi = cashbackApi.injectEndpoints({
         url: 'product/create',
         body,
         method: 'POST',
+      }),
+    }),
+    putEditProductForStore: build.mutation<void, IUpdateProductBody>({
+      query: (body) => ({
+        url: 'product/update',
+        body,
+        method: 'PUT',
       }),
     }),
     postToReceiveURLToSaveProductImage: build.mutation<
@@ -125,6 +145,7 @@ export const productServiceApi = cashbackApi.injectEndpoints({
         url: `product/${uId}`,
         method: 'GET',
       }),
+      providesTags: ['Product'],
     }),
     deleteProduct: build.mutation<
       DataWrapper<ICreateProductForStoreResponse>,
@@ -136,12 +157,21 @@ export const productServiceApi = cashbackApi.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    deleteProductImage: build.mutation<void, IProductDeleteImageBody>({
+      query: (body) => ({
+        url: 'product/delete/image',
+        body,
+        method: 'DELETE',
+      }),
+    }),
   }),
 })
 
 export const {
   usePostToReceiveURLToSaveProductImageMutation,
   usePostCreateProductForStoreMutation,
+  usePutEditProductForStoreMutation,
+  useDeleteProductImageMutation,
   useGetProductsByStoreUidQuery,
   useGetProductQuery,
   useDeleteProductMutation,

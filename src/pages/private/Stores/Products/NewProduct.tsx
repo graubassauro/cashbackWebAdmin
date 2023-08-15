@@ -11,7 +11,6 @@ import { cashbackApi } from '~api/cashback-api.service'
 import { FormButton } from '~components/Buttons'
 import * as FileInput from '~components/Forms/Inputs/FileInput'
 import {
-  // LabelFileInput,
   LabelInput,
   LabelTextarea,
   LightCheckbox,

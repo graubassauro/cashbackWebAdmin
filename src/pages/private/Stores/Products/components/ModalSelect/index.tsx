@@ -8,7 +8,11 @@ import { useGetAllCategoriesQuery } from '~services/category.service'
 import { UniqueSelect } from './UniqueSelect'
 import { MultipleSelect } from './MultipleSelect'
 
-export function ModalSelect() {
+type ModalSelectProps = {
+  isEditMode?: boolean
+}
+
+export function ModalSelect({ isEditMode = false }: ModalSelectProps) {
   const [modalListType, setModalListType] = useState<'category' | 'brand'>(
     'category',
   )
@@ -83,15 +87,17 @@ export function ModalSelect() {
         alignItems="center"
         templateColumns={['1fr', '1fr', '1fr 1fr']}
       >
-        <ButtonInput
-          label="Category"
-          title={categoriesLabel}
-          modalButton="category"
-          isLoading={isLoadingButton}
-          hasSelectedItems={selectedCategory.length > 1}
-          onHandleOpenCorrectModal={handleOpenCorrectModal}
-          onHandleOpenCorrectUnselectModal={onOpenMultipleUnselectButton}
-        />
+        {!isEditMode && (
+          <ButtonInput
+            label="Category"
+            title={categoriesLabel}
+            modalButton="category"
+            isLoading={isLoadingButton}
+            hasSelectedItems={selectedCategory.length > 1}
+            onHandleOpenCorrectModal={handleOpenCorrectModal}
+            onHandleOpenCorrectUnselectModal={onOpenMultipleUnselectButton}
+          />
+        )}
         <ButtonInput
           label="Brand"
           title={selectedBrand?.name ?? 'Select brand'}
