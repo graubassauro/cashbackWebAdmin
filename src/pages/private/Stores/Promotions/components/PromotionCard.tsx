@@ -2,12 +2,12 @@ import { useMemo } from 'react'
 import { Variants, motion } from 'framer-motion'
 import {
   Badge,
-  Box,
   Card,
   Grid,
   HStack,
   Heading,
   Icon,
+  Image,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -54,6 +54,15 @@ export function PromotionCard({ item }: PromotionCardProps) {
 
   const productsNames = item.products.map((p) => p.name).join(',')
 
+  const cardAnimated: Variants = {
+    offscreen: { y: 100, opacity: 0 },
+    onscreen: {
+      y: 0,
+      opacity: 1,
+      transition: { type: 'spring', bounce: 0.4, duration: 1 },
+    },
+  }
+
   const textAnimate: Variants = {
     offscreen: { y: 100, opacity: 0 },
     onscreen: {
@@ -66,10 +75,14 @@ export function PromotionCard({ item }: PromotionCardProps) {
   return (
     <>
       <motion.div
+        style={{
+          width: '100%',
+        }}
         initial="offscreen"
         whileInView="onscreen"
         viewport={{ once: false, amount: 0.5 }}
         transition={{ staggerChildren: 0.5 }}
+        variants={cardAnimated}
       >
         <Card w="100%" p={6}>
           <Grid gap={2} templateColumns={['3fr 2fr 1fr']} alignItems="center">
@@ -183,13 +196,43 @@ export function PromotionCard({ item }: PromotionCardProps) {
           <ModalCloseButton />
           <ModalBody>
             <Text fontFamily="body" fontSize={16} fontWeight="regular">
-              Vinculated products
+              All products vinculated to this promotion
             </Text>
-            <VStack>
+            <VStack pt={4}>
               {item.products.map((p) => (
-                <Box key={p.productUid}>
-                  <Text>{p.name}</Text>
-                </Box>
+                <HStack
+                  w="100%"
+                  justifyContent="space-between"
+                  spacing={2}
+                  key={p.productUid}
+                  borderBottomWidth={1}
+                  borderBottomColor="gray.400"
+                  pb={4}
+                >
+                  <VStack alignItems="flex-start">
+                    <Text fontSize={14} fontWeight={700} color="gray.800">
+                      {p.name}
+                    </Text>
+                    <Text fontSize={20} color="purple.900" fontWeight={500}>
+                      ${p.promotionPriceOff}
+                    </Text>
+                  </VStack>
+                  <HStack>
+                    {p.images &&
+                      p?.images.map((i) => (
+                        <Image
+                          key={i.productImageUId}
+                          src={i.url}
+                          alt={i.productImageUId}
+                          w={10}
+                          h={10}
+                          borderRadius="full"
+                          objectFit="cover"
+                          fallbackSrc="https://via.placeholder.com/150"
+                        />
+                      ))}
+                  </HStack>
+                </HStack>
               ))}
             </VStack>
           </ModalBody>

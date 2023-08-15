@@ -24,6 +24,7 @@ export function PublicLayout() {
           h="100vh"
           w="100%"
           objectFit="fill"
+          fallbackSrc="https://via.placeholder.com/150"
         />
       ) : null}
     </Grid>

@@ -72,6 +72,7 @@ function ProductCardComponent({
             w="100%"
             fit="cover"
             borderRadius="md"
+            fallbackSrc="https://via.placeholder.com/150"
             borderBottomLeftRadius={0}
             borderBottomRightRadius={0}
           />

@@ -51,8 +51,8 @@ const createPromotionTabs = ['promotion', 'product'] as const
 type PromotionTabs = (typeof createPromotionTabs)[number]
 
 export function NewPromotion() {
-  const [selectedTab, setSelectedTab] = useState<PromotionTabs>('promotion')
-  const [productsUids, setProductsUids] = useState<string[] | null>()
+  const [selectedTab, setSelectedTab] = useState<PromotionTabs>('product')
+  const [productsUids, setProductsUids] = useState<string | null>()
   const [promo, setPromo] = useState<PromotionGroup | null>()
 
   const dispatch = useDispatch()
@@ -138,24 +138,9 @@ export function NewPromotion() {
     [vinculateProductToPromo, productsUids, promo?.uId],
   )
 
-  const handleSetNewProductUids = useCallback(
-    (uId: string) => {
-      if (productsUids) {
-        const productUidExist = productsUids.find((q) => q === uId)
-
-        if (productUidExist) {
-          const filteredUids = productsUids.filter((q) => q !== uId)
-          setProductsUids(filteredUids)
-        } else {
-          const updatedProductsUids = [...productsUids, uId]
-          setProductsUids(updatedProductsUids)
-        }
-      } else {
-        setProductsUids([uId])
-      }
-    },
-    [productsUids],
-  )
+  const handleSetNewProductUids = useCallback((uId: string) => {
+    setProductsUids(uId)
+  }, [])
 
   const promotionForm = useMemo(() => {
     return (
@@ -260,15 +245,9 @@ export function NewPromotion() {
                   borderWidth={1}
                   borderColor="purple.900"
                   bgColor={
-                    productsUids?.find((q) => q === item.uId)
-                      ? 'purple.900'
-                      : 'transparent'
+                    productsUids === item.uId ? 'purple.900' : 'transparent'
                   }
-                  textColor={
-                    productsUids?.find((q) => q === item.uId)
-                      ? 'white'
-                      : 'purple.900'
-                  }
+                  textColor={productsUids === item.uId ? 'white' : 'purple.900'}
                   _hover={{
                     bgColor: 'purple.900',
                     color: 'white',
@@ -278,10 +257,7 @@ export function NewPromotion() {
                   }}
                   transition="ease-in 0.35s"
                   rightIcon={
-                    <Icon
-                      as={productsUids?.find((q) => q === item.uId) ? X : Plus}
-                      size={18}
-                    />
+                    <Icon as={productsUids === item.uId ? X : Plus} size={18} />
                   }
                   key={item.uId}
                   onClick={() => handleSetNewProductUids(item.uId)}

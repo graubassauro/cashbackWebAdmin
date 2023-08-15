@@ -37,7 +37,14 @@ export function ImagePreview({ data, onHandleDelete }: ImagePreviewProps) {
 
   return (
     <Box position="relative">
-      <Image alt="" src={data.url} h={32} w={32} borderRadius="full" />
+      <Image
+        alt=""
+        src={data.url}
+        h={32}
+        w={32}
+        borderRadius="full"
+        fallbackSrc="https://via.placeholder.com/150"
+      />
       <Icon
         as={X}
         size={24}

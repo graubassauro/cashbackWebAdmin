@@ -75,6 +75,7 @@ export function LabelFileInput({
             src={URL.createObjectURL(selectedFile)}
             alt="File preview"
             objectFit="cover"
+            fallbackSrc="https://via.placeholder.com/150"
           />
           <Icon
             as={X}

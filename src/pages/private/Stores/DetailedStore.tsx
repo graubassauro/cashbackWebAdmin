@@ -335,6 +335,7 @@ export function DetailedStore() {
           }
           borderRadius="md"
           alt={store?.name}
+          fallbackSrc="https://via.placeholder.com/150"
         />
         <Center mt={4}>
           <Grid
