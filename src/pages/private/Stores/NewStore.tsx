@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { MapPin } from '@phosphor-icons/react'
@@ -14,6 +14,7 @@ import {
   useGetAdressLocationQuery,
 } from '~services/location.service'
 import { usePostCreateMerchantStoreMutation } from '~services/merchant.service'
+import { formatAddressList } from '~utils/formatAddress'
 
 const createMerchantStoreSchema = z.object({
   name: z.string(),
@@ -72,16 +73,11 @@ export function NewStore() {
    */
 
   const handleSetChosenAddress = useCallback(
-    (data: IAddressLocationDTO) => {
+    (data: IAddressLocationDTO, displayName: string) => {
       setCanShowInput(true)
 
-      const cityAddress = data.address.city ? `${data.address.city},` : ''
-      const stateAddress = data.address.state ? `${data.address.state},` : ''
-
-      const streetFormattedValue = `${data.displayName}, ${cityAddress} ${stateAddress}`
-
       setValue('cityId', data.placeId)
-      setValue('streetNameFormatted', streetFormattedValue)
+      setValue('streetNameFormatted', displayName)
       setValue('city', data.address.city)
       setValue('state', data.address.state)
       setValue('latitude', data.latitude)
@@ -107,6 +103,17 @@ export function NewStore() {
     { skip: !debouncedAddress },
   )
 
+  const formattedAddressList = useMemo(() => {
+    if (addressList) {
+      const addressListMapped = formatAddressList(addressList?.data)
+
+      return addressListMapped
+    }
+
+    return []
+  }, [addressList])
+
+  console.log('formattedAddressList', formattedAddressList)
   /**
    * Handling to create a new store
    */
@@ -238,20 +245,25 @@ export function NewStore() {
             {isFetchingAddress && isLoadingAddress ? (
               <Loading />
             ) : (
-              addressList?.data.map((item) => (
+              formattedAddressList.map((location) => (
                 <Button
-                  key={item.placeId}
+                  key={location.item.placeId}
                   w="100%"
                   alignItems="center"
                   gap={2}
                   bgColor="gray.300"
                   borderWidth={1}
                   borderColor="gray.400"
-                  title={item.displayName}
+                  title={location.formattedDisplayName}
                   _hover={{
                     bgColor: 'gray.400',
                   }}
-                  onClick={() => handleSetChosenAddress(item)}
+                  onClick={() =>
+                    handleSetChosenAddress(
+                      location.item,
+                      location.formattedDisplayName,
+                    )
+                  }
                 >
                   <Icon as={MapPin} color="gray.700" />
                   <Text
@@ -260,7 +272,7 @@ export function NewStore() {
                     fontFamily="body"
                     color="gray.700"
                   >
-                    {item.displayName}
+                    {location.formattedDisplayName}
                   </Text>
                 </Button>
               ))
