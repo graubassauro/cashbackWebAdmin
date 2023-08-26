@@ -197,9 +197,7 @@ function StoreCardComponent({ data }: StoreCardProps) {
                 mr={3}
                 onClick={onClose}
                 _hover={{
-                  bgColor: 'white',
-                  borderColor: 'purple.900',
-                  textColor: 'purple.900',
+                  opacity: 0.8,
                 }}
               >
                 Cancel
@@ -214,9 +212,7 @@ function StoreCardComponent({ data }: StoreCardProps) {
                 onClick={handleDeleteStore}
                 isLoading={isDeletingStore}
                 _hover={{
-                  bgColor: 'purple.900',
-                  borderColor: 'purple.900',
-                  textColor: 'white',
+                  opacity: 0.75,
                 }}
               >
                 Continue

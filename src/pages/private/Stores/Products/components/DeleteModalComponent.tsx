@@ -48,9 +48,7 @@ export function DeleteModalComponent({
             mr={3}
             onClick={onClose}
             _hover={{
-              bgColor: 'white',
-              borderColor: 'purple.900',
-              textColor: 'purple.900',
+              opacity: 0.75,
             }}
           >
             Cancel
@@ -64,7 +62,7 @@ export function DeleteModalComponent({
             mr={3}
             isLoading={isDeleting}
             _hover={{
-              filter: 'brightness(1.2)',
+              opacity: 0.75,
             }}
             onClick={onHandleDeleteProductByProductUid}
           >
