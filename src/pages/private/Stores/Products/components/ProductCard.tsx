@@ -188,7 +188,16 @@ function ProductCardComponent({
                 {product.name}
               </Heading>
             </motion.span>
-            <HStack wrap="wrap">
+            <HStack
+              wrap="wrap"
+              maxHeight="6rem"
+              overflow="scroll"
+              css={{
+                '&::-webkit-scrollbar': {
+                  width: 0,
+                },
+              }}
+            >
               {product.categories?.map((category: ICategoryDTO) => (
                 <motion.span variants={textAnimate} key={category.uId}>
                   <Badge colorScheme="purple">{category.name}</Badge>
