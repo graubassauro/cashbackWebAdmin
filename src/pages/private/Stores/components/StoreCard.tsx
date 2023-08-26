@@ -72,7 +72,6 @@ function StoreCardComponent({ data }: StoreCardProps) {
   return (
     <Card
       w="100%"
-      h="16rem"
       p={4}
       bgColor="white"
       alignItems="flex-start"
@@ -85,8 +84,8 @@ function StoreCardComponent({ data }: StoreCardProps) {
       <HStack
         borderBottomWidth={1}
         w="100%"
-        py={4}
-        px={4}
+        py={2}
+        px={2}
         justifyContent="space-between"
       >
         <Icon
@@ -139,17 +138,6 @@ function StoreCardComponent({ data }: StoreCardProps) {
         </VStack>
       </HStack>
       <VStack alignItems="flex-start" mt={4}>
-        <HStack spacing={2}>
-          <Icon as={Package} color="gray.800" />
-          <Text
-            fontSize={18}
-            fontFamily="body"
-            fontWeight={700}
-            color="gray.700"
-          >
-            {data.categories.length} categories
-          </Text>
-        </HStack>
         <HStack>
           <Icon as={Package} color="gray.800" />
           <Text

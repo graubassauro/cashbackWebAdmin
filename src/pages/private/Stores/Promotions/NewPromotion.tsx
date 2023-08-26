@@ -51,7 +51,7 @@ const createPromotionTabs = ['promotion', 'product'] as const
 type PromotionTabs = (typeof createPromotionTabs)[number]
 
 export function NewPromotion() {
-  const [selectedTab, setSelectedTab] = useState<PromotionTabs>('product')
+  const [selectedTab, setSelectedTab] = useState<PromotionTabs>('promotion')
   const [productsUids, setProductsUids] = useState<string | null>()
   const [promo, setPromo] = useState<PromotionGroup | null>()
 
@@ -131,7 +131,7 @@ export function NewPromotion() {
     (data: VinculateProductToPromotionInputs) => {
       vinculateProductToPromo({
         promotionUid: promo?.uId ?? '',
-        productUid: productsUids?.[0] ?? '',
+        productUid: productsUids ?? '',
         priceOff: Number(data.priceOff),
       })
     },

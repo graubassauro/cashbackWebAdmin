@@ -100,7 +100,11 @@ export function ModalSelect({ isEditMode = false }: ModalSelectProps) {
         )}
         <ButtonInput
           label="Brand"
-          title={selectedBrand?.name ?? 'Select brand'}
+          title={
+            selectedBrand?.name.length > 0
+              ? selectedBrand?.name
+              : 'Select brand'
+          }
           modalButton="brand"
           isLoading={isLoadingButton}
           onHandleOpenCorrectModal={onOpenUniqueModalButton}

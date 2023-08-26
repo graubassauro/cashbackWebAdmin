@@ -1,4 +1,6 @@
-import { memo, useCallback, useState } from 'react'
+import { memo, useCallback, useEffect, useState } from 'react'
+import { useKeenSlider } from 'keen-slider/react'
+import 'keen-slider/keen-slider.min.css'
 import { motion, Variants } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -9,6 +11,7 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
+  Center,
   Divider,
   HStack,
   Heading,
@@ -18,11 +21,16 @@ import {
   Stack,
   Switch,
   Text,
+  useToast,
 } from '@chakra-ui/react'
 import { PencilSimpleLine, Trash } from '@phosphor-icons/react'
 
+import { Loading } from '~components/Loading'
 import { ICategoryDTO } from '~models/Category'
 import { IProductStoreDTO } from '~models/Store'
+import { usePutProductStatusMutation } from '~services/products.service'
+
+import { Bullet } from './Bullet'
 
 type ProductProps = {
   product: IProductStoreDTO
@@ -37,11 +45,29 @@ function ProductCardComponent({
 
   const [isAvailable, setIsAvailable] = useState(hasProducts)
 
+  const toast = useToast()
   const navigate = useNavigate()
 
   const handleNavigateToEditProduct = useCallback(() => {
     navigate(`/products/edit-product/${product.uId}`)
   }, [navigate, product.uId])
+
+  // SLIDER
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [loaded, setLoaded] = useState(false)
+
+  const [sliderRef] = useKeenSlider<HTMLDivElement>({
+    initial: 0,
+    slides: {
+      perView: 1,
+    },
+    slideChanged(slider) {
+      setCurrentSlide(slider.track.details.rel)
+    },
+    created() {
+      setLoaded(true)
+    },
+  })
 
   const textAnimate: Variants = {
     offscreen: { y: 100, opacity: 0 },
@@ -52,15 +78,75 @@ function ProductCardComponent({
     },
   }
 
+  const [
+    updateStatus,
+    { isLoading: isUpdatingStatus, isSuccess: updatedSuccessfully },
+  ] = usePutProductStatusMutation()
+
+  const handleUpdateProductStatus = useCallback(() => {
+    updateStatus({
+      statusId: isAvailable ? 0 : 1,
+      uId: product.uId ?? '',
+    })
+
+    setIsAvailable(isAvailable)
+  }, [updateStatus, isAvailable, product.uId])
+
+  useEffect(() => {
+    if (updatedSuccessfully) {
+      const isAvailableString = isAvailable ? 'available' : 'unavailable'
+
+      toast({
+        title: `The product: ${product.name} was updated successfully`,
+        description: `Now it will be ${isAvailableString} for your clients.`,
+        status: 'info',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      })
+    }
+  }, [updatedSuccessfully, isAvailable, toast, product.name])
+
   return (
-    <motion.div
-      initial="offscreen"
-      whileInView="onscreen"
-      viewport={{ once: false, amount: 0.5 }}
-      transition={{ staggerChildren: 0.5 }}
-    >
-      <Card w="100%">
-        <CardHeader p="0">
+    <Card>
+      <CardHeader p={0} className="keen-slider" ref={sliderRef}>
+        {product.images.length > 1 && loaded && (
+          <>
+            {product.images.map((i) => (
+              <Image
+                key={i.imageUId}
+                className="keen-slider__slide"
+                alt={product.name}
+                src={i.url}
+                maxH="10rem"
+                w="100%"
+                fit="cover"
+                borderRadius="md"
+                fallbackSrc="https://via.placeholder.com/150"
+                borderBottomLeftRadius={0}
+                borderBottomRightRadius={0}
+              />
+            ))}
+            <HStack
+              w="100%"
+              mt={8}
+              justifyContent="center"
+              position="absolute"
+              bottom={2}
+            >
+              <HStack spacing={2}>
+                {product.images.length > 1 &&
+                  product.images.map((item, index) => (
+                    <Bullet
+                      key={`${item.imageUId}`}
+                      isActive={index === currentSlide}
+                    />
+                  ))}
+              </HStack>
+            </HStack>
+          </>
+        )}
+        {product.images.length === 1 && (
           <Image
             src={
               product.images.length > 0
@@ -76,7 +162,14 @@ function ProductCardComponent({
             borderBottomLeftRadius={0}
             borderBottomRightRadius={0}
           />
-        </CardHeader>
+        )}
+      </CardHeader>
+      <motion.div
+        initial="offscreen"
+        whileInView="onscreen"
+        viewport={{ once: false, amount: 0.5 }}
+        transition={{ staggerChildren: 0.5 }}
+      >
         <CardBody>
           <Stack mt="2" spacing="2">
             <motion.span variants={textAnimate}>
@@ -84,7 +177,7 @@ function ProductCardComponent({
                 fontSize={24}
                 color="gray.900"
                 fontWeight={700}
-                noOfLines={2}
+                noOfLines={1}
               >
                 {product.name}
               </Heading>
@@ -123,47 +216,53 @@ function ProductCardComponent({
             )}
           </Stack>
         </CardBody>
-        <Divider color="gray.400" />
-        <CardFooter bgColor="gray.300" justifyContent="space-between">
-          <ButtonGroup spacing="2">
-            <IconButton
-              aria-label="Edit Product"
-              bgColor="white"
-              transition="ease-in 0.35s"
-              fontSize={18}
-              fontWeight={700}
-              _hover={{
-                bgColor: 'purple.900',
-                opacity: 0.85,
-                svg: { fill: 'white' },
-              }}
-              icon={<Icon as={PencilSimpleLine} color="gray.700" size={32} />}
-              onClick={handleNavigateToEditProduct}
-            />
-            <IconButton
-              aria-label="Delete Product"
-              bgColor="white"
-              transition="ease-in 0.35s"
-              fontSize={18}
-              fontWeight={700}
-              _hover={{
-                bgColor: 'purple.900',
-                svg: { fill: 'white' },
-              }}
-              icon={<Icon as={Trash} color="gray.700" size={32} />}
-              onClick={() => onHandleSetUidToDelete(product.uId)}
-            />
-          </ButtonGroup>
-          <HStack>
-            <Text>{isAvailable ? 'Available' : 'Unavailable'}</Text>
+      </motion.div>
+      <Divider color="gray.400" />
+      <CardFooter bgColor="gray.300" justifyContent="space-between">
+        <ButtonGroup spacing="2">
+          <IconButton
+            aria-label="Edit Product"
+            bgColor="white"
+            transition="ease-in 0.35s"
+            fontSize={18}
+            fontWeight={700}
+            _hover={{
+              bgColor: 'purple.900',
+              opacity: 0.85,
+              svg: { fill: 'white' },
+            }}
+            icon={<Icon as={PencilSimpleLine} color="gray.700" size={32} />}
+            onClick={handleNavigateToEditProduct}
+          />
+          <IconButton
+            aria-label="Delete Product"
+            bgColor="white"
+            transition="ease-in 0.35s"
+            fontSize={18}
+            fontWeight={700}
+            _hover={{
+              bgColor: 'purple.900',
+              svg: { fill: 'white' },
+            }}
+            icon={<Icon as={Trash} color="gray.700" size={32} />}
+            onClick={() => onHandleSetUidToDelete(product.uId)}
+          />
+        </ButtonGroup>
+        <HStack>
+          <Text>{isAvailable ? 'Available' : 'Unavailable'}</Text>
+          {isUpdatingStatus ? (
+            <Center p={4}>
+              <Loading />
+            </Center>
+          ) : (
             <Switch
               isChecked={isAvailable}
-              onChange={() => setIsAvailable(!isAvailable)}
+              onChange={handleUpdateProductStatus}
             />
-          </HStack>
-        </CardFooter>
-      </Card>
-    </motion.div>
+          )}
+        </HStack>
+      </CardFooter>
+    </Card>
   )
 }
 

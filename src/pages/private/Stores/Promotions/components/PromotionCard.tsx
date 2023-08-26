@@ -93,14 +93,16 @@ export function PromotionCard({ item }: PromotionCardProps) {
             >
               <HStack>
                 <motion.span variants={textAnimate}>
-                  <Heading
-                    fontSize={24}
-                    fontWeight={700}
-                    color="gray.900"
-                    noOfLines={1}
-                  >
-                    {item.name}
-                  </Heading>
+                  <HStack>
+                    <Heading
+                      fontSize={24}
+                      fontWeight={700}
+                      color="gray.900"
+                      noOfLines={1}
+                    >
+                      {item.name}
+                    </Heading>
+                  </HStack>
                 </motion.span>
                 {statusBadge}
               </HStack>

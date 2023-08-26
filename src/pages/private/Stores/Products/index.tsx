@@ -156,7 +156,6 @@ export function Products() {
     <>
       <VStack w="100%" ref={containerRef}>
         <Grid
-          w="100%"
           templateColumns={[
             '1fr',
             '1fr',
@@ -166,6 +165,7 @@ export function Products() {
           ]}
           gap={[2, 4]}
           mt={8}
+          maxWidth="1440px"
         >
           {productsToCards?.map((product) => (
             <ProductCard

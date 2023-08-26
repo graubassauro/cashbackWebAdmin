@@ -98,6 +98,11 @@ export type IUpdateProductBody = Omit<
   uId: string
 }
 
+interface IUpdateProductStatusBody {
+  uId: string
+  statusId: number
+}
+
 export const productServiceApi = cashbackApi.injectEndpoints({
   endpoints: (build) => ({
     postCreateProductForStore: build.mutation<
@@ -164,6 +169,13 @@ export const productServiceApi = cashbackApi.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    putProductStatus: build.mutation<void, IUpdateProductStatusBody>({
+      query: (body) => ({
+        url: 'product/update/status',
+        body,
+        method: 'PUT',
+      }),
+    }),
   }),
 })
 
@@ -172,6 +184,7 @@ export const {
   usePostCreateProductForStoreMutation,
   usePutEditProductForStoreMutation,
   useDeleteProductImageMutation,
+  usePutProductStatusMutation,
   useGetProductsByStoreUidQuery,
   useGetProductQuery,
   useDeleteProductMutation,
