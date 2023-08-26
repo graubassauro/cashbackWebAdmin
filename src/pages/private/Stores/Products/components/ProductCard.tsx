@@ -54,7 +54,6 @@ function ProductCardComponent({
 
   // SLIDER
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [loaded, setLoaded] = useState(false)
 
   const [sliderRef] = useKeenSlider<HTMLDivElement>({
     initial: 0,
@@ -63,9 +62,6 @@ function ProductCardComponent({
     },
     slideChanged(slider) {
       setCurrentSlide(slider.track.details.rel)
-    },
-    created() {
-      setLoaded(true)
     },
   })
 
@@ -84,8 +80,19 @@ function ProductCardComponent({
   ] = usePutProductStatusMutation()
 
   const handleUpdateProductStatus = useCallback(() => {
+    /**
+     * public enum EStatus
+	{
+		Active = 1,
+		Inactive = 2,
+		Excluded = 3,
+		Issued = 4,
+		Delivered = 5,
+		Processing = 6
+	}
+     */
     updateStatus({
-      statusId: isAvailable ? 0 : 1,
+      statusId: isAvailable ? 2 : 1,
       uId: product.uId ?? '',
     })
 
@@ -108,9 +115,9 @@ function ProductCardComponent({
   }, [updatedSuccessfully, isAvailable, toast, product.name])
 
   return (
-    <Card>
-      <CardHeader p={0} className="keen-slider" ref={sliderRef}>
-        {product.images.length > 1 && loaded && (
+    <Card w="100%">
+      <CardHeader w="100%" p={0} className="keen-slider" ref={sliderRef}>
+        {product.images.length > 1 && (
           <>
             {product.images.map((i) => (
               <Image
