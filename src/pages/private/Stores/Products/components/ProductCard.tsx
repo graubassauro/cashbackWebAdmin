@@ -12,7 +12,6 @@ import {
   CardFooter,
   CardHeader,
   Center,
-  Divider,
   HStack,
   Heading,
   Icon,
@@ -115,7 +114,7 @@ function ProductCardComponent({
   }, [updatedSuccessfully, isAvailable, toast, product.name])
 
   return (
-    <Card w="100%">
+    <Card w="100%" justifyContent="space-between">
       <CardHeader w="100%" p={0} className="keen-slider" ref={sliderRef}>
         {product.images.length > 1 && (
           <>
@@ -224,8 +223,12 @@ function ProductCardComponent({
           </Stack>
         </CardBody>
       </motion.div>
-      <Divider color="gray.400" />
-      <CardFooter bgColor="gray.300" justifyContent="space-between">
+      <CardFooter
+        bgColor="gray.300"
+        justifyContent="space-between"
+        borderTopWidth={1}
+        borderTopColor="gray.400"
+      >
         <ButtonGroup spacing="2">
           <IconButton
             aria-label="Edit Product"
