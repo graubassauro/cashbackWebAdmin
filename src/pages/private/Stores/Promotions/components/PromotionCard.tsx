@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
+import { useDispatch } from 'react-redux'
 import { Variants, motion } from 'framer-motion'
 import {
   Badge,
@@ -7,22 +8,20 @@ import {
   HStack,
   Heading,
   Icon,
-  Image,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
   Text,
   VStack,
   useBreakpointValue,
   useDisclosure,
 } from '@chakra-ui/react'
-import { CheckCircle, Eye, Question } from '@phosphor-icons/react'
+import { CheckCircle, Eye, Question, Trash } from '@phosphor-icons/react'
 
+import { cashbackApi } from '~api/cashback-api.service'
 import { Promotion } from '~models/Promotion'
 import { distanceRelativeFromToday, formatDate } from '~utils/formatDate'
+import { useDeletePromotionMutation } from '~services/promotion.service'
+
+import { ShowProductsModal } from './ShowProductsModal'
+import { DeletePromoModal } from './DeletePromoModal'
 
 type PromotionCardProps = {
   item: Promotion
@@ -35,12 +34,29 @@ export function PromotionCard({ item }: PromotionCardProps) {
     lg: true,
   })
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const dispatch = useDispatch()
+
+  /** SHOW PRODUCTS MODAL */
+  const {
+    isOpen: isShowProductModal,
+    onOpen: onOpenShowProductModal,
+    onClose: onCloseShowProductModal,
+  } = useDisclosure()
+
+  /** DELETE PROMO MODAL */
+  const {
+    isOpen: isDeletePromotionModal,
+    onOpen: onOpenDeletePromotionModal,
+    onClose: onCloseDeletePromotionModal,
+  } = useDisclosure()
 
   const startDate = formatDate(item.initialDate)
   const endDate = formatDate(item.endDate)
 
   const distance = distanceRelativeFromToday(item.initialDate)
+
+  const [deletePromo, { isLoading: isDeleting, isSuccess: promoDeleted }] =
+    useDeletePromotionMutation()
 
   const statusBadge = useMemo(() => {
     if (distance.includes('days')) {
@@ -51,6 +67,12 @@ export function PromotionCard({ item }: PromotionCardProps) {
       return null
     }
   }, [distance, isWideVersion])
+
+  const handleDeletePromo = useCallback(() => {
+    deletePromo({
+      uId: item.uId,
+    })
+  }, [deletePromo, item.uId])
 
   const productsNames = item.products.map((p) => p.name).join(',')
 
@@ -71,6 +93,12 @@ export function PromotionCard({ item }: PromotionCardProps) {
       transition: { type: 'spring', bounce: 0.4, duration: 1 },
     },
   }
+
+  useEffect(() => {
+    if (promoDeleted) {
+      dispatch(cashbackApi.util.invalidateTags(['Promotion']))
+    }
+  }, [promoDeleted, dispatch])
 
   return (
     <>
@@ -177,69 +205,48 @@ export function PromotionCard({ item }: PromotionCardProps) {
                 </Heading>
               </VStack>
             </Grid>
-            <Icon
-              ml="auto"
-              as={Eye}
-              w={6}
-              h={6}
-              color="gray.700"
-              onClick={onOpen}
-            />
+            <HStack spacing={2} ml="auto">
+              <Icon
+                as={Eye}
+                w={6}
+                h={6}
+                color="gray.700"
+                cursor="pointer"
+                onClick={onOpenShowProductModal}
+                _hover={{
+                  opacity: 0.75,
+                }}
+              />
+              <Icon
+                as={Trash}
+                w={6}
+                h={6}
+                color="gray.700"
+                cursor="pointer"
+                onClick={onOpenDeletePromotionModal}
+                _hover={{
+                  opacity: 0.75,
+                }}
+              />
+            </HStack>
           </Grid>
         </Card>
       </motion.div>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader fontFamily="heading" fontSize={24} fontWeight="bold">
-            {item.name}
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text fontFamily="body" fontSize={16} fontWeight="regular">
-              All products vinculated to this promotion
-            </Text>
-            <VStack pt={4}>
-              {item.products.map((p) => (
-                <HStack
-                  w="100%"
-                  justifyContent="space-between"
-                  spacing={2}
-                  key={p.productUid}
-                  borderBottomWidth={1}
-                  borderBottomColor="gray.400"
-                  pb={4}
-                >
-                  <VStack alignItems="flex-start">
-                    <Text fontSize={14} fontWeight={700} color="gray.800">
-                      {p.name}
-                    </Text>
-                    <Text fontSize={20} color="purple.900" fontWeight={500}>
-                      ${p.promotionPriceOff}
-                    </Text>
-                  </VStack>
-                  <HStack>
-                    {p.images &&
-                      p?.images.map((i) => (
-                        <Image
-                          key={i.productImageUId}
-                          src={i.url}
-                          alt={i.productImageUId}
-                          w={10}
-                          h={10}
-                          borderRadius="full"
-                          objectFit="cover"
-                          fallbackSrc="https://via.placeholder.com/150"
-                        />
-                      ))}
-                  </HStack>
-                </HStack>
-              ))}
-            </VStack>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <ShowProductsModal
+        promoName={item.name}
+        data={item.products}
+        isOpen={isShowProductModal}
+        onClose={onCloseShowProductModal}
+      />
+
+      <DeletePromoModal
+        promoName={item.name}
+        isDeleting={isDeleting}
+        isOpen={isDeletePromotionModal}
+        onClose={onCloseDeletePromotionModal}
+        onDelete={handleDeletePromo}
+      />
     </>
   )
 }

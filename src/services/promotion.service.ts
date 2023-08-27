@@ -56,6 +56,13 @@ export const promotionsServiceApi = cashbackApi.injectEndpoints({
         method: 'POST',
       }),
     }),
+    deletePromotion: build.mutation<void, IPromotionsByStoreParams>({
+      query: (body) => ({
+        url: generateBaseUrl('delete'),
+        body,
+        method: 'DELETE',
+      }),
+    }),
   }),
 })
 
@@ -63,4 +70,5 @@ export const {
   useGetPromotionsByStoreUidQuery,
   usePostPromotionGroupMutation,
   usePostVinculateProductToPromoMutation,
+  useDeletePromotionMutation,
 } = promotionsServiceApi

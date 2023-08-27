@@ -40,12 +40,12 @@ function ProductCardComponent({
   product,
   onHandleSetUidToDelete,
 }: ProductProps) {
-  const hasProducts = product.quantity > 0
+  const isAvailableProduct = product.statusName === 'Active'
 
-  const [isAvailable, setIsAvailable] = useState(hasProducts)
+  const [isAvailable, setIsAvailable] = useState(isAvailableProduct)
 
-  const toast = useToast()
   const navigate = useNavigate()
+  const toast = useToast()
 
   const handleNavigateToEditProduct = useCallback(() => {
     navigate(`/products/edit-product/${product.uId}`)

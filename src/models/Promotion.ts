@@ -3,7 +3,7 @@ type PromotionImage = {
   url: string
 }
 
-type PromotionProduct = {
+export type PromotionProduct = {
   brand: string
   images: PromotionImage[]
   name: string

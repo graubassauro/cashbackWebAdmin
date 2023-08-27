@@ -14,6 +14,8 @@ export interface IProductStoreDTO {
   quantity: number
   storeId: number
   photoUrl: string | null
+  statusId: number
+  statusName: string
   cashbackType: string
   points: number
   brandId: null

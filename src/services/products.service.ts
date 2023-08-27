@@ -103,6 +103,11 @@ interface IUpdateProductStatusBody {
   statusId: number
 }
 
+interface IGetProductByNameParams {
+  uid: string
+  name: string
+}
+
 export const productServiceApi = cashbackApi.injectEndpoints({
   endpoints: (build) => ({
     postCreateProductForStore: build.mutation<
@@ -152,6 +157,15 @@ export const productServiceApi = cashbackApi.injectEndpoints({
       }),
       providesTags: ['Product'],
     }),
+    getProductByName: build.query<
+      DataWrapper<IProductDetailResponse[]>,
+      IGetProductByNameParams
+    >({
+      query: ({ uid, name }) => ({
+        url: `product/store/${uid}/name/${name}`,
+        method: 'GET',
+      }),
+    }),
     deleteProduct: build.mutation<
       DataWrapper<ICreateProductForStoreResponse>,
       IDeleteProductsByUid
@@ -183,9 +197,10 @@ export const {
   usePostToReceiveURLToSaveProductImageMutation,
   usePostCreateProductForStoreMutation,
   usePutEditProductForStoreMutation,
-  useDeleteProductImageMutation,
   usePutProductStatusMutation,
+  useDeleteProductImageMutation,
+  useDeleteProductMutation,
   useGetProductsByStoreUidQuery,
   useGetProductQuery,
-  useDeleteProductMutation,
+  useGetProductByNameQuery,
 } = productServiceApi

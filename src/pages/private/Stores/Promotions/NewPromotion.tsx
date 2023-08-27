@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Center,
+  Divider,
   Flex,
   Grid,
   Icon,
@@ -28,7 +29,7 @@ import {
   usePostPromotionGroupMutation,
   usePostVinculateProductToPromoMutation,
 } from '~services/promotion.service'
-import { useGetProductsByStoreUidQuery } from '~services/products.service'
+import { useGetProductByNameQuery } from '~services/products.service'
 
 const createStorePromotionSchema = z.object({
   name: z.string(),
@@ -50,13 +51,35 @@ type VinculateProductToPromotionInputs = z.infer<
 const createPromotionTabs = ['promotion', 'product'] as const
 type PromotionTabs = (typeof createPromotionTabs)[number]
 
+function useDebouncedValue(value: string, delay: number) {
+  const [debouncedValue, setDebouncedValue] = useState(value)
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value)
+    }, delay)
+
+    return () => {
+      clearTimeout(handler)
+    }
+  }, [value, delay])
+
+  return debouncedValue
+}
+
+const DEBOUNCEDELAY = 850
+
 export function NewPromotion() {
   const [selectedTab, setSelectedTab] = useState<PromotionTabs>('promotion')
   const [productsUids, setProductsUids] = useState<string | null>()
   const [promo, setPromo] = useState<PromotionGroup | null>()
 
+  const [searchProducts, setSearchProducts] = useState('')
+
   const dispatch = useDispatch()
   const store = useAppSelector((state) => state.merchant.currentStore)
+
+  const debouncedProducts = useDebouncedValue(searchProducts, DEBOUNCEDELAY)
 
   const toast = useToast()
   const navigate = useNavigate()
@@ -107,11 +130,18 @@ export function NewPromotion() {
     data: products,
     isLoading: isProductsLoading,
     isFetching: isProductsFetching,
-  } = useGetProductsByStoreUidQuery({
-    page: 1,
-    uId: store?.uId ?? '',
-    size: 50,
-  })
+  } = useGetProductByNameQuery(
+    {
+      name: debouncedProducts,
+      uid: store?.uId ?? '',
+    },
+    {
+      skip:
+        !debouncedProducts ||
+        debouncedProducts.length === 0 ||
+        debouncedProducts === '',
+    },
+  )
 
   const handleCreateStorePromotion = useCallback(
     (data: CreateStorePromotionInputs) => {
@@ -233,14 +263,21 @@ export function NewPromotion() {
           {...vinculateProductToPromoRegister('priceOff')}
           error={vinculateProductToPromoErrors.priceOff}
         />
-        <VStack mt={8}>
+        <Divider color="gray.400}" />
+        <LabelInput
+          label="Search for a product"
+          placeholder="Type at least 2 caracteres"
+          onChange={(e) => setSearchProducts(e.target.value)}
+          id="product"
+        />
+        <VStack w="100%" mt={8} alignItems="center" justifyContent="center">
           {isProductsFetching || isProductsLoading ? (
-            <Center>
+            <Center w="100%">
               <Loading />
             </Center>
           ) : (
             <Flex rowGap={2} columnGap={4} wrap="wrap" flex={1} w="100%">
-              {products?.data.products.map((item) => (
+              {products?.data.map((item) => (
                 <Button
                   borderWidth={1}
                   borderColor="purple.900"
@@ -293,7 +330,7 @@ export function NewPromotion() {
     handleVinculateProductToPromo,
     isProductsFetching,
     isProductsLoading,
-    products?.data.products,
+    products?.data,
     productsUids,
     vinculateProductToPromoHandleSubmit,
     isVinculatingProToPromo,
