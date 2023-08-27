@@ -1,6 +1,7 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { z } from 'zod'
+import axios, { AxiosResponse } from 'axios'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -16,17 +17,19 @@ import {
 } from '~components/Forms/Inputs'
 import { HeaderForm } from '~components/Forms/HeaderForm'
 import { LightSelectInput, SelectOptions } from '~components/Forms/Select'
-import { BodyLayout } from '~layouts/Body'
 import { Loading } from '~components/Loading'
+import { ModalSelect } from './components/ModalSelect'
+import { useFileInputContext } from '~contexts/FileListInputContext'
+import { BodyLayout } from '~layouts/Body'
 import { useAppSelector } from '~redux/store'
+import { resetFields } from '~redux/form'
 import {
   IUpdateProductBody,
   useDeleteProductImageMutation,
   useGetProductQuery,
+  usePostToReceiveURLToSaveProductImageMutation,
   usePutEditProductForStoreMutation,
 } from '~services/products.service'
-
-import { ModalSelect } from './components/ModalSelect'
 
 const selectOptions: SelectOptions[] = [
   {
@@ -57,6 +60,8 @@ const updateStoreProductSchema = z.object({
 type UpdateStoreProductInputs = z.infer<typeof updateStoreProductSchema>
 
 export function EditProduct() {
+  const [currentSelectedFileIndex, setCurrentSelectedFileIndex] = useState(0)
+
   const { id } = useParams()
 
   const toast = useToast()
@@ -64,6 +69,8 @@ export function EditProduct() {
   const store = useAppSelector((state) => {
     return state.merchant.currentStore
   })
+
+  const { files: selectedFiles } = useFileInputContext()
   const { selectedBrand } = useAppSelector((state) => state.form)
 
   const [
@@ -73,6 +80,9 @@ export function EditProduct() {
 
   const [deleteImage, { isSuccess: deletedImage, isLoading: isDeletingImage }] =
     useDeleteProductImageMutation()
+
+  const [requestImageURL, { isSuccess: isRequested, data: requestUrl }] =
+    usePostToReceiveURLToSaveProductImageMutation()
 
   const {
     data: product,
@@ -142,8 +152,20 @@ export function EditProduct() {
         isClosable: true,
         position: 'top',
       })
+
+      requestImageURL({
+        storeUId: store?.uId ?? '',
+        productUId: product?.data.uId ?? '',
+      })
     }
-  }, [updatedProduct, dispatch, toast])
+  }, [
+    updatedProduct,
+    dispatch,
+    toast,
+    requestImageURL,
+    store?.uId,
+    product?.data.uId,
+  ])
 
   useEffect(() => {
     if (deletedImage) {
@@ -165,6 +187,7 @@ export function EditProduct() {
    */
   useEffect(() => {
     if (isProductLoaded && product) {
+      console.log('product', product)
       setValue('name', product?.data?.name ?? '')
       setValue('about', product?.data?.about ?? '')
       setValue('quantity', String(product?.data?.quantity) ?? '')
@@ -173,8 +196,122 @@ export function EditProduct() {
       setValue('pointGainValue', String(product?.data?.points) ?? '')
       setValue('acceptCoins', product?.data?.acceptCoins ?? false)
       setValue('percentCoins', String(product?.data?.amountCoins) ?? '')
+
+      // dispatch(
+      //   setNewBrand({
+      //     item: {
+      //       id: product?.data.brandId ?? 0,
+      //       uId: '',
+      //       name: product?.data?.brandName ?? '',
+      //       categories: [],
+      //     },
+      //   }),
+      // )
     }
   }, [isProductLoaded, product, setValue])
+
+  // Define the function to upload an image using Axios
+  const uploadImage = useCallback(
+    async (file: File, requestUrl: string): Promise<void> => {
+      try {
+        const response: AxiosResponse = await axios.put(requestUrl, file, {
+          headers: {
+            'Content-Type': file.type,
+            'x-ms-blob-type': 'BlockBlob',
+          },
+        })
+
+        if (response.status === 201) {
+          dispatch(cashbackApi.util.invalidateTags(['Product']))
+          toast({
+            title: `Image uploaded successfully`,
+            description:
+              'Now your clients you be able to see picture about your new product!',
+            status: 'info',
+            duration: 3000,
+            isClosable: true,
+            position: 'top',
+          })
+
+          if (
+            selectedFiles &&
+            currentSelectedFileIndex < selectedFiles.length
+          ) {
+            requestImageURL({
+              storeUId: store?.uId ?? '',
+              productUId: product?.data.uId ?? '',
+            })
+            setCurrentSelectedFileIndex(currentSelectedFileIndex + 1)
+          }
+        } else {
+          // TODO:
+        }
+      } catch (error) {
+        console.log('Image upload FAILED', error)
+        toast({
+          title: `New product was created`,
+          description: 'But we could not add the images',
+          status: 'info',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        })
+      }
+    },
+    [
+      dispatch,
+      currentSelectedFileIndex,
+      requestImageURL,
+      product?.data.uId,
+      selectedFiles,
+      store?.uId,
+      toast,
+    ],
+  )
+
+  useEffect(() => {
+    if (isRequested && requestUrl) {
+      if (!selectedFiles) {
+        toast({
+          title: `No file was provided`,
+          description: 'This product will be created without images',
+          status: 'warning',
+          duration: 3000,
+          isClosable: true,
+          position: 'top',
+        })
+        return
+      }
+
+      if (currentSelectedFileIndex < selectedFiles.length) {
+        uploadImage(
+          selectedFiles[currentSelectedFileIndex],
+          requestUrl.data.url,
+        )
+      } else {
+        dispatch(cashbackApi.util.invalidateTags(['Product']))
+      }
+    }
+  }, [
+    isRequested,
+    requestUrl,
+    selectedFiles,
+    toast,
+    uploadImage,
+    currentSelectedFileIndex,
+    dispatch,
+  ])
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetFields())
+    }
+  }, [dispatch])
+
+  /**
+   * AUX variables
+   */
+  const hasImages = product?.data.images && product?.data.images.length > 0
 
   return (
     <BodyLayout>
@@ -262,8 +399,7 @@ export function EditProduct() {
                 </Center>
               )}
               {!isDeletingImage &&
-                product?.data.images &&
-                product?.data.images.length > 0 &&
+                hasImages &&
                 product?.data.images.map((i) => (
                   <FileInput.ImagePreview
                     key={i.imageUId}
@@ -272,6 +408,15 @@ export function EditProduct() {
                   />
                 ))}
             </Flex>
+
+            <VStack w="100%">
+              <FileInput.Root>
+                <FileInput.Trigger />
+                <FileInput.FileList />
+                <FileInput.Control multiple />
+              </FileInput.Root>
+            </VStack>
+
             <ModalSelect isEditMode />
             <FormButton
               type="submit"

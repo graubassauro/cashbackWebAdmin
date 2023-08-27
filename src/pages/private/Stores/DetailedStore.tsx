@@ -1,327 +1,32 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useMemo } from 'react'
 import {
-  Button,
   Center,
   Grid,
   HStack,
   Icon,
   Image,
-  Input,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   VStack,
-  useBreakpointValue,
 } from '@chakra-ui/react'
-import {
-  TextT,
-  NavigationArrow,
-  At,
-  Phone,
-  CaretDown,
-} from '@phosphor-icons/react'
+import { TextT, NavigationArrow, At, Phone } from '@phosphor-icons/react'
 
-import { ActionButton } from '~components/Buttons'
-import { FeedbackCard } from './components/FeedbackCard'
 import { useAppSelector } from '~redux/store'
 import { BodyLayout } from '~layouts/Body'
 
 import { Promotions } from './Promotions'
 import { Products } from './Products'
 
-const detailStoreTabs = ['products', 'promotions', 'feedback'] as const
-type DetailStoreTab = (typeof detailStoreTabs)[number]
-
-/**
- * Tab Item Compoennt
- */
-
-type TabItemProps = {
-  tab: DetailStoreTab
-  title: string
-  onSelected: (tab: DetailStoreTab) => void
-  isActive: boolean
-}
-
-const TabItem = ({ title, tab, isActive, onSelected }: TabItemProps) => {
-  const titleCapitalize = title.charAt(0).toUpperCase() + title.slice(1)
-
-  const onSelectedTab = useCallback(() => {
-    onSelected(tab)
-  }, [onSelected, tab])
-
-  return (
-    <MenuItem
-      bgColor={isActive ? 'purple.900' : 'transparent'}
-      textColor={isActive ? 'white' : 'gray.700'}
-      _selected={{
-        bgColor: 'purple.900',
-        textColor: 'white',
-      }}
-      _hover={{
-        bgColor: 'purple.900',
-        textColor: 'white',
-        opacity: isActive ? 1 : 0.2,
-      }}
-      onClick={onSelectedTab}
-    >
-      {titleCapitalize}
-    </MenuItem>
-  )
-}
-
-const optionsTabData = [
-  {
-    inputPlaceholder: 'Search for a product',
-    newData: {
-      title: 'New product',
-      urlEndpoint: 'products/new-product',
-    },
-  },
-  {
-    inputPlaceholder: 'Search for a promotion',
-    newData: {
-      title: 'New promotion',
-      urlEndpoint: 'promotions/new-promotion',
-    },
-  },
-]
-
-/**
- * Tab Options Compoennt
- */
-
-type TabOptionsProps = {
-  data: {
-    inputPlaceholder: string
-    newData: {
-      title: string
-      urlEndpoint: string
-    }
-  }
-}
-
-const TabOptions = ({ data }: TabOptionsProps) => {
-  const navigate = useNavigate()
-  const isWideVersion = useBreakpointValue({
-    base: false,
-    lg: true,
-  })
-
-  if (!isWideVersion) {
-    return (
-      <Menu>
-        <MenuButton
-          borderWidth={1}
-          borderColor="gray.700"
-          borderRadius="lg"
-          px={4}
-          py={2}
-        >
-          Options
-        </MenuButton>
-        <MenuList>
-          <MenuItem
-            bgColor="white"
-            textColor="gray.700"
-            _hover={{
-              bgColor: 'purple.900',
-              textColor: 'white',
-            }}
-            title={data.newData.title}
-            onClick={() => navigate(`../../${data.newData.urlEndpoint}`)}
-          >
-            {data.newData.title}
-          </MenuItem>
-        </MenuList>
-      </Menu>
-    )
-  }
-
-  return (
-    <HStack>
-      <Input
-        bgColor="white"
-        borderColor="gray.700"
-        borderWidth={1}
-        borderRadius={8}
-        px={6}
-        py={2}
-        fontSize={16}
-        fontWeight={400}
-        textColor="gray.700"
-        transition="ease-in 0.35s"
-        placeholder={data.inputPlaceholder}
-        _placeholder={{
-          color: 'gray.700',
-        }}
-        _hover={{
-          borderColor: 'gray.700',
-        }}
-        _focus={{
-          borderColor: 'gray.700',
-        }}
-      />
-      <ActionButton
-        title={data.newData.title}
-        onClick={() => navigate(`../../${data.newData.urlEndpoint}`)}
-      />
-    </HStack>
-  )
-}
-
-/**
- *
- */
-
-const feedbackFilterOptions = [
-  {
-    title: 'All',
-    key: 'all',
-  },
-  {
-    title: 'Recents',
-    key: 'recents',
-  },
-  {
-    title: 'Old',
-    key: 'old',
-  },
-  {
-    title: 'Accpeted',
-    key: 'accpeted',
-  },
-  {
-    title: 'Rejected',
-    key: 'rejected',
-  },
-]
-
-type FeedbackTabProps = {
-  activeFeedbackFilter: string
-  onSelected: (tab: string) => void
-}
-
-const FeedbackTab = ({
-  onSelected,
-  activeFeedbackFilter,
-}: FeedbackTabProps) => {
-  const isWideVersion = useBreakpointValue({
-    base: false,
-    lg: true,
-  })
-
-  const onSelectedTab = useCallback(
-    (tab: string) => {
-      onSelected(tab)
-    },
-    [onSelected],
-  )
-
-  if (!isWideVersion) {
-    return (
-      <Menu>
-        <MenuButton
-          borderWidth={1}
-          borderColor="gray.700"
-          borderRadius="lg"
-          px={4}
-          py={2}
-        >
-          Options
-        </MenuButton>
-        <MenuList>
-          {feedbackFilterOptions.map((option) => (
-            <MenuItem
-              key={option.key}
-              bgColor="white"
-              textColor="gray.700"
-              _hover={{
-                bgColor: 'purple.900',
-                textColor: 'white',
-              }}
-              onClick={() => onSelectedTab(option.key)}
-            >
-              {option.title}
-            </MenuItem>
-          ))}
-        </MenuList>
-      </Menu>
-    )
-  }
-
-  return (
-    <HStack position="absolute" right={0} bottom={0}>
-      {feedbackFilterOptions.map((option) => (
-        <Button
-          key={option.key}
-          bgColor="transparent"
-          pb={4}
-          borderBottomWidth={1}
-          borderRadius={0}
-          borderBottomColor={
-            activeFeedbackFilter === option.key ? 'purple.900' : 'transparent'
-          }
-          fontSize={16}
-          fontWeight={activeFeedbackFilter === option.key ? 700 : 400}
-          textColor="gray.800"
-          transition="ease-in 0.35s"
-          _hover={{ bgColor: 'transparent', borderBottomColor: 'purple.900' }}
-          onClick={() => onSelectedTab(option.key)}
-        >
-          {option.title}
-        </Button>
-      ))}
-    </HStack>
-  )
-}
+const detailStoreTabs = ['Products', 'Promotions'] as const
 
 export function DetailedStore() {
-  const [selectedTab, setSelectedTab] = useState<DetailStoreTab>('products')
-  const [selectedFeedback, setSelectedFeedback] = useState('all')
-
   const store = useAppSelector((state) => {
     return state.merchant.currentStore
   })
-
-  const titleCapitalize =
-    selectedTab.charAt(0).toUpperCase() + selectedTab.slice(1)
-
-  const tabs = useMemo((): Record<DetailStoreTab, React.JSX.Element | null> => {
-    return {
-      products: <Products />,
-      promotions: <Promotions />,
-      feedback: (
-        <VStack w="100%" spacing={2}>
-          <FeedbackCard />
-          <FeedbackCard />
-          <FeedbackCard />
-          <FeedbackCard />
-          <FeedbackCard />
-          <FeedbackCard />
-        </VStack>
-      ),
-    }
-  }, [])
-
-  const optionsTab = useMemo((): Record<
-    DetailStoreTab,
-    React.JSX.Element | null
-  > => {
-    return {
-      products: <TabOptions data={optionsTabData[0]} />,
-      promotions: <TabOptions data={optionsTabData[1]} />,
-      feedback: (
-        <FeedbackTab
-          activeFeedbackFilter={selectedFeedback}
-          onSelected={setSelectedFeedback}
-        />
-      ),
-    }
-  }, [selectedFeedback])
 
   const HeaderStoreDetailComponent = useMemo(() => {
     return (
@@ -401,45 +106,22 @@ export function DetailedStore() {
   return (
     <BodyLayout>
       {HeaderStoreDetailComponent}
-      <VStack mt={8}>
-        <HStack
-          w="100%"
-          justifyContent="space-between"
-          borderBottomColor="gray.400"
-          borderBottomWidth={1}
-          pb={4}
-          position="relative"
-        >
-          <Menu>
-            <MenuButton
-              as={Button}
-              rightIcon={<CaretDown />}
-              bgColor="transparent"
-              textColor="gray.800"
-              fontSize={18}
-              fontWeight={700}
-              _hover={{
-                bgColor: 'gray.400',
-              }}
-            >
-              {titleCapitalize}
-            </MenuButton>
-            <MenuList>
-              {detailStoreTabs.map((tab) => (
-                <TabItem
-                  key={tab}
-                  tab={tab}
-                  title={tab}
-                  onSelected={setSelectedTab}
-                  isActive={selectedTab === tab}
-                />
-              ))}
-            </MenuList>
-          </Menu>
-          {optionsTab[selectedTab]}
-        </HStack>
-        {tabs[selectedTab]}
-      </VStack>
+      <Tabs mt={4} variant="line" colorScheme="purple">
+        <TabList>
+          {detailStoreTabs.map((t) => (
+            <Tab key={t}>{t}</Tab>
+          ))}
+        </TabList>
+
+        <TabPanels>
+          <TabPanel>
+            <Products />
+          </TabPanel>
+          <TabPanel>
+            <Promotions />
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
     </BodyLayout>
   )
 }

@@ -11,8 +11,6 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
-  // useDisclosure,
-  // useToast,
 } from '@chakra-ui/react'
 
 import { cashbackApi } from '~api/cashback-api.service'
@@ -37,9 +35,6 @@ export function Categories() {
   const [currentPage, setCurrentPage] = useState(1)
   const [currentStoreSelected, setCurrentStoreSelected] =
     useState<IStoreDTO | null>(store ?? null)
-  // const dispatch = useDispatch()
-  // const { isOpen, onOpen, onClose } = useDisclosure()
-  // const toast = useToast()
 
   const {
     data: categories,
@@ -75,25 +70,6 @@ export function Categories() {
     },
     [dispatch],
   )
-
-  /**
-   * useEffect after createBrand
-   */
-  // useEffect(() => {
-  //   if (hasCreated) {
-  //     dispatch(cashbackApi.util.invalidateTags(['Brands']))
-  //     reset()
-
-  //     toast({
-  //       title: `New brand was created`,
-  //       description: 'Now you can associate to your products!',
-  //       status: 'info',
-  //       duration: 3000,
-  //       isClosable: true,
-  //       position: 'top',
-  //     })
-  //   }
-  // }, [hasCreated, dispatch, reset, toast])
 
   useEffect(() => {
     if (isStoresSuccess && stores) {

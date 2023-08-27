@@ -1,11 +1,31 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { SlidersHorizontal } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
-import { Button, Grid, VStack, useDisclosure } from '@chakra-ui/react'
+import {
+  Button,
+  Center,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  Grid,
+  Icon,
+  IconButton,
+  Input,
+  Stack,
+  VStack,
+  useDisclosure,
+} from '@chakra-ui/react'
 
 import { cashbackApi } from '~api/cashback-api.service'
+import { ActionButton } from '~components/Buttons'
+import { Loading } from '~components/Loading'
 import { IProductStoreDTO } from '~models/Store'
 import { useAppSelector } from '~redux/store'
+import { useGetAllCategoriesQuery } from '~services/category.service'
 import {
   useDeleteProductMutation,
   useGetProductsByStoreUidQuery,
@@ -18,6 +38,16 @@ export function Products() {
   /** START */
   const [page, setPage] = useState(1)
   const [productsToCards, setProductsToCards] = useState<IProductStoreDTO[]>([])
+  const [category, setCategory] = useState<number>(0)
+
+  const navigate = useNavigate()
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const {
+    isOpen: isFiltersOpen,
+    onOpen: onOpenFitlers,
+    onClose: onCloseFilters,
+  } = useDisclosure()
 
   const store = useAppSelector((state) => {
     return state.merchant.currentStore
@@ -31,7 +61,14 @@ export function Products() {
   } = useGetProductsByStoreUidQuery({
     page,
     uId: store?.uId ?? '',
+    category,
   })
+
+  const {
+    data: categories,
+    isFetching: isFetchingCategories,
+    isLoading: isLoadingCategories,
+  } = useGetAllCategoriesQuery()
 
   const isLoading = isProductsLoading || isProductsFetching
 
@@ -100,6 +137,7 @@ export function Products() {
 
   useEffect(() => {
     setPage(1)
+    setCategory(0)
   }, [])
 
   useEffect(() => {
@@ -111,7 +149,6 @@ export function Products() {
   const [uIdToDelete, setUIdToDelete] = useState('')
 
   const dispatch = useDispatch()
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [
     deleteProduct,
@@ -155,6 +192,51 @@ export function Products() {
   return (
     <>
       <VStack w="100%" ref={containerRef}>
+        <Stack w="100%" flexDir="row">
+          <Input
+            bgColor="white"
+            borderColor="gray.700"
+            borderWidth={1}
+            borderRadius={8}
+            px={4}
+            py={4}
+            fontSize={16}
+            fontWeight={400}
+            textColor="gray.700"
+            transition="ease-in 0.35s"
+            placeholder="Search for products"
+            _placeholder={{
+              color: 'gray.700',
+            }}
+            _hover={{
+              borderColor: 'gray.700',
+            }}
+            _focus={{
+              borderColor: 'gray.700',
+            }}
+          />
+          <ActionButton
+            title="New product"
+            onClick={() => navigate(`../../products/new-product`)}
+          />
+          <IconButton
+            aria-label="Open filters"
+            bgColor="white"
+            borderColor="gray.700"
+            borderWidth={1}
+            borderRadius={8}
+            px={4}
+            py={4}
+            icon={<Icon as={SlidersHorizontal} color="gray.700" />}
+            _hover={{
+              borderColor: 'gray.700',
+            }}
+            _focus={{
+              borderColor: 'gray.700',
+            }}
+            onClick={onOpenFitlers}
+          />
+        </Stack>
         <Grid
           templateColumns={[
             '1fr',
@@ -199,6 +281,22 @@ export function Products() {
         onClose={onClose}
         onHandleDeleteProductByProductUid={handleDeleteProductByProductUid}
       />
+
+      <Drawer placement="left" onClose={onCloseFilters} isOpen={isFiltersOpen}>
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerHeader borderBottomWidth="1px">Filter Options</DrawerHeader>
+          <DrawerBody>
+            {isLoadingCategories || isFetchingCategories ? (
+              <Center>
+                <Loading />
+              </Center>
+            ) : (
+              categories?.data.map((c) => <p key={c.uId}>{c.name}</p>)
+            )}
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </>
   )
 }

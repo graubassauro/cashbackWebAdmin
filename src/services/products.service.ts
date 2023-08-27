@@ -37,6 +37,7 @@ interface ICreateProductImageRequestURLResponse {
 interface IProductsByStoreParams {
   uId: string
   page: number
+  category?: number
   size?: number
 }
 
